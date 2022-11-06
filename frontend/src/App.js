@@ -7,12 +7,14 @@ import "./assets/vendor/quill/quill.bubble.css";
 import "./assets/vendor/remixicon/remixicon.css";
 import "./assets/vendor/simple-datatables/style.css";
 import "./assets/css/style.css";
-import UserLogin from './pages/UserLogin';
+import UserRegister from './pages/UserRegister';
+//import UserLogin from './pages/UserLogin';
+//import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
   return (
     <div className="App">
-      <UserLogin/>
+      <UserRegister/>
     </div>
   );
 }
