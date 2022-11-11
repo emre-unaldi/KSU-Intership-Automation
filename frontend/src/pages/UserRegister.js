@@ -1,7 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ksuLogo from '../assets/img/ksu.png';
-import { BootstrapValidations } from '../components/BootstrapValidations';
-
+import BootstrapValidations from '../components/BootstrapValidations';
 
 const UserRegister = () => {
 
@@ -16,7 +16,7 @@ const UserRegister = () => {
                         <div className="row justify-content-center">
                             <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
                                 <div className="d-flex justify-content-center py-3">
-                                    <a href="#" className="logo d-flex align-items-center w-auto">
+                                    <a href={ksuLink} className="logo d-flex align-items-center w-auto">
                                         <img src={ksuLogo} alt=""/>
                                         <span className="d-none d-lg-block">KSÜ</span>
                                     </a>
@@ -75,7 +75,7 @@ const UserRegister = () => {
                                                     <div className="col-12 pb-1 pt-1">
                                                         <div className="form-check">
                                                             <input className="form-check-input" name="StudentAcceptTerms" type="checkbox" value="true" id="StudentAcceptTerms" required/>
-                                                                <label className="form-check-label" htmlFor="StudentAcceptTerms"><a href="#">Şartlar ve koşulları</a> kabul ediyorum.</label>
+                                                                <label className="form-check-label" htmlFor="StudentAcceptTerms"><a href={ksuLink}>Şartlar ve koşulları</a> kabul ediyorum.</label>
                                                             <div className="invalid-feedback">Göndermeden önce kabul etmelisiniz.</div>
                                                         </div>
                                                     </div>
@@ -83,7 +83,9 @@ const UserRegister = () => {
                                                         <button className="btn btn-primary w-100" type="submit" >Hesap Oluştur</button>
                                                     </div>
                                                     <div className="col-12">
-                                                        <p className="small mb-0">Zaten hesabın var mı ? <a href="{ksuLink}">Giriş Yap</a></p>
+                                                        <p className="small mb-0">Zaten hesabın var mı ? 
+                                                            <Link to={"/login"}> Giriş Yap</Link>
+                                                        </p>
                                                     </div>
                                                 </form>
                                             </div>
@@ -126,7 +128,7 @@ const UserRegister = () => {
                                                     <div className="col-12 pt-1 pb-1">
                                                         <div className="form-check">
                                                             <input className="form-check-input" name="teacherAcceptTerms" type="checkbox" value="true" id="teacherAcceptTerms" required/>
-                                                                <label className="form-check-label" htmlFor="teacherAcceptTerms"><a href="#">Şartlar ve koşulları</a> kabul ediyorum.</label>
+                                                                <label className="form-check-label" htmlFor="teacherAcceptTerms"><a href={ksuLink}>Şartlar ve koşulları</a> kabul ediyorum.</label>
                                                             <div className="invalid-feedback">Göndermeden önce kabul etmelisiniz.</div>
                                                         </div>
                                                     </div>
@@ -134,7 +136,9 @@ const UserRegister = () => {
                                                         <button className="btn btn-primary w-100" type="submit">Hesap Oluştur</button>
                                                     </div>
                                                     <div className="col-12">
-                                                        <p className="small mb-0">Zaten hesabın var mı ? <a href={ksuLink}>Giriş Yap</a></p>
+                                                        <p className="small mb-0">Zaten hesabın var mı ? 
+                                                            <Link to={"/login"}> Giriş Yap</Link>
+                                                        </p>
                                                     </div>
                                                 </form>
                                             </div>

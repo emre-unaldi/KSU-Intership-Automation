@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ksuLogo from '../assets/img/ksu.png';
-import { BootstrapValidations } from '../components/BootstrapValidations';
+import BootstrapValidations from '../components/BootstrapValidations';
 
 const ForgotPassword = () => {
 
@@ -41,14 +42,16 @@ const ForgotPassword = () => {
                           <div className="form-check">
                             <input className="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe" required/>
                               <label className="form-check-label" htmlFor="rememberMe">Google Recaptcha</label>
-                            <div className="invalid-feedback">Google Recaptcha Doğrulanmadı</div>
+                            <div className="invalid-feedback">Google Recaptcha Doğrulaması</div>
                           </div>
                         </div>
                         <div className="col-12 pb-1">
                           <button className="btn btn-primary w-100" type="submit">Şifre Yenile</button>
                         </div>
                         <div className="col-12" align="center">
-                            <p><a href={ksuLink}>Giriş Yap</a></p>
+                            <p>
+                              <Link to={"/login"}>Giriş Yap</Link>
+                            </p>
                         </div>
                       </form>
                     </div>

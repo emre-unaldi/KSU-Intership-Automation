@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const BootstrapValidations = () => {
+const BootstrapValidations = () => {
   return (
     <>
         {
@@ -22,3 +22,5 @@ export const BootstrapValidations = () => {
     </>
   )
 }
+
+export default BootstrapValidations

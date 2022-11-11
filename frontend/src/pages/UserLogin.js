@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ksuLogo from '../assets/img/ksu.png';
-import { BootstrapValidations } from '../components/BootstrapValidations';
+import BootstrapValidations from '../components/BootstrapValidations';
 
 const UserLogin = () => {
 
@@ -40,18 +41,20 @@ const UserLogin = () => {
                           <div className="col-12 pb-1 pt-1">
                             <div className="form-check">
                               <input className="form-check-input" type="checkbox" name="loginRemember" value="true" id="loginRememberMe" required/>
-                                <label className="form-check-label" htmlFor="loginRememberMe">Beni hatırla</label>
-                              <div className="invalid-feedback">Lütfen işaretleyiniz !</div>
+                                <label className="form-check-label" htmlFor="loginRememberMe">Google Recaptcha</label>
+                              <div className="invalid-feedback">Google Recaptcha Doğrulaması</div>
                             </div>
                           </div>
                           <div className="col-12 pb-1">
                             <button className="btn btn-primary w-100" type="submit">Giriş Yap</button>
                           </div>
                           <div className="col-12">
-                            <p className="small mb-0">Hesabınız yok mu? <a href={ksuLink}>Hesap Oluştur</a></p>
+                            <p className="small mb-0">Hesabınız yok mu? 
+                              <Link to={"/register"}> Hesap Oluştur</Link>
+                            </p>
                           </div>
                           <div className="col-12" align="right">
-                            <a href={ksuLink}>Şifremi Unuttum</a>
+                            <Link to={"/forgotPassword"}>Şifremi Unuttum</Link>
                           </div>
                         </form>
                       </div>
