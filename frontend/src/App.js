@@ -15,21 +15,19 @@ import "./assets/vendor/remixicon/remixicon.css";
 import "./assets/vendor/simple-datatables/style.css";
 import "./assets/css/style.css";
 
-
-
 function App() {
   return (
     <>
       <Routes>
-        <Route exact path="/login" element={<UserLogin/>}/>
-        <Route exact path="/forgotPassword" element={<ForgotPassword/>}/>
-        <Route exact path="/register" element={<UserRegister/>}/>
-        <Route exact path="/student/home" element={<StudentHome/>}/>
-        <Route exact path="/teacher/home" element={<TeacherHome/>}/>
-        <Route path="*" element={<Error404/>}/>
+        <Route exact path="/login" element={<UserLogin />} />
+        <Route exact path="/forgotPassword" element={<ForgotPassword />} />
+        <Route exact path="/register" element={<UserRegister />} />
+        <Route exact path="/student/home" element={<StudentHome />} />
+        <Route exact path="/teacher/home" element={<TeacherHome />} />
+        <Route path="*" element={<Error404 />} />
       </Routes>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
