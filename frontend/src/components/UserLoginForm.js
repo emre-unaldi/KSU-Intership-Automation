@@ -2,16 +2,19 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import { loginValidationSchema } from "../components/FormikValidations";
-import { loginInitialValues } from "../components/ValidationsValues";
 
 const UserLoginForm = () => {
   const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
-      initialValues: loginInitialValues,
+      initialValues: {
+        loginEmail: "",
+        loginPassword: "",
+        loginRemember: "",
+      },
       onSubmit: (values) => {
         console.log(JSON.stringify(values));
       },
       validationSchema: loginValidationSchema,
-    })
+    });
 
   return (
     <>
@@ -113,7 +116,7 @@ const UserLoginForm = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default UserLoginForm
+export default UserLoginForm;

@@ -1,9 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import ksuLogo from "../assets/img/ksu.png";
 import ForgotPasswordForm from "../components/ForgotPasswordForm";
 
 const ForgotPassword = () => {
-  const ksuLink = "https://www.ksu.edu.tr";
+  const ksuLink = useSelector((state) => state.system.ksuLink);
 
   return (
     <>
@@ -35,7 +36,7 @@ const ForgotPassword = () => {
         </div>
       </main>
     </>
-  )
-}
+  );
+};
 
-export default ForgotPassword
+export default ForgotPassword;

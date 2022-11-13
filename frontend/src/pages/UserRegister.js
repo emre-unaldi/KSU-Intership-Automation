@@ -2,9 +2,10 @@ import React from "react";
 import StudentRegisterForm from "../components/StudentRegisterForm";
 import TeacherRegisterForm from "../components/TeacherRegisterForm";
 import ksuLogo from "../assets/img/ksu.png";
+import { useSelector } from "react-redux";
 
 const UserRegister = () => {
-  const ksuLink = "https://www.ksu.edu.tr";
+  const ksuLink = useSelector((state) => state.system.ksuLink);
 
   return (
     <>
@@ -70,7 +71,7 @@ const UserRegister = () => {
         </div>
       </main>
     </>
-  )
-}
+  );
+};
 
-export default UserRegister
+export default UserRegister;

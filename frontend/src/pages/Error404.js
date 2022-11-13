@@ -1,9 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import notFound from "../assets/img/not-found.svg";
 
 const Error404 = () => {
-  const ksuLink = "https://www.ksu.edu.tr";
+  const ksuLink = useSelector((state) => state.system.ksuLink);
 
   return (
     <>
@@ -33,7 +34,7 @@ const Error404 = () => {
         <i className="bi bi-arrow-up-short"></i>
       </a>
     </>
-  )
-}
+  );
+};
 
-export default Error404
+export default Error404;

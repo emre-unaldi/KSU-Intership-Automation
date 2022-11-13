@@ -1,18 +1,26 @@
 import React from "react";
 import { useFormik } from "formik";
 import { teacherRegisterValidationSchema } from "./FormikValidations";
-import { teacherInitialValues } from "./ValidationsValues";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 const TeacherRegisterForm = () => {
-  const ksuLink = "https://www.ksu.edu.tr";
+  const ksuLink = useSelector((state) => state.system.ksuLink);
 
   const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
-      initialValues: teacherInitialValues,
+      initialValues: {
+        teacherName: "",
+        teacherSurname: "",
+        teacherPhoneNumber: "",
+        teacherEmail: "",
+        teacherPassword: "",
+        teacherPasswordConfirm: "",
+        teacherAcceptTerms: "",
+      },
       onSubmit: (values) => {
         console.log(JSON.stringify(values));
       },
       validationSchema: teacherRegisterValidationSchema,
-    })
+    });
 
   return (
     <>
@@ -192,7 +200,7 @@ const TeacherRegisterForm = () => {
         </form>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default TeacherRegisterForm
+export default TeacherRegisterForm;

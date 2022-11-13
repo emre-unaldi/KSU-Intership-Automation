@@ -145,4 +145,4 @@ export {
   forgotPasswordValidationSchema,
   studentRegisterValidationSchema,
   teacherRegisterValidationSchema,
-}
+};

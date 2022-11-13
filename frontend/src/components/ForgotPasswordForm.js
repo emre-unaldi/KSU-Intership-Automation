@@ -2,16 +2,19 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import { forgotPasswordValidationSchema } from "../components/FormikValidations";
-import { forgotPasswordInitialValues } from "../components/ValidationsValues";
 
 const ForgotPasswordForm = () => {
   const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
-      initialValues: forgotPasswordInitialValues,
+      initialValues: {
+        schoolNumber: "",
+        userEmail: "",
+        remember: "",
+      },
       onSubmit: (values) => {
         console.log(JSON.stringify(values));
       },
       validationSchema: forgotPasswordValidationSchema,
-    })
+    });
 
   return (
     <>
@@ -110,7 +113,7 @@ const ForgotPasswordForm = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default ForgotPasswordForm
+export default ForgotPasswordForm;

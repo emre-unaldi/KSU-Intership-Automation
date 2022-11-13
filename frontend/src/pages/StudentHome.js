@@ -2,29 +2,12 @@ import React from "react";
 import ksuLogo from "../assets/img/ksu.png";
 import profile from "../assets/img/profile-img.jpg";
 import messagesProfile from "../assets/img/messages-1.jpg";
+import { useDispatch, useSelector } from "react-redux";
+import { sideBarMenuOpen } from "../redux/systemConfigurationSlice";
 
 const StudentHome = () => {
-  const ksuLink = "https://www.ksu.edu.tr";
-  let active = true;
-  const getWidth = window.screen.width;
-
-  const menuOpen = () => {
-    if (active === true) {
-      document.querySelector(".sidebar").style.left = "0";
-      if (getWidth > 800) {
-        document.querySelector("#main").style.marginLeft = "300px";
-        document.querySelector("#footer").style.marginLeft = "300px";
-      }
-      active = false;
-    } else {
-      document.querySelector(".sidebar").style.left = "-300px";
-      if (getWidth > 800) {
-        document.querySelector("#main").style.marginLeft = "0";
-        document.querySelector("#footer").style.marginLeft = "0";
-      }
-      active = true;
-    }
-  };
+  const ksuLink = useSelector((state) => state.system.ksuLink);
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -37,7 +20,12 @@ const StudentHome = () => {
             <img src={ksuLogo} alt="" />
             <span className="d-none d-lg-block">KSÜ</span>
           </a>
-          <i className="bi bi-list toggle-sidebar-btn" onClick={menuOpen}></i>
+          <i
+            className="bi bi-list toggle-sidebar-btn"
+            onClick={() => {
+              dispatch(sideBarMenuOpen());
+            }}
+          ></i>
         </div>
         <nav className="header-nav ms-auto">
           <ul className="d-flex align-items-center">
@@ -320,7 +308,7 @@ const StudentHome = () => {
         <i className="bi bi-arrow-up-short"></i>
       </a>
     </>
-  )
-}
+  );
+};
 
-export default StudentHome
+export default StudentHome;

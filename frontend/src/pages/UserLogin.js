@@ -1,9 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import ksuLogo from "../assets/img/ksu.png";
 import UserLoginForm from "../components/UserLoginForm";
 
 const UserLogin = () => {
-  const ksuLink = "https://www.ksu.edu.tr";
+  const ksuLink = useSelector((state) => state.system.ksuLink);
+
   return (
     <>
       <main>
@@ -39,7 +41,7 @@ const UserLogin = () => {
         <i className="bi bi-arrow-up-short"></i>
       </a>
     </>
-  )
-}
+  );
+};
 
-export default UserLogin
+export default UserLogin;
