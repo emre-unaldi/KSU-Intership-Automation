@@ -1,20 +1,51 @@
-import React from "react";
+import React, { useRef, useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import { forgotPasswordValidationSchema } from "../components/FormikValidations";
 
 const ForgotPasswordForm = () => {
-  const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
-      initialValues: {
-        schoolNumber: "",
-        userEmail: "",
-        remember: "",
-      },
-      onSubmit: (values) => {
-        console.log(JSON.stringify(values));
-      },
-      validationSchema: forgotPasswordValidationSchema,
-    });
+  const captchaRef = useRef(null);
+  let [googleRecaptchaValue, setGoogleRecaptchaValue] = useState(false);
+
+  const {
+    handleSubmit,
+    handleChange,
+    handleBlur,
+    values,
+    errors,
+    touched,
+    resetForm,
+  } = useFormik({
+    initialValues: {
+      schoolNumber: "",
+      userEmail: "",
+    },
+    onSubmit: (values) => {
+      console.log(JSON.stringify(values));
+
+      resetForm({ values: "" });
+      captchaRef.current.reset();
+      setGoogleRecaptchaValue((googleRecaptchaValue = false));
+    },
+    validationSchema: forgotPasswordValidationSchema,
+  });
+
+  const captchaOnChange = async (value) => {
+    console.log("Captcha value = ", value);
+    const token = captchaRef.current.getValue();
+
+    await axios
+      .post(process.env.REACT_APP_API_URL, { token })
+      .then((res) => {
+        setGoogleRecaptchaValue((googleRecaptchaValue = res.data));
+        console.log(googleRecaptchaValue);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <>
@@ -50,7 +81,7 @@ const ForgotPasswordForm = () => {
               {errors.schoolNumber && touched.schoolNumber && (
                 <div style={{ color: "red" }}>
                   <i className="bi bi-exclamation-octagon">
-                    {errors.schoolNumber}
+                    &nbsp;{errors.schoolNumber}
                   </i>
                 </div>
               )}
@@ -71,36 +102,49 @@ const ForgotPasswordForm = () => {
               {errors.userEmail && touched.userEmail && (
                 <div style={{ color: "red" }}>
                   <i className="bi bi-exclamation-octagon">
-                    {errors.userEmail}
+                    &nbsp;{errors.userEmail}
                   </i>
                 </div>
               )}
             </div>
-            <div className="col-12 pb-1 pt-1">
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name="remember"
-                  id="rememberMe"
-                  value={values.remember}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+            <div
+              className="col-12 pb-1 pt-1"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <div>
+                <ReCAPTCHA
+                  sitekey={process.env.REACT_APP_SITE_KEY}
+                  ref={captchaRef}
+                  onChange={captchaOnChange}
                 />
-                <label className="form-check-label" htmlFor="rememberMe">
-                  Google Recaptcha
-                </label>
-                {errors.remember && touched.remember && (
-                  <div style={{ color: "red" }}>
-                    <i className="bi bi-exclamation-octagon">
-                      {errors.remember}
+              </div>
+              <div>
+                {googleRecaptchaValue === false ? (
+                  <div
+                    style={{
+                      color: "#4169E1",
+                      fontSize: "17px",
+                      paddingTop: "5px",
+                    }}
+                  >
+                    <i className="bi bi-chat-right-text-fill">
+                      &nbsp;Google Doğrulamasını Tamamlayınız
                     </i>
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
             <div className="col-12 pb-1">
-              <button className="btn btn-primary w-100" type="submit">
+              <button
+                className="btn btn-primary w-100"
+                type="submit"
+                disabled={googleRecaptchaValue === false}
+              >
                 Şifre Yenile
               </button>
             </div>

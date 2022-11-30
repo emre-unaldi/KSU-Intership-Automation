@@ -43,8 +43,7 @@ const forgotPasswordValidationSchema = yup.object().shape({
   userEmail: yup
     .string()
     .email("Geçerli bir E-posta adresi giriniz!")
-    .required("E-posta adresi giriniz!"),
-  remember: yup.boolean().required("Google Doğrulamasını tamamlayınız!"),
+    .required("E-posta adresi giriniz!")
 });
 
 const studentRegisterValidationSchema = yup.object().shape({
