@@ -23,10 +23,12 @@ const loginValidationSchema = yup.object().shape({
       passwordRegexUpperCase,
       "Şifrenizi en az bir büyük karakter içermelidir."
     )
-    .matches(passwordRegexNumberCase, "Şifrenizi en az bir sayı içermelidir.")
-    .max(12, "Şifreniz en fazla 12 karakter olmalıdır.")
-    .required("Şifre belirleyiniz!"),
-  loginRemember: yup.boolean().required("Google Doğrulamasını tamamlayınız!"),
+    .matches(
+      passwordRegexNumberCase, 
+      "Şifrenizi en az bir sayı içermelidir."
+    )
+    .max(20, "Şifreniz en fazla 12 karakter olmalıdır.")
+    .required("Şifrenizi giriniz!"),
 });
 
 const forgotPasswordValidationSchema = yup.object().shape({

@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export const systemConfigurationSlice = createSlice({
-  name: "systemLink",
+  name: "system",
   initialState: {
     ksuLink: "https://www.ksu.edu.tr",
     sideBarActive: true,
-    browserWindowWidth: window.screen.width,
+    browserWindowWidth: window.screen.width
   },
   reducers: {
     sideBarMenuOpen: (state) => {
