@@ -1,12 +1,13 @@
 import React, { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { loginValidationSchema } from "../components/FormikValidations";
 
 const UserLoginForm = () => {
   const captchaRef = useRef(null);
+  const navigate = useNavigate();
   let [googleRecaptchaValue, setGoogleRecaptchaValue] = useState(false);
 
   const {
@@ -23,11 +24,24 @@ const UserLoginForm = () => {
       loginPassword: "",
     },
     onSubmit: (values) => {
-      console.log(JSON.stringify(values));
+      //console.log(JSON.stringify(values));
 
       resetForm({ values: "" });
       captchaRef.current.reset();
       setGoogleRecaptchaValue((googleRecaptchaValue = false));
+
+      axios
+        .post("http://localhost:3001/api/users/login", {
+          email: values.loginEmail,
+          password: values.loginPassword,
+        })
+        .then((result) => {
+          console.log(result);
+          navigate("/student/home");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     validationSchema: loginValidationSchema,
   });
@@ -106,7 +120,6 @@ const UserLoginForm = () => {
                 </div>
               )}
             </div>
-
             <div
               className="col-12 pb-1 pt-1"
               style={{
@@ -139,7 +152,6 @@ const UserLoginForm = () => {
                 ) : null}
               </div>
             </div>
-
             <div className="col-12 pb-1">
               <button
                 className="btn btn-primary w-100"

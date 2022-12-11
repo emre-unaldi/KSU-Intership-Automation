@@ -1,13 +1,15 @@
 import React from "react";
 import { useFormik } from "formik";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { studentRegisterValidationSchema } from "./FormikValidations";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+
 
 const StudentRegisterForm = () => {
-  const ksuLink = useSelector((state) => state.system.ksuLink);
+  const navigate = useNavigate();
 
-  const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
+  const { handleSubmit, handleChange, handleBlur, values, errors, touched } =
+    useFormik({
       initialValues: {
         studentName: "",
         studentSurname: "",
@@ -15,10 +17,27 @@ const StudentRegisterForm = () => {
         studentEmail: "",
         studentPassword: "",
         studentPasswordConfirm: "",
-        StudentAcceptTerms: "",
+        userType: "student",
       },
       onSubmit: (values) => {
-        console.log(JSON.stringify(values));
+        //console.log(JSON.stringify(values));
+
+        axios
+          .post("http://localhost:3001/api/users/signup", {
+            name: values.studentName,
+            surname: values.studentSurname,
+            schoolNumber: values.schoolNumber,
+            email: values.studentEmail,
+            password: values.studentPassword,
+            role: values.userType,
+          })
+          .then((result) => {
+            console.log(result.data);
+            navigate("/login");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       },
       validationSchema: studentRegisterValidationSchema,
     });
@@ -144,7 +163,7 @@ const StudentRegisterForm = () => {
               </div>
             )}
           </div>
-          <div className="col-12">
+          <div className="col-12 pb-2">
             <label htmlFor="studentPasswordConfirm" className="form-label mb-0">
               Şifre Tekrar
             </label>
@@ -157,36 +176,14 @@ const StudentRegisterForm = () => {
               onChange={handleChange}
               onBlur={handleBlur}
             />
-            {errors.studentPasswordConfirm && touched.studentPasswordConfirm && (
-              <div style={{ color: "red" }}>
-                <i className="bi bi-exclamation-octagon">
-                  {errors.studentPasswordConfirm}
-                </i>
-              </div>
-            )}
-          </div>
-          <div className="col-12 pb-1 pt-1">
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                name="StudentAcceptTerms"
-                type="checkbox"
-                id="StudentAcceptTerms"
-                value={values.StudentAcceptTerms}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              <label className="form-check-label" htmlFor="StudentAcceptTerms">
-                <a href={ksuLink}>Şartlar ve koşulları</a> kabul ediyorum.
-              </label>
-              {errors.StudentAcceptTerms && touched.StudentAcceptTerms && (
+            {errors.studentPasswordConfirm &&
+              touched.studentPasswordConfirm && (
                 <div style={{ color: "red" }}>
                   <i className="bi bi-exclamation-octagon">
-                    {errors.StudentAcceptTerms}
+                    {errors.studentPasswordConfirm}
                   </i>
                 </div>
               )}
-            </div>
           </div>
           <div className="col-12 pb-1">
             <button className="btn btn-primary w-100" type="submit">

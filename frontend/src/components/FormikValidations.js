@@ -88,10 +88,7 @@ const studentRegisterValidationSchema = yup.object().shape({
   studentPasswordConfirm: yup
     .string()
     .oneOf([yup.ref("studentPassword")], "Şifreler uyuşmamaktadır.")
-    .required("Şifrenizi tekrar giriniz!"),
-  StudentAcceptTerms: yup
-    .boolean()
-    .required(" Google Doğrulamasını tamamlayınız!"),
+    .required("Şifrenizi tekrar giriniz!")
 });
 
 const teacherRegisterValidationSchema = yup.object().shape({
@@ -135,10 +132,7 @@ const teacherRegisterValidationSchema = yup.object().shape({
   teacherPasswordConfirm: yup
     .string()
     .oneOf([yup.ref("teacherPassword")], "Şifreler uyuşmamaktadır.")
-    .required("Şifrenizi tekrar giriniz!"),
-  teacherAcceptTerms: yup
-    .boolean()
-    .required("Google Doğrulamasını tamamlayınız!"),
+    .required("Şifrenizi tekrar giriniz!")
 });
 
 export {

@@ -1,10 +1,11 @@
 import React from "react";
 import { useFormik } from "formik";
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 import { teacherRegisterValidationSchema } from "./FormikValidations";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+
 const TeacherRegisterForm = () => {
-  const ksuLink = useSelector((state) => state.system.ksuLink);
+  const navigate = useNavigate();
 
   const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
       initialValues: {
@@ -14,10 +15,27 @@ const TeacherRegisterForm = () => {
         teacherEmail: "",
         teacherPassword: "",
         teacherPasswordConfirm: "",
-        teacherAcceptTerms: "",
+        userType: "teacher",
       },
       onSubmit: (values) => {
         console.log(JSON.stringify(values));
+
+        axios
+        .post("http://localhost:3001/api/users/signup", {
+          name: values.teacherName,
+          surname: values.teacherSurname,
+          phoneNumber: values.teacherPhoneNumber,
+          email: values.teacherEmail,
+          password: values.teacherPassword,
+          role: values.userType,
+        })
+        .then((result) => {
+          console.log(result.data);
+          navigate("/login");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       },
       validationSchema: teacherRegisterValidationSchema,
     });
@@ -143,7 +161,7 @@ const TeacherRegisterForm = () => {
               </div>
             )}
           </div>
-          <div className="col-12">
+          <div className="col-12 pb-2">
             <label htmlFor="teacherPasswordConfirm" className="form-label mb-0">
               Şifre Tekrar
             </label>
@@ -163,29 +181,6 @@ const TeacherRegisterForm = () => {
                 </i>
               </div>
             )}
-          </div>
-          <div className="col-12 pt-1 pb-1">
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                name="teacherAcceptTerms"
-                type="checkbox"
-                id="teacherAcceptTerms"
-                value={values.teacherAcceptTerms}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              <label className="form-check-label" htmlFor="teacherAcceptTerms">
-                <a href={ksuLink}>Şartlar ve koşulları</a> kabul ediyorum.
-              </label>
-              {errors.teacherAcceptTerms && touched.teacherAcceptTerms && (
-                <div style={{ color: "red" }}>
-                  <i className="bi bi-exclamation-octagon">
-                    {errors.teacherAcceptTerms}
-                  </i>
-                </div>
-              )}
-            </div>
           </div>
           <div className="col-12 pb-1">
             <button className="btn btn-primary w-100" type="submit">
