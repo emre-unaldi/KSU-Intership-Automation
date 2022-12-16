@@ -1,13 +1,11 @@
 const express = require('express');
 const createError = require('http-errors');
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const indexRouter = require('./routes/index');
 const verifyRecaptchaRouter = require('./routes/verifyRecaptcha');
-const userRouter = require('./routes/userRoute');
+const authRoutes = require('./routes/auth.routes');
 const mongoDB = require('./helper/mongoDB');
 
 const app = express();
@@ -16,28 +14,26 @@ const app = express();
 dotenv.config();
 
 // cors
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    credentials: true,
+  })
+);
 
 // Database 
 mongoDB();
-
-// View engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 
 // Parse data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
-app.use('/', indexRouter);
 app.use('/api/verifyRecaptcha', verifyRecaptchaRouter);
-app.use('/api/users', userRouter);
+app.use('/api/users', authRoutes);
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {

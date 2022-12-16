@@ -1,13 +1,13 @@
 import React from "react";
+import axios from "axios";
 import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
-import axios from 'axios';
 import { teacherRegisterValidationSchema } from "./FormikValidations";
 
 const TeacherRegisterForm = () => {
   const navigate = useNavigate();
-
-  const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
+  const { handleSubmit, handleChange, handleBlur, values, errors, touched } =
+    useFormik({
       initialValues: {
         teacherName: "",
         teacherSurname: "",
@@ -17,25 +17,26 @@ const TeacherRegisterForm = () => {
         teacherPasswordConfirm: "",
         userType: "teacher",
       },
-      onSubmit: (values) => {
-        console.log(JSON.stringify(values));
+      onSubmit: async (values) => {
+        //console.log(JSON.stringify(values));
 
-        axios
-        .post("http://localhost:3001/api/users/signup", {
-          name: values.teacherName,
-          surname: values.teacherSurname,
-          phoneNumber: values.teacherPhoneNumber,
-          email: values.teacherEmail,
-          password: values.teacherPassword,
-          role: values.userType,
-        })
-        .then((result) => {
-          console.log(result.data);
-          navigate("/login");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        await axios
+          .post("http://localhost:3001/api/users/signup", 
+          {
+            name: values.teacherName,
+            surname: values.teacherSurname,
+            phoneNumber: values.teacherPhoneNumber,
+            email: values.teacherEmail,
+            password: values.teacherPassword,
+            role: values.userType,
+          })
+          .then((result) => {
+            console.log(result);
+            navigate(result.data.path);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       },
       validationSchema: teacherRegisterValidationSchema,
     });
@@ -174,13 +175,14 @@ const TeacherRegisterForm = () => {
               onChange={handleChange}
               onBlur={handleBlur}
             />
-            {errors.teacherPasswordConfirm && touched.teacherPasswordConfirm && (
-              <div style={{ color: "red" }}>
-                <i className="bi bi-exclamation-octagon">
-                  {errors.teacherPasswordConfirm}
-                </i>
-              </div>
-            )}
+            {errors.teacherPasswordConfirm &&
+              touched.teacherPasswordConfirm && (
+                <div style={{ color: "red" }}>
+                  <i className="bi bi-exclamation-octagon">
+                    {errors.teacherPasswordConfirm}
+                  </i>
+                </div>
+              )}
           </div>
           <div className="col-12 pb-1">
             <button className="btn btn-primary w-100" type="submit">

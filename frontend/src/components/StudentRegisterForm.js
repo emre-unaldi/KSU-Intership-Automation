@@ -1,13 +1,11 @@
 import React from "react";
+import axios from "axios";
 import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { studentRegisterValidationSchema } from "./FormikValidations";
-
 
 const StudentRegisterForm = () => {
   const navigate = useNavigate();
-
   const { handleSubmit, handleChange, handleBlur, values, errors, touched } =
     useFormik({
       initialValues: {
@@ -19,11 +17,12 @@ const StudentRegisterForm = () => {
         studentPasswordConfirm: "",
         userType: "student",
       },
-      onSubmit: (values) => {
+      onSubmit: async (values) => {
         //console.log(JSON.stringify(values));
 
-        axios
-          .post("http://localhost:3001/api/users/signup", {
+        await axios
+          .post("http://localhost:3001/api/users/signup", 
+          {
             name: values.studentName,
             surname: values.studentSurname,
             schoolNumber: values.schoolNumber,
@@ -32,8 +31,8 @@ const StudentRegisterForm = () => {
             role: values.userType,
           })
           .then((result) => {
-            console.log(result.data);
-            navigate("/login");
+            console.log(result);
+            navigate(result.data.path);
           })
           .catch((err) => {
             console.log(err);

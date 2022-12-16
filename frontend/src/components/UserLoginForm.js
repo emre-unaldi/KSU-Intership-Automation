@@ -4,10 +4,11 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { loginValidationSchema } from "../components/FormikValidations";
+axios.defaults.withCredentials = true;
 
 const UserLoginForm = () => {
-  const captchaRef = useRef(null);
   const navigate = useNavigate();
+  const captchaRef = useRef(null);
   let [googleRecaptchaValue, setGoogleRecaptchaValue] = useState(false);
 
   const {
@@ -23,21 +24,24 @@ const UserLoginForm = () => {
       loginEmail: "",
       loginPassword: "",
     },
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       //console.log(JSON.stringify(values));
 
       resetForm({ values: "" });
       captchaRef.current.reset();
       setGoogleRecaptchaValue((googleRecaptchaValue = false));
 
-      axios
-        .post("http://localhost:3001/api/users/login", {
-          email: values.loginEmail,
-          password: values.loginPassword,
-        })
+      await axios
+        .post("http://localhost:3001/api/users/login",
+          {
+            email: values.loginEmail,
+            password: values.loginPassword,
+          },
+          { withCredentials: true }
+        )
         .then((result) => {
           console.log(result);
-          navigate("/student/home");
+          navigate(result.data.path);
         })
         .catch((err) => {
           console.log(err);

@@ -9,7 +9,7 @@ router.post("/", async (req, res) => {
   await axios.post(
     `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
   );
-  
+
   if (res.status(200)) {
     res.send(true);
   } else {

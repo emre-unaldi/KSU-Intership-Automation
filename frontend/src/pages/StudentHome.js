@@ -1,13 +1,29 @@
 import React from "react";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { sideBarMenuOpen } from "../redux/systemConfigurationSlice";
 import ksuLogo from "../assets/img/ksu.png";
 import profile from "../assets/img/profile-img.jpg";
 import messagesProfile from "../assets/img/messages-1.jpg";
-import { useDispatch, useSelector } from "react-redux";
-import { sideBarMenuOpen } from "../redux/systemConfigurationSlice";
+axios.defaults.withCredentials = true;
 
 const StudentHome = () => {
   const ksuLink = useSelector((state) => state.system.ksuLink);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const logoutUser = () => {
+    axios
+      .post("http://localhost:3001/api/users/logout")
+        .then((result) => {
+          console.log(result);
+          navigate(result.data.path);
+        },{ withCredentials: true })
+        .catch((err) => {
+          console.log(err);
+        });
+  };
 
   return (
     <>
@@ -220,13 +236,13 @@ const StudentHome = () => {
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <a
+                  <button
                     className="dropdown-item d-flex align-items-center"
-                    href={ksuLink}
+                    onClick={logoutUser}
                   >
                     <i className="bi bi-box-arrow-right"></i>
                     <span>Çıkış Yap</span>
-                  </a>
+                  </button>
                 </li>
               </ul>
             </li>
