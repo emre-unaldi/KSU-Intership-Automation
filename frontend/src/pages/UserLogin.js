@@ -1,10 +1,36 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import ksuLogo from "../assets/img/ksu.png";
 import UserLoginForm from "../components/UserLoginForm";
+axios.defaults.withCredentials = true;
 
 const UserLogin = () => {
   const ksuLink = useSelector((state) => state.system.ksuLink);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      await axios
+        .post("http://localhost:3001/api/users/check", {
+          withCredentials: true,
+        })
+        .then((result) => {
+          const status = result.data.status;
+          const currentUser = result.data.currentUser;
+
+          if (status === "success") {
+            // kullanıcı varsa
+            navigate(`/${currentUser.role}/home`);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    checkUser();
+  }, [navigate]);
 
   return (
     <>

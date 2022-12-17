@@ -1,5 +1,5 @@
-import React from "react";
-import axios from 'axios';
+import React, { useEffect } from "react";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { sideBarMenuOpen } from "../redux/systemConfigurationSlice";
@@ -13,13 +13,40 @@ const TeacherHome = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const logoutUser = () => {
-    axios
-      .post("http://localhost:3001/api/users/logout")
+  useEffect(() => {
+    const checkUser = async () => {
+      await axios
+        .post("http://localhost:3001/api/users/check", {
+          withCredentials: true
+        })
+        .then((result) => {
+          const status = result.data.status;
+          const currentUser = result.data.currentUser;
+
+          if (status === "fail") {
+            // kullanıcı yoksa
+            navigate("/login");
+          }
+          if (status === "success" && currentUser.role !== "teacher") {
+            // kullanıcı varsa ve kullanıcı öğretmen değilse
+            navigate(`/${currentUser.role}/home`);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    checkUser();
+  }, [navigate]);
+
+  const logoutUser = async () => {
+    await axios
+      .post("http://localhost:3001/api/users/logout", {
+        withCredentials: true
+      })
       .then((result) => {
-        console.log(result);
         navigate(result.data.path);
-      },{ withCredentials: true })
+      })
       .catch((err) => {
         console.log(err);
       });

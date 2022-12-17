@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -13,16 +13,43 @@ const StudentHome = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const logoutUser = () => {
-    axios
-      .post("http://localhost:3001/api/users/logout")
+  useEffect(() => {
+    const checkUser = async () => {
+      await axios
+        .post("http://localhost:3001/api/users/check", {
+          withCredentials: true
+        })
         .then((result) => {
-          console.log(result);
-          navigate(result.data.path);
-        },{ withCredentials: true })
+          const status = result.data.status;
+          const currentUser = result.data.currentUser;
+
+          if (status === "fail") {
+            // kullanıcı yoksa
+            navigate("/login");
+          }
+          if (status === "success" && currentUser.role !== "student") {
+            // kullanıcı varsa ve kullanıcı öğrenci değilse
+            navigate(`/${currentUser.role}/home`);
+          }
+        })
         .catch((err) => {
           console.log(err);
         });
+    };
+    checkUser();
+  }, [navigate]);
+
+  const logoutUser = async () => {
+    await axios
+      .post("http://localhost:3001/api/users/logout", {
+        withCredentials: true
+      })
+      .then((result) => {
+        navigate(result.data.path);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
