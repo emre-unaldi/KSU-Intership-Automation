@@ -6,6 +6,7 @@ import { sideBarMenuOpen } from "../redux/systemConfigurationSlice";
 import ksuLogo from "../assets/img/ksu.png";
 import profile from "../assets/img/profile-img.jpg";
 import messagesProfile from "../assets/img/messages-1.jpg";
+import PdfViewer from "../components/PdfViewer";
 axios.defaults.withCredentials = true;
 
 const TeacherHome = () => {
@@ -17,7 +18,7 @@ const TeacherHome = () => {
     const checkUser = async () => {
       await axios
         .post("http://localhost:3001/api/users/check", {
-          withCredentials: true
+          withCredentials: true,
         })
         .then((result) => {
           const status = result.data.status;
@@ -42,7 +43,7 @@ const TeacherHome = () => {
   const logoutUser = async () => {
     await axios
       .post("http://localhost:3001/api/users/logout", {
-        withCredentials: true
+        withCredentials: true,
       })
       .then((result) => {
         navigate(result.data.path);
@@ -309,23 +310,52 @@ const TeacherHome = () => {
           <div className="row">
             <div className="col-xl-8">
               <div className="card">
-                <div className="card-body pt-4 d-flex flex-column align-items-center">
-                  <h2>Kevin Anderson</h2>
-                  <h3>Web Designer</h3>
-                </div>
-              </div>
-              <div className="card">
-                <div className="card-body pt-4 d-flex flex-column align-items-center">
-                  <h2>Kevin Anderson</h2>
-                  <h3>Web Designer</h3>
+                <div className="card-body pt-2 d-flex flex-column align-items-center">
+                  <h2 className="card-title d-flex justify-content-center">
+                    Akademik Takvim
+                  </h2>
+                  <PdfViewer />
                 </div>
               </div>
             </div>
             <div className="col-xl-4">
               <div className="card">
-                <div className="card-body  pt-4 d-flex flex-column align-items-center">
-                  <h2>Kevin Anderson</h2>
-                  <h3>Web Designer</h3>
+                <div className="card-body pt-3 pb-0 d-flex flex-column align-items-center">
+                  <div className="alert alert-primary">
+                    <i className="bi bi-calendar-week-fill me-1"></i>
+                    <b>
+                      Staj başvuruları 20.01.2023 tarihinde sonlandırılacaktır.
+                      Öğrencilerin staj evraklarını zamanında teslim etmek
+                      zorundadır.
+                    </b>
+                  </div>
+                </div>
+                <div className="card-body pb-0 align-items-center">
+                  <div className="alert alert-warning">
+                    <i className="bi bi-info-square-fill me-1"></i>
+                    <b>
+                      Öğrencilerin staj evraklarını zamanında teslim etmek
+                      zorundadır.
+                    </b>
+                  </div>
+                </div>
+                <div className="card-body pb-0 align-items-center">
+                  <div className="alert alert-warning">
+                    <i className="bi bi-info-square-fill me-1"></i>
+                    <b>
+                      Öğrencilerin staj evraklarını zamanında teslim etmek
+                      zorundadır.
+                    </b>
+                  </div>
+                </div>
+                <div className="card-body pb-0 align-items-center">
+                  <div className="alert alert-warning">
+                    <i className="bi bi-info-square-fill me-1"></i>
+                    <b>
+                      Öğrencilerin staj evraklarını zamanında teslim etmek
+                      zorundadır.
+                    </b>
+                  </div>
                 </div>
               </div>
             </div>
