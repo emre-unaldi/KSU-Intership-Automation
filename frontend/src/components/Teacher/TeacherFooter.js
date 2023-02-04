@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-function Footer() {
+function TeacherFooter() {
   const ksuLink = useSelector((state) => state.system.ksuLink);
 
   return (
@@ -14,10 +14,10 @@ function Footer() {
         tarafından saklıdır. &copy; 2022
       </div>
       <div className="credits">
-        Tasarım ve Geliştirme: <a href={ksuLink}>ÜNALDI</a>
+        Tasarım ve Geliştirme: <a href={ksuLink}>Öğretmen</a>
       </div>
     </footer>
   );
 }
 
-export default Footer;
+export default TeacherFooter;

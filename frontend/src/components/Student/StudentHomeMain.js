@@ -1,7 +1,7 @@
 import React from "react";
-import PdfViewer from "../components/PdfViewer";
+import PdfViewer from "../System/PdfViewer";
 
-function TeacherHomeMain() {
+function StudentHomeMain() {
   return (
     <main id="main" className="main">
       <section className="section">
@@ -63,4 +63,4 @@ function TeacherHomeMain() {
   );
 }
 
-export default TeacherHomeMain;
+export default StudentHomeMain;

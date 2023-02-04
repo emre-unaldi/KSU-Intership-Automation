@@ -2,10 +2,10 @@ import React from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { sideBarMenuOpen } from "../redux/systemConfigurationSlice";
-import ksuLogo from "../assets/img/ksu.png";
-import profile from "../assets/img/profile-img.jpg";
-import messagesProfile from "../assets/img/messages-1.jpg";
+import { sideBarMenuOpen } from "../../redux/systemConfigurationSlice";
+import ksuLogo from "../../assets/img/ksu.png";
+import profile from "../../assets/img/profile-img.jpg";
+import messagesProfile from "../../assets/img/messages-1.jpg";
 axios.defaults.withCredentials = true;
 
 function TeacherHeader() {
@@ -19,7 +19,7 @@ function TeacherHeader() {
         withCredentials: true,
       })
       .then((result) => {
-        navigate.push(result.data.path, {replace: true});
+        navigate(result.data.path, {replace: true});
       })
       .catch((err) => {
         console.log(err);

@@ -1,11 +1,13 @@
 import React, { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import { forgotPasswordValidationSchema } from "../components/FormikValidations";
+import { loginValidationSchema } from "./FormikValidations";
+axios.defaults.withCredentials = true;
 
-const ForgotPasswordForm = () => {
+const UserLoginForm = () => {
+  const navigate = useNavigate();
   const captchaRef = useRef(null);
   let [googleRecaptchaValue, setGoogleRecaptchaValue] = useState(false);
 
@@ -19,17 +21,33 @@ const ForgotPasswordForm = () => {
     resetForm,
   } = useFormik({
     initialValues: {
-      schoolNumber: "",
-      userEmail: "",
+      loginEmail: "",
+      loginPassword: "",
     },
-    onSubmit: (values) => {
-      console.log(JSON.stringify(values));
+    onSubmit: async (values) => {
+      //console.log(JSON.stringify(values));
 
       resetForm({ values: "" });
       captchaRef.current.reset();
       setGoogleRecaptchaValue((googleRecaptchaValue = false));
+
+      await axios
+        .post("http://localhost:3001/api/users/login",
+          {
+            email: values.loginEmail,
+            password: values.loginPassword,
+          },
+          { withCredentials: true }
+        )
+        .then((result) => {
+          console.log(result);
+          navigate(result.data.path);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
-    validationSchema: forgotPasswordValidationSchema,
+    validationSchema: loginValidationSchema,
   });
 
   const captchaOnChange = async (value) => {
@@ -53,10 +71,10 @@ const ForgotPasswordForm = () => {
         <div className="card-body">
           <div className="pt-1 pb-1">
             <h5 className="card-title text-center pb-0 fs-4">
-              Şifremi Unuttum
+              Hesabınıza Giriş Yapın
             </h5>
             <p className="text-center small">
-              Şifrenizi yenilemek için kişisel bilgilerinizi giriniz!
+              Giriş yapmak için kişisel bilgilerinizi giriniz!
             </p>
           </div>
           <form
@@ -65,44 +83,43 @@ const ForgotPasswordForm = () => {
             noValidate
           >
             <div className="col-12">
-              <label htmlFor="schoolNumber" className="form-label mb-0">
-                Okul Numarası
+              <label htmlFor="loginEmail" className="form-label mb-0">
+                E-posta Adresi
               </label>
               <input
-                type="text"
-                name="schoolNumber"
+                type="email"
+                name="loginEmail"
                 className="form-control"
-                id="schoolNumber"
-                maxLength={11}
-                value={values.schoolNumber}
+                id="loginEmail"
+                value={values.loginEmail}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              {errors.schoolNumber && touched.schoolNumber && (
+              {errors.loginEmail && touched.loginEmail && (
                 <div style={{ color: "red" }}>
                   <i className="bi bi-exclamation-octagon">
-                    &nbsp;{errors.schoolNumber}
+                    &nbsp;{errors.loginEmail}
                   </i>
                 </div>
               )}
             </div>
             <div className="col-12">
-              <label htmlFor="userEmail" className="form-label mb-0">
-                E-Posta Adresi
+              <label htmlFor="loginPassword" className="form-label mb-0">
+                Şifre
               </label>
               <input
-                type="email"
-                name="userEmail"
+                type="password"
+                name="loginPassword"
                 className="form-control"
-                id="userEmail"
-                value={values.userEmail}
+                id="loginPassword"
+                value={values.loginPassword}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              {errors.userEmail && touched.userEmail && (
+              {errors.loginPassword && touched.loginPassword && (
                 <div style={{ color: "red" }}>
                   <i className="bi bi-exclamation-octagon">
-                    &nbsp;{errors.userEmail}
+                    &nbsp;{errors.loginPassword}
                   </i>
                 </div>
               )}
@@ -145,13 +162,17 @@ const ForgotPasswordForm = () => {
                 type="submit"
                 disabled={googleRecaptchaValue === false}
               >
-                Şifre Yenile
+                Giriş Yap
               </button>
             </div>
-            <div className="col-12" align="center">
-              <p>
-                <Link to={"/login"}>Giriş Yap</Link>
+            <div className="col-12">
+              <p className="small mb-0">
+                Hesabınız yok mu?
+                <Link to={"/register"}> Hesap Oluştur</Link>
               </p>
+            </div>
+            <div className="col-12" align="right">
+              <Link to={"/forgotPassword"}>Şifremi Unuttum</Link>
             </div>
           </form>
         </div>
@@ -160,4 +181,4 @@ const ForgotPasswordForm = () => {
   );
 };
 
-export default ForgotPasswordForm;
+export default UserLoginForm;

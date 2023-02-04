@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ksuLogo from "../assets/img/ksu.png";
-import UserLoginForm from "../components/UserLoginForm";
+import UserLoginForm from "../components/Form/UserLoginForm";
 axios.defaults.withCredentials = true;
 
 const UserLogin = () => {

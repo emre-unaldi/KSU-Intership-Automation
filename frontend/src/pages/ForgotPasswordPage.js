@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ksuLogo from "../assets/img/ksu.png";
-import ForgotPasswordForm from "../components/ForgotPasswordForm";
+import ForgotPasswordForm from "../components/Form/ForgotPasswordForm";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 

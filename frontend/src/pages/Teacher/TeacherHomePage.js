@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import StudentHeader from "../components/StudentHeader";
-import StudentAside from "../components/StudentAside";
-import StudentHomeMain from "../components/StudentHomeMain";
-import Footer from "../components/Footer";
+import TeacherHeader from "../../components/Teacher/TeacherHeader";
+import TeacherAside from "../../components/Teacher/TeacherAside";
+import TeacherHomeMain from "../../components/Teacher/TeacherHomeMain";
+import TeacherFooter from "../../components/Teacher/TeacherFooter";
 axios.defaults.withCredentials = true;
 
-const StudentHome = () => {
+const TeacherHome = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,8 +24,8 @@ const StudentHome = () => {
             // kullanıcı yoksa
             navigate("/login");
           }
-          if (status === "success" && currentUser.role !== "student") {
-            // kullanıcı varsa ve kullanıcı öğrenci değilse
+          if (status === "success" && currentUser.role !== "teacher") {
+            // kullanıcı varsa ve kullanıcı öğretmen değilse
             navigate(`/${currentUser.role}/home`);
           }
         })
@@ -38,12 +38,12 @@ const StudentHome = () => {
 
   return (
     <>
-      <StudentHeader />
-      <StudentAside />
-      <StudentHomeMain />
-      <Footer />
+      <TeacherHeader />
+      <TeacherAside />
+      <TeacherHomeMain />
+      <TeacherFooter/>
     </>
   );
 };
 
-export default StudentHome;
+export default TeacherHome;
