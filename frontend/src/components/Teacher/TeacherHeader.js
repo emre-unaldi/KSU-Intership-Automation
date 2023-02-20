@@ -3,6 +3,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { sideBarMenuOpen } from "../../redux/systemConfigurationSlice";
+import { logoutUser } from "../../redux/userConfigurationSlice";
 import ksuLogo from "../../assets/img/ksu.png";
 import profile from "../../assets/img/profile-img.jpg";
 import messagesProfile from "../../assets/img/messages-1.jpg";
@@ -13,18 +14,6 @@ function TeacherHeader() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const logoutUser = async () => {
-    await axios
-      .post("http://localhost:3001/api/users/logout", {
-        withCredentials: true,
-      })
-      .then((result) => {
-        navigate(result.data.path, {replace: true});
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
   return (
     <header id="header" className="header fixed-top d-flex align-items-center">
       <div className="d-flex align-items-center justify-content-between">
@@ -234,7 +223,25 @@ function TeacherHeader() {
               <li>
                 <button
                   className="dropdown-item d-flex align-items-center"
-                  onClick={logoutUser}
+                  onClick={() => {
+                    dispatch(logoutUser())
+                      .then((loggedOut) => {
+                        if (loggedOut?.meta?.requestStatus === "fulfilled") {
+                          if (loggedOut?.payload?.status === "success") {
+                            console.log(loggedOut.payload.message);
+                            navigate("/");
+                          } else {
+                            console.log(loggedOut.payload.message);
+                            navigate("/teacher/home");
+                          }
+                        } else {
+                          console.log("User logout failed. Try logging out again");
+                        }
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                  }}
                 >
                   <i className="bi bi-box-arrow-right"></i>
                   <span>Çıkış Yap</span>

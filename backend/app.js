@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const verifyRecaptchaRouter = require('./routes/verifyRecaptcha');
+const recaptchaRouter = require('./routes/recaptcha.routes');
 const authRoutes = require('./routes/auth.routes');
 const mongoDB = require('./helper/mongoDB');
 
@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
-app.use('/api/verifyRecaptcha', verifyRecaptchaRouter);
+app.use('/api/recaptcha', recaptchaRouter);
 app.use('/api/users', authRoutes);
 
 // Catch 404 and forward to error handler

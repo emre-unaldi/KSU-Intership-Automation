@@ -5,60 +5,45 @@ const jwt = require("jsonwebtoken");
 
 const maxAge = 60 * 60 * 24;
 
+// JWT token oluşturma
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET_KEY, {
     expiresIn: maxAge,
   });
 };
 
-const userConfig = (userRole) => {
-  let userConfig = {};
-
-  switch (userRole) {
-    case "student":
-      userConfig = {
-        path: "/student/home",
-        roleTR: "Öğrenci",
-      };
-      break;
-    case "teacher":
-      userConfig = {
-        path: "/teacher/home",
-        roleTR: "Öğretmen",
-      };
-      break;
-    case "admin":
-      userConfig = {
-        path: "/admin/home",
-        roleTR: "Yönetici",
-      };
-      break;
-  }
-  return userConfig;
-};
-
 // Kullanıcı ekleme endpointi
-exports.signupUser = async (req, res) => {
-  const user = new User(req.body);
+exports.registerUser = async (req, res) => {
+  // E-posta adresine göre kullanıcı arama
+  const existingUser = await User.findOne({ email: req.body.email });
 
-  await user
-    .save()
-    .then((user) => {
-      res.json({
-        status: "success",
-        path: "/login",
-        message: `${userConfig(user.role).roleTR} kullanıcısı eklendi.`,
-        user,
-      });
-    })
-    .catch((err) => {
-      res.json({
-        status: "fail",
-        path: "/register",
-        message: `${userConfig(user.role).roleTR} kullanıcısı eklenemedi.`,
-        err,
-      });
+  if (existingUser) {
+    // E-posta adresiyle eşleşen kullanıcı varsa hata döndürün
+    return res.json({
+      status: "fail", 
+      message: "This email address is already in use",
+      existingUser
     });
+  } else {
+    const user = new User(req.body);
+    // Eşleşen kullanıcı yoksa yeni kullanıcıyı kaydet
+    await user
+      .save()
+      .then((user) => {
+        return res.json({
+          status: "success",
+          message: `${user.role} user registered`,
+          user
+        });
+      })
+      .catch((err) => {
+        return res.json({
+          status: "fail",
+          message: `The ${user.role} user could not be registered`,
+          err
+        });
+      });
+  }
 };
 
 // Kullanıcı giriş yap endpointi
@@ -77,29 +62,28 @@ exports.loginUser = async (req, res) => {
           res.cookie("CONNECT_UID", token, {
             withCredentials: true,
             httpOnly: true,
-            maxAge: maxAge * 1000,
+            maxAge: maxAge * 1000
           });
-          res.json({
+
+          return res.json({
             status: "success",
-            path: userConfig(user.role).path,
-            user,
+            message: `${user.role} successfully logged in`,
+            user
           });
         } else {
           // parola yanlışsa
-          res.json({
+          return res.json({
             status: "fail",
-            path: "/login",
-            message: "Parola yanlış",
+            message: "Password is not correct"
           });
         }
       });
     })
     .catch(() => {
       // kullanıcı yoksa
-      res.json({
+      return res.json({
         status: "fail",
-        path: "/login",
-        message: "Kullanıcı bulunamadı",
+        message: "User not found"
       });
     });
 };
@@ -107,10 +91,9 @@ exports.loginUser = async (req, res) => {
 // Kullanıcı çıkış yap endpointi
 exports.logoutUser = (req, res) => {
   res.clearCookie("CONNECT_UID");
-  res.json({
+  return res.json({
     status: "success",
-    path: "/login",
-    message: "Kullanıcı çıkış yaptı",
+    message: "User logged out"
   });
 };
 
@@ -122,36 +105,33 @@ exports.checkUser = (req, res) => {
     // token var
     jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, decodedToken) => {
       if (err) {
-        res.json({
+        return res.json({
           status: "fail",
-          message: "Token doğrulanamadı",
-          path: "/login",
-          err,
+          message: "Failed to verify token",
+          err
         });
       } else {
-        const currentUser = await User.findById(decodedToken.userId);
+        const user = await User.findById(decodedToken.userId);
 
-        if (currentUser) {
-          res.json({
+        if (user) {
+          return res.json({
             status: "success",
-            message: "Kullanıcı bulundu",
-            currentUser,
+            message: "User found",
+            user
           });
         } else {
-          res.json({
+          return res.json({
             status: "fail",
-            message: "Kullanıcı bulunamadı && Token doğrulanamadı",
-            path: "/login",
+            message: "User not found && Token could not be verified"
           });
         }
       }
     });
   } else {
     // token yok
-    res.json({
+    return res.json({
       status: "fail",
-      message: "Token bulunamadı",
-      path: "/login",
+      message: "Token not found"
     });
   }
 };

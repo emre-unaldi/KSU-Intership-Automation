@@ -1,40 +1,14 @@
-import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import StudentRegisterForm from "../components/Form/StudentRegisterForm";
-import TeacherRegisterForm from "../components/Form/TeacherRegisterForm";
-import ksuLogo from "../assets/img/ksu.png";
+import StudentRegisterForm from "../../../components/Form/StudentRegisterForm";
+import TeacherRegisterForm from "../../../components/Form/TeacherRegisterForm";
+import ksuLogo from "../../../assets/img/ksu.png";
 axios.defaults.withCredentials = true;
 
 const UserRegister = () => {
   const ksuLink = useSelector((state) => state.system.ksuLink);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkUser = async () => {
-      await axios
-        .post("http://localhost:3001/api/users/check", {
-          withCredentials: true
-        })
-        .then((result) => {
-          const status = result.data.status;
-          const currentUser = result.data.currentUser;
-
-          if (status === "success") {
-            // kullanıcı varsa
-            navigate(`/${currentUser.role}/home`);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    checkUser();
-  }, [navigate]);
 
   return (
-    <>
       <main>
         <div className="container">
           <section className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
@@ -96,7 +70,6 @@ const UserRegister = () => {
           </section>
         </div>
       </main>
-    </>
   );
 };
 

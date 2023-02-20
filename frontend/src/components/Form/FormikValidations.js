@@ -28,7 +28,7 @@ const loginValidationSchema = yup.object().shape({
       "Şifrenizi en az bir sayı içermelidir."
     )
     .max(20, "Şifreniz en fazla 12 karakter olmalıdır.")
-    .required("Şifrenizi giriniz!"),
+    .required("Şifrenizi giriniz!")
 });
 
 const forgotPasswordValidationSchema = yup.object().shape({
@@ -139,5 +139,5 @@ export {
   loginValidationSchema,
   forgotPasswordValidationSchema,
   studentRegisterValidationSchema,
-  teacherRegisterValidationSchema,
-};
+  teacherRegisterValidationSchema
+}

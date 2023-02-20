@@ -1,51 +1,29 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import { forgotPasswordValidationSchema } from "./FormikValidations";
+import { useDispatch, useSelector } from "react-redux";
+import { verifyReCaptcha, checkReCaptchaValue } from "../../redux/systemConfigurationSlice";
+
 
 const ForgotPasswordForm = () => {
+  const dispatch = useDispatch();
   const captchaRef = useRef(null);
-  let [googleRecaptchaValue, setGoogleRecaptchaValue] = useState(false);
+  const googleRecaptcha = useSelector((state) => state.system.recaptcha);
 
-  const {
-    handleSubmit,
-    handleChange,
-    handleBlur,
-    values,
-    errors,
-    touched,
-    resetForm,
-  } = useFormik({
+  const { handleSubmit, handleChange, handleBlur, values, errors, touched, resetForm } = useFormik({
     initialValues: {
       schoolNumber: "",
-      userEmail: "",
+      userEmail: ""
     },
     onSubmit: (values) => {
-      console.log(JSON.stringify(values));
-
-      resetForm({ values: "" });
+      resetForm(values = {});
       captchaRef.current.reset();
-      setGoogleRecaptchaValue((googleRecaptchaValue = false));
+      dispatch(checkReCaptchaValue());
     },
-    validationSchema: forgotPasswordValidationSchema,
+    validationSchema: forgotPasswordValidationSchema
   });
-
-  const captchaOnChange = async (value) => {
-    console.log("Captcha value = ", value);
-    const token = captchaRef.current.getValue();
-
-    await axios
-      .post(process.env.REACT_APP_API_URL, { token })
-      .then((res) => {
-        setGoogleRecaptchaValue((googleRecaptchaValue = res.data));
-        console.log(googleRecaptchaValue);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   return (
     <>
@@ -56,7 +34,7 @@ const ForgotPasswordForm = () => {
               Şifremi Unuttum
             </h5>
             <p className="text-center small">
-              Şifrenizi yenilemek için kişisel bilgilerinizi giriniz!
+              Şifrenizi yenilemek için kişisel bilgilerinizi giriniz
             </p>
           </div>
           <form
@@ -80,9 +58,9 @@ const ForgotPasswordForm = () => {
               />
               {errors.schoolNumber && touched.schoolNumber && (
                 <div style={{ color: "red" }}>
-                  <i className="bi bi-exclamation-octagon">
+                  <label className="bi bi-exclamation-circle-fill">
                     &nbsp;{errors.schoolNumber}
-                  </i>
+                  </label>
                 </div>
               )}
             </div>
@@ -101,9 +79,9 @@ const ForgotPasswordForm = () => {
               />
               {errors.userEmail && touched.userEmail && (
                 <div style={{ color: "red" }}>
-                  <i className="bi bi-exclamation-octagon">
+                  <label className="bi bi-exclamation-circle-fill">
                     &nbsp;{errors.userEmail}
-                  </i>
+                  </label>
                 </div>
               )}
             </div>
@@ -120,11 +98,15 @@ const ForgotPasswordForm = () => {
                 <ReCAPTCHA
                   sitekey={process.env.REACT_APP_SITE_KEY}
                   ref={captchaRef}
-                  onChange={captchaOnChange}
+                  onChange={(value) => {
+                    value
+                      ? dispatch(verifyReCaptcha(value))
+                      : dispatch(checkReCaptchaValue());
+                  }}
                 />
               </div>
               <div>
-                {googleRecaptchaValue === false ? (
+                {googleRecaptcha.data === false ? (
                   <div
                     style={{
                       color: "#4169E1",
@@ -132,9 +114,9 @@ const ForgotPasswordForm = () => {
                       paddingTop: "5px",
                     }}
                   >
-                    <i className="bi bi-chat-right-text-fill">
+                    <label className="bi bi-shield-fill-check">
                       &nbsp;Google Doğrulamasını Tamamlayınız
-                    </i>
+                    </label>
                   </div>
                 ) : null}
               </div>
@@ -143,14 +125,14 @@ const ForgotPasswordForm = () => {
               <button
                 className="btn btn-primary w-100"
                 type="submit"
-                disabled={googleRecaptchaValue === false}
+                disabled={googleRecaptcha.data === false}
               >
                 Şifre Yenile
               </button>
             </div>
             <div className="col-12" align="center">
               <p>
-                <Link to={"/login"}>Giriş Yap</Link>
+                <Link to={"/"}>Giriş Yap</Link>
               </p>
             </div>
           </form>

@@ -13,12 +13,12 @@ const UserSchema = new Schema(
     role: {
       type: String,
       enum: ["student", "teacher", "admin"],
-      default: "student",
-    },
+      default: "student"
+    }
   },
   {
     collection: "Users",
-    timestamps: true,
+    timestamps: true
   }
 );
 

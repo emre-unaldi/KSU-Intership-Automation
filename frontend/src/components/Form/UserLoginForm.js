@@ -1,69 +1,49 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { loginValidationSchema } from "./FormikValidations";
+import { useDispatch, useSelector } from "react-redux";
+import { verifyReCaptcha, checkReCaptchaValue } from "../../redux/systemConfigurationSlice";
+import { loginUser } from "../../redux/userConfigurationSlice";
 axios.defaults.withCredentials = true;
 
 const UserLoginForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const captchaRef = useRef(null);
-  let [googleRecaptchaValue, setGoogleRecaptchaValue] = useState(false);
+  const googleRecaptcha = useSelector((state) => state.system.recaptcha);
 
-  const {
-    handleSubmit,
-    handleChange,
-    handleBlur,
-    values,
-    errors,
-    touched,
-    resetForm,
-  } = useFormik({
+  const { handleSubmit, handleChange, handleBlur, values, errors, touched, resetForm } = useFormik({
     initialValues: {
       loginEmail: "",
-      loginPassword: "",
+      loginPassword: ""
     },
-    onSubmit: async (values) => {
-      //console.log(JSON.stringify(values));
-
-      resetForm({ values: "" });
-      captchaRef.current.reset();
-      setGoogleRecaptchaValue((googleRecaptchaValue = false));
-
-      await axios
-        .post("http://localhost:3001/api/users/login",
-          {
-            email: values.loginEmail,
-            password: values.loginPassword,
-          },
-          { withCredentials: true }
-        )
-        .then((result) => {
-          console.log(result);
-          navigate(result.data.path);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    validationSchema: loginValidationSchema,
-  });
-
-  const captchaOnChange = async (value) => {
-    console.log("Captcha value = ", value);
-    const token = captchaRef.current.getValue();
-
-    await axios
-      .post(process.env.REACT_APP_API_URL, { token })
-      .then((res) => {
-        setGoogleRecaptchaValue((googleRecaptchaValue = res.data));
-        console.log(googleRecaptchaValue);
+    onSubmit: (values) => {
+      dispatch(loginUser(values))
+        .then((loggedIn) => {
+          if (loggedIn?.meta?.requestStatus === "fulfilled") {
+            if (loggedIn?.payload?.status === "success") {
+              console.log(loggedIn.payload.message);
+              navigate(`${loggedIn.payload.user.role}/home`);
+            } else {
+              console.log(loggedIn.payload.message);
+              navigate("/");
+            }
+          } else {
+            console.log("User login failed. Try logging in again");
+          }
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
-  };
+      resetForm(values = {});
+      captchaRef.current.reset();
+      dispatch(checkReCaptchaValue());
+    },
+    validationSchema: loginValidationSchema
+  });
 
   return (
     <>
@@ -97,9 +77,9 @@ const UserLoginForm = () => {
               />
               {errors.loginEmail && touched.loginEmail && (
                 <div style={{ color: "red" }}>
-                  <i className="bi bi-exclamation-octagon">
+                  <label className="bi bi-exclamation-octagon">
                     &nbsp;{errors.loginEmail}
-                  </i>
+                  </label>
                 </div>
               )}
             </div>
@@ -118,9 +98,9 @@ const UserLoginForm = () => {
               />
               {errors.loginPassword && touched.loginPassword && (
                 <div style={{ color: "red" }}>
-                  <i className="bi bi-exclamation-octagon">
+                  <label className="bi bi-exclamation-octagon">
                     &nbsp;{errors.loginPassword}
-                  </i>
+                  </label>
                 </div>
               )}
             </div>
@@ -137,11 +117,15 @@ const UserLoginForm = () => {
                 <ReCAPTCHA
                   sitekey={process.env.REACT_APP_SITE_KEY}
                   ref={captchaRef}
-                  onChange={captchaOnChange}
+                  onChange={(value) => {
+                    value
+                      ? dispatch(verifyReCaptcha(value))
+                      : dispatch(checkReCaptchaValue());
+                  }}
                 />
               </div>
               <div>
-                {googleRecaptchaValue === false ? (
+                {googleRecaptcha.data === false ? (
                   <div
                     style={{
                       color: "#4169E1",
@@ -149,9 +133,9 @@ const UserLoginForm = () => {
                       paddingTop: "5px",
                     }}
                   >
-                    <i className="bi bi-chat-right-text-fill">
+                    <label className="bi bi-shield-fill-check">
                       &nbsp;Google Doğrulamasını Tamamlayınız
-                    </i>
+                    </label>
                   </div>
                 ) : null}
               </div>
@@ -160,7 +144,7 @@ const UserLoginForm = () => {
               <button
                 className="btn btn-primary w-100"
                 type="submit"
-                disabled={googleRecaptchaValue === false}
+                disabled={googleRecaptcha.data === false}
               >
                 Giriş Yap
               </button>

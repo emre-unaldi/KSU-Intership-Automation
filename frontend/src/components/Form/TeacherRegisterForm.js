@@ -1,13 +1,13 @@
-import React from "react";
-import axios from "axios";
 import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { teacherRegisterValidationSchema } from "./FormikValidations";
+import { registerTeacher } from "../../redux/userConfigurationSlice";
 
 const TeacherRegisterForm = () => {
   const navigate = useNavigate();
-  const { handleSubmit, handleChange, handleBlur, values, errors, touched } =
-    useFormik({
+  const dispatch = useDispatch();
+  const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
       initialValues: {
         teacherName: "",
         teacherSurname: "",
@@ -15,31 +15,29 @@ const TeacherRegisterForm = () => {
         teacherEmail: "",
         teacherPassword: "",
         teacherPasswordConfirm: "",
-        userType: "teacher",
+        userType: "teacher"
       },
-      onSubmit: async (values) => {
-        //console.log(JSON.stringify(values));
-
-        await axios
-          .post("http://localhost:3001/api/users/signup", 
-          {
-            name: values.teacherName,
-            surname: values.teacherSurname,
-            phoneNumber: values.teacherPhoneNumber,
-            email: values.teacherEmail,
-            password: values.teacherPassword,
-            role: values.userType,
-          })
-          .then((result) => {
-            console.log(result);
-            navigate(result.data.path);
+      onSubmit: (values) => {
+        dispatch(registerTeacher(values))
+          .then((registration) => {
+            if (registration?.meta?.requestStatus === "fulfilled") {
+              if (registration?.payload?.status === "success") {
+                console.log(registration.payload.message);
+                navigate("/");
+              } else {
+                console.log(registration.payload.message);
+                navigate("/register");
+              }
+            } else {
+              console.log("User register failed. Try registered in again");
+            }
           })
           .catch((err) => {
             console.log(err);
           });
       },
-      validationSchema: teacherRegisterValidationSchema,
-    });
+      validationSchema: teacherRegisterValidationSchema
+  });
 
   return (
     <>
@@ -69,9 +67,9 @@ const TeacherRegisterForm = () => {
                 />
                 {errors.teacherName && touched.teacherName && (
                   <div style={{ color: "red" }}>
-                    <i className="bi bi-exclamation-octagon">
-                      {errors.teacherName}
-                    </i>
+                    <label className="bi bi-exclamation-circle-fill">
+                      &nbsp;{errors.teacherName}
+                    </label>
                   </div>
                 )}
               </div>
@@ -90,9 +88,9 @@ const TeacherRegisterForm = () => {
                 />
                 {errors.teacherSurname && touched.teacherSurname && (
                   <div style={{ color: "red" }}>
-                    <i className="bi bi-exclamation-octagon">
-                      {errors.teacherSurname}
-                    </i>
+                    <label className="bi bi-exclamation-circle-fill">
+                      &nbsp;{errors.teacherSurname}
+                    </label>
                   </div>
                 )}
               </div>
@@ -114,9 +112,9 @@ const TeacherRegisterForm = () => {
             />
             {errors.teacherPhoneNumber && touched.teacherPhoneNumber && (
               <div style={{ color: "red" }}>
-                <i className="bi bi-exclamation-octagon">
-                  {errors.teacherPhoneNumber}
-                </i>
+                <label className="bi bi-exclamation-circle-fill">
+                  &nbsp;{errors.teacherPhoneNumber}
+                </label>
               </div>
             )}
           </div>
@@ -135,9 +133,9 @@ const TeacherRegisterForm = () => {
             />
             {errors.teacherEmail && touched.teacherEmail && (
               <div style={{ color: "red" }}>
-                <i className="bi bi-exclamation-octagon">
-                  {errors.teacherEmail}
-                </i>
+                <label className="bi bi-exclamation-circle-fill">
+                  &nbsp;{errors.teacherEmail}
+                </label>
               </div>
             )}
           </div>
@@ -156,9 +154,9 @@ const TeacherRegisterForm = () => {
             />
             {errors.teacherPassword && touched.teacherPassword && (
               <div style={{ color: "red" }}>
-                <i className="bi bi-exclamation-octagon">
-                  {errors.teacherPassword}
-                </i>
+                <label className="bi bi-exclamation-circle-fill">
+                  &nbsp;{errors.teacherPassword}
+                </label>
               </div>
             )}
           </div>
@@ -178,9 +176,9 @@ const TeacherRegisterForm = () => {
             {errors.teacherPasswordConfirm &&
               touched.teacherPasswordConfirm && (
                 <div style={{ color: "red" }}>
-                  <i className="bi bi-exclamation-octagon">
-                    {errors.teacherPasswordConfirm}
-                  </i>
+                  <label className="bi bi-exclamation-circle-fill">
+                    &nbsp;{errors.teacherPasswordConfirm}
+                  </label>
                 </div>
               )}
           </div>
@@ -191,7 +189,7 @@ const TeacherRegisterForm = () => {
           </div>
           <div className="col-12">
             <p className="small mb-0">
-              Zaten hesabın var mı ?<Link to={"/login"}> Giriş Yap</Link>
+              Zaten hesabın var mı ?<Link to={"/"}> Giriş Yap</Link>
             </p>
           </div>
         </form>
