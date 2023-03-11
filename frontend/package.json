@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "@react-pdf-viewer/core": "^3.11.0",
     "@react-pdf-viewer/default-layout": "^3.11.0",
     "@reduxjs/toolkit": "^1.9.0",
+    "antd": "^5.2.2",
     "axios": "^1.2.0",
     "formik": "^2.2.9",
     "pdfjs-dist": "^3.3.122",

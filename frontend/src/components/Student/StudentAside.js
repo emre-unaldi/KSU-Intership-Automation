@@ -1,35 +1,53 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
 
 function StudentAside() {
-  const ksuLink = useSelector((state) => state.system.ksuLink);
-
   return (
     <aside id="sidebar" className="sidebar">
       <ul className="sidebar-nav" id="sidebar-nav">
         <li className="nav-item">
-          <a className="nav-link" href={ksuLink}>
-            <i className="bi bi-house-fill"></i>
-            <span>Menü</span>
-          </a>
+          <NavLink
+            to={"/student/home"}
+            className={({ isActive }) =>
+              isActive ? "nav-link" : "nav-link collapsed"
+            }
+          >
+            <i className="bi bi-house-fill" />
+            <span>Anasayfa</span>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <a className="nav-link collapsed" href={ksuLink}>
-            <i className="bi bi-calendar-plus-fill"></i>
+          <NavLink
+            to={"/student/internshipForm/selection"}
+            className={({ isActive }) =>
+              isActive ? "nav-link" : "nav-link collapsed"
+            }
+          >
+            <i className="bi bi-calendar-plus-fill" />
             <span>Staj Formu</span>
-          </a>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <a className="nav-link collapsed" href={ksuLink}>
-            <i className="bi bi-folder-symlink-fill"></i>
+          <NavLink
+            to={"/student/internshipDocuments"}
+            className={({ isActive }) =>
+              isActive ? "nav-link" : "nav-link collapsed"
+            }
+          >
+            <i className="bi bi-folder-symlink-fill" />
             <span>Staj Evrakları</span>
-          </a>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <a className="nav-link collapsed" href={ksuLink}>
-            <i className="bi bi-collection-fill"></i>
+          <NavLink
+            to={"/student/internshipProcess"}
+            className={({ isActive }) =>
+              isActive ? "nav-link" : "nav-link collapsed"
+            }
+          >
+            <i className="bi bi-collection-fill" />
             <span>Staj Süreci</span>
-          </a>
+          </NavLink>
         </li>
       </ul>
     </aside>

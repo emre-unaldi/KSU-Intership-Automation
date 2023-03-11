@@ -9,14 +9,16 @@ import StudentLayout from "./users/student/StudentLayout";
 import StudentHomePage from "./users/student/HomePage";
 import InternshipDocumentsPage from "./users/student/InternshipDocumentsPage";
 import InternshipProcessPage from "./users/student/InternshipProcessPage";
-import InternshipLayout from "./users/student/InternshipForm/InternshipFormLayout";
-import SelectionPage from "./users/student/InternshipForm/SelectionPage";
-import InstructionsPage from "./users/student/InternshipForm/InstructionsPage";
-import CompanyInformationPage from "./users/student/InternshipForm/CompanyInformationPage";
-import CompanyApprovalStatusPage from "./users/student/InternshipForm/CompanyApprovalStatusPage";
-import CompanyApprovalWaitPage from "./users/student/InternshipForm/CompanyApprovalWaitPage";
-import ConsultantApprovalWaitPage from "./users/student/InternshipForm/ConsultantApprovalWaitPage";
-import ApplicationCompletedPage from "./users/student/InternshipForm/ApplicationCompletedPage";
+
+import InternshipLayout from "./users/student/internshipForm/InternshipFormLayout";
+import SelectionPage from "./users/student/internshipForm/SelectionPage";
+import InstructionsPage from "./users/student/internshipForm/InstructionsPage";
+import CompanyInformationPage from "./users/student/internshipForm/CompanyInformationPage";
+import CompanyApprovalStatusPage from "./users/student/internshipForm/CompanyApprovalStatusPage"; // şirketin dolduracağı sayfa
+import CompanyApprovalWaitPage from "./users/student/internshipForm/CompanyApprovalWaitPage";
+import ConsultantApprovalWaitPage from "./users/student/internshipForm/ConsultantApprovalWaitPage";
+import ApplicationCompletedPage from "./users/student/internshipForm/ApplicationCompletedPage";
+
 import StudentProfileLayout from "./users/student/profile/ProfileLayout";
 import StudentAboutPage from "./users/student/profile/AboutPage";
 import StudentEditPage from "./users/student/profile/EditPage";
