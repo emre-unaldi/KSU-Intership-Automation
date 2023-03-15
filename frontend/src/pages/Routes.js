@@ -66,7 +66,7 @@ const routes = [
           { path: "selection", element: <SelectionPage /> },
           { path: "instructions", element: <InstructionsPage /> },
           { path: "companyInformation", element: <CompanyInformationPage /> },
-          { path: "companyApprovalStatus/:ogr_id", element: <CompanyApprovalStatusPage /> },
+          { path: "companyApprovalStatus", element: <CompanyApprovalStatusPage /> },
           { path: "companyApprovalWait", element: <CompanyApprovalWaitPage /> },
           { path: "consultantApprovalWait", element: <ConsultantApprovalWaitPage /> },
           { path: "applicationCompleted", element: <ApplicationCompletedPage /> }
