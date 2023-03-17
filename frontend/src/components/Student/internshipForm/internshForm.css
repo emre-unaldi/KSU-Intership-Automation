@@ -26,3 +26,9 @@
     line-height: 1;
     content: "*";
 }
+
+.ant-result-extra > button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -66,7 +66,7 @@ const CompanyInformationForm = () => {
     setFormFieldError(false);
     form.resetFields();
     setTimeout(() => {
-      navigate("/student/internshipForm/companyApprovalStatus");
+      navigate("/student/internshipForm/companyApprovalWait");
     }, 3000)
   }
 

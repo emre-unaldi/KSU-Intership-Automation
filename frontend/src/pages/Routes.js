@@ -9,16 +9,14 @@ import StudentLayout from "./users/student/StudentLayout";
 import StudentHomePage from "./users/student/HomePage";
 import InternshipDocumentsPage from "./users/student/InternshipDocumentsPage";
 import InternshipProcessPage from "./users/student/InternshipProcessPage";
-
 import InternshipLayout from "./users/student/internshipForm/InternshipFormLayout";
 import SelectionPage from "./users/student/internshipForm/SelectionPage";
 import InstructionsPage from "./users/student/internshipForm/InstructionsPage";
 import CompanyInformationPage from "./users/student/internshipForm/CompanyInformationPage";
-import CompanyApprovalStatusPage from "./users/student/internshipForm/CompanyApprovalStatusPage"; // şirketin dolduracağı sayfa
+//import CompanyApprovalStatusPage from "./users/student/internshipForm/CompanyApprovalStatusPage"; // şirketin dolduracağı sayfa
 import CompanyApprovalWaitPage from "./users/student/internshipForm/CompanyApprovalWaitPage";
 import ConsultantApprovalWaitPage from "./users/student/internshipForm/ConsultantApprovalWaitPage";
 import ApplicationCompletedPage from "./users/student/internshipForm/ApplicationCompletedPage";
-
 import StudentProfileLayout from "./users/student/profile/ProfileLayout";
 import StudentAboutPage from "./users/student/profile/AboutPage";
 import StudentEditPage from "./users/student/profile/EditPage";
@@ -66,7 +64,7 @@ const routes = [
           { path: "selection", element: <SelectionPage /> },
           { path: "instructions", element: <InstructionsPage /> },
           { path: "companyInformation", element: <CompanyInformationPage /> },
-          { path: "companyApprovalStatus", element: <CompanyApprovalStatusPage /> },
+          //{ path: "companyApprovalStatus", element: <CompanyApprovalStatusPage /> },
           { path: "companyApprovalWait", element: <CompanyApprovalWaitPage /> },
           { path: "consultantApprovalWait", element: <ConsultantApprovalWaitPage /> },
           { path: "applicationCompleted", element: <ApplicationCompletedPage /> }

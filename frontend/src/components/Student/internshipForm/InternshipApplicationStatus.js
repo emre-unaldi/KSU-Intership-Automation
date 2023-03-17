@@ -1,4 +1,4 @@
-import { CheckSquareFilled, FlagFilled, IdcardFilled, MailFilled, ProfileFilled, ReconciliationFilled } from '@ant-design/icons';
+import { CheckSquareFilled, IdcardFilled, MailFilled, ProfileFilled, ReconciliationFilled } from '@ant-design/icons';
 import { Steps } from 'antd';
 import "./internshForm.css"
 
@@ -34,12 +34,6 @@ const InternshipStatus = () => (
         //description: 'Üniversitenin stajı onaylama durumu',
         status: 'wait',
         icon: <ReconciliationFilled />
-      },
-      {
-        title: 'Tamamlandı',
-        //description: 'Staj başvurusu başarıyla tamamlandı',
-        status: 'wait',
-        icon: <FlagFilled />
       }
     ]}
   />
