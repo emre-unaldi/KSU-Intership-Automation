@@ -1,39 +1,57 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
 
 function TeacherAside() {
-  const ksuLink = useSelector((state) => state.system.ksuLink);
-
   return (
     <aside id="sidebar" className="sidebar">
       <ul className="sidebar-nav" id="sidebar-nav">
         <li className="nav-item">
-          <a className="nav-link" href={ksuLink}>
-            <i className="bi bi-house-fill"></i>
-            <span>Menü</span>
-          </a>
+          <NavLink
+            to={"/teacher/home"}
+            className={({ isActive }) =>
+              isActive ? "nav-link" : "nav-link collapsed"
+            }
+          >
+            <i className="bi bi-house-fill" />
+            <span>Anasayfa</span>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <a className="nav-link collapsed" href={ksuLink}>
-            <i className="bi bi-file-earmark-check-fill"></i>
+          <NavLink
+            to={"/teacher/internshipApplications"}
+            className={({ isActive }) =>
+              isActive ? "nav-link" : "nav-link collapsed"
+            }
+          >
+            <i className="bi bi-calendar-plus-fill" />
             <span>Başvurular</span>
-          </a>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <a className="nav-link collapsed" href={ksuLink}>
-            <i className="bi bi-people-fill"></i>
+          <NavLink
+            to={"/teacher/internshipStudentsView"}
+            className={({ isActive }) =>
+              isActive ? "nav-link" : "nav-link collapsed"
+            }
+          >
+            <i className="bi bi-folder-symlink-fill" />
             <span>Öğrenciler</span>
-          </a>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <a className="nav-link collapsed" href={ksuLink}>
-            <i className="bi bi-slack"></i>
+          <NavLink
+            to={"/teacher/internshipTeam"}
+            className={({ isActive }) =>
+              isActive ? "nav-link" : "nav-link collapsed"
+            }
+          >
+            <i className="bi bi-collection-fill" />
             <span>Staj Ekip</span>
-          </a>
+          </NavLink>
         </li>
       </ul>
     </aside>
-  );
+  )
 }
 
-export default TeacherAside;
+export default TeacherAside

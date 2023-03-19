@@ -17,35 +17,35 @@ const InternshipStatus = () => {
             title: "Staj Seçimi",
             //description: 'Yapılacak olan staj çeşidi seçme',
             status: "finish",
-            icon: <ProfileFilled />,
+            icon: <ProfileFilled />
           },
           {
             title: "Staj İlkeleri",
             //description: 'Staj uygulama ilkeleri onayı verme',
             status: "process",
-            icon: <CheckSquareFilled />,
+            icon: <CheckSquareFilled />
           },
           {
             title: "Şirket Bilgileri",
             //description: 'Staj yapılacak şirket bilgilerini girme',
             status: "wait",
-            icon: <MailFilled />,
+            icon: <MailFilled />
           },
           {
             title: "Şirket Onayı",
             //description: 'Şirket tarafından stajın onaylanma durumu',
             status: "wait",
-            icon: <IdcardFilled />,
+            icon: <IdcardFilled />
           },
           {
             title: "Danışman Onayı",
             //description: 'Üniversitenin stajı onaylama durumu',
             status: "wait",
-            icon: <ReconciliationFilled />,
-          }
+            icon: <ReconciliationFilled />
+          },
         ]}
       />
     </>
-  );
-};
+  )
+}
 export default InternshipStatus;
