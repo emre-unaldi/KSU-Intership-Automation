@@ -16,7 +16,7 @@ const InstructionsPage = () => {
           <div className="col-xl-12">
             <div className="card">
               <div className="card-body pt-3 d-flex flex-column align-items-center">
-                <InternshipApplicationStatus/>
+                <InternshipApplicationStatus path={"instructions"} />
               </div>
             </div>
           </div>
