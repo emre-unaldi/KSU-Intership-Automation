@@ -4,9 +4,10 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const recaptchaRouter = require('./routes/recaptcha.routes');
-const authRoutes = require('./routes/auth.routes');
 const mongoDB = require('./helper/mongoDB');
+const recaptchaRouter = require('./routes/recaptcha.routes');
+const userRoutes = require('./routes/user.routes');
+const internshipRoutes = require('./routes/internship.routes');
 
 const app = express();
 
@@ -17,7 +18,7 @@ dotenv.config();
 app.use(
   cors({
     origin: ["http://localhost:3000"],
-    credentials: true,
+    credentials: true
   })
 );
 
@@ -33,7 +34,8 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/recaptcha', recaptchaRouter);
-app.use('/api/users', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/internship', internshipRoutes);
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {

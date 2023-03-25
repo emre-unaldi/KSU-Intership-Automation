@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const maxAge = 60 * 60 * 24;
 
-// JWT token oluşturma
+// JWT token oluşturma endpointi
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET_KEY, {
     expiresIn: maxAge,
@@ -20,9 +20,9 @@ exports.registerUser = async (req, res) => {
   if (existingUser) {
     // E-posta adresiyle eşleşen kullanıcı varsa hata döndürün
     return res.json({
-      status: "fail", 
+      status: "fail",
       message: "This email address is already in use",
-      existingUser
+      existingUser,
     });
   } else {
     const user = new User(req.body);
@@ -33,14 +33,14 @@ exports.registerUser = async (req, res) => {
         return res.json({
           status: "success",
           message: `${user.role} user registered`,
-          user
+          user,
         });
       })
       .catch((err) => {
         return res.json({
           status: "fail",
           message: `The ${user.role} user could not be registered`,
-          err
+          err,
         });
       });
   }
@@ -62,19 +62,19 @@ exports.loginUser = async (req, res) => {
           res.cookie("CONNECT_UID", token, {
             withCredentials: true,
             httpOnly: true,
-            maxAge: maxAge * 1000
+            maxAge: maxAge * 1000,
           });
 
           return res.json({
             status: "success",
             message: `${user.role} successfully logged in`,
-            user
+            user,
           });
         } else {
           // parola yanlışsa
           return res.json({
             status: "fail",
-            message: "Password is not correct"
+            message: "Password is not correct",
           });
         }
       });
@@ -83,7 +83,7 @@ exports.loginUser = async (req, res) => {
       // kullanıcı yoksa
       return res.json({
         status: "fail",
-        message: "User not found"
+        message: "User not found",
       });
     });
 };
@@ -93,7 +93,7 @@ exports.logoutUser = (req, res) => {
   res.clearCookie("CONNECT_UID");
   return res.json({
     status: "success",
-    message: "User logged out"
+    message: "User logged out",
   });
 };
 
@@ -108,7 +108,7 @@ exports.checkUser = (req, res) => {
         return res.json({
           status: "fail",
           message: "Failed to verify token",
-          err
+          err,
         });
       } else {
         const user = await User.findById(decodedToken.userId);
@@ -117,12 +117,12 @@ exports.checkUser = (req, res) => {
           return res.json({
             status: "success",
             message: "User found",
-            user
+            user,
           });
         } else {
           return res.json({
             status: "fail",
-            message: "User not found && Token could not be verified"
+            message: "User not found && Token could not be verified",
           });
         }
       }
@@ -131,7 +131,28 @@ exports.checkUser = (req, res) => {
     // token yok
     return res.json({
       status: "fail",
-      message: "Token not found"
+      message: "Token not found",
     });
   }
+};
+
+// Kullanıcıları listeleme endpointi
+exports.getAllUsers = async (req, res) => {
+  const users = User.find({});
+
+  await users
+    .then((users) => {
+      return res.json({
+        status: "success",
+        message: "All users found",
+        users
+      });
+    })
+    .catch((err) => {
+      return res.json({
+        status: "fail",
+        message: "All users not found",
+        err
+      });
+    });
 };
