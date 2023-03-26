@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { createInternship } from "../../../redux/internshipConfigurationSlice";
 import {
   Button,
   Form,
@@ -25,29 +27,34 @@ import "./internshForm.css";
 const CompanyInformationForm = () => {
   const [loadings, setLoadings] = useState(false);
   const [formFieldError, setFormFieldError] = useState(false);
-  const navigate = useNavigate();
   const { RangePicker } = DatePicker;
   const { Title } = Typography;
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  const currentUser = useSelector((state) => state.user.check.data.user);
+  const instructionsAndInternship = location.state.instructionsAndInternship;
 
   const formItemLayout = {
     labelCol: {
       xs: {
-        span: 24
+        span: 24,
       },
       sm: {
         span: 8
-      }
+      },
     },
     wrapperCol: {
       xs: {
-        span: 24
+        span: 24,
       },
       sm: {
         span: 16
       }
     }
-  }
+  };
   const tailFormItemLayout = {
     wrapperCol: {
       xs: {
@@ -59,28 +66,47 @@ const CompanyInformationForm = () => {
         offset: 8
       }
     }
-  }
+  };
 
   const onFinish = (values) => {
-    console.log("onFinish Values: ", values);
+    const internshipValues = {
+      ...instructionsAndInternship,
+      ...values,
+      studentID: currentUser?._id
+    };
     setFormFieldError(false);
     form.resetFields();
     setTimeout(() => {
-      navigate("/student/internshipForm/companyApprovalWait");
-    }, 3000)
-  }
+      dispatch(createInternship(internshipValues))
+        .then((create) => {
+          if (create?.meta?.requestStatus === "fulfilled") {
+            if (create?.payload?.status === "success") {
+              console.log(create.payload.message);
+              navigate("/student/internshipForm/companyApprovalWait");
+            } else {
+              console.log(create.payload.message);
+            }
+          } else {
+            console.log("Internship create failed. Try created in again");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }, 3000);
+  };
 
   const onFinishFailed = (values) => {
     setFormFieldError(true);
     console.log("onFinishFailed Values: ", values);
-  }
+  };
 
   const handleLoading = () => {
     setLoadings(true);
     setTimeout(() => {
       setLoadings(false);
-    }, 3000)
-  }
+    }, 3000);
+  };
 
   return (
     <>
@@ -113,12 +139,12 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: "İş yeri adını giriniz !"
+              message: "İş yeri adını giriniz !",
             },
             {
               type: "string",
               whitespace: true,
-              message: "İş yeri adı sadece boşluk karakteri içermemelidir !"
+              message: "İş yeri adı sadece boşluk karakteri içermemelidir !",
             },
             {
               max: 20,
@@ -137,7 +163,7 @@ const CompanyInformationForm = () => {
           rules={[
             {
               type: "email",
-              message: "E-Posta girişi geçerli değil !"
+              message: "E-Posta girişi geçerli değil !",
             },
             {
               required: true,
@@ -155,7 +181,7 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: "Telefon numarası giriniz !"
+              message: "Telefon numarası giriniz !",
             },
             {
               pattern: /^\+?\d{1,3}[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
@@ -172,7 +198,7 @@ const CompanyInformationForm = () => {
           className="responsible"
           hasFeedback
           style={{
-            marginBottom: 0
+            marginBottom: 0,
           }}
         >
           <Row gutter={8}>
@@ -183,12 +209,13 @@ const CompanyInformationForm = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Yetkili adını giriniz !"
+                    message: "Yetkili adını giriniz !",
                   },
                   {
                     type: "string",
                     whitespace: true,
-                    message: "Yetkili adı sadece boşluk karakteri içermemelidir !"
+                    message:
+                      "Yetkili adı sadece boşluk karakteri içermemelidir !",
                   },
                   {
                     max: 20,
@@ -206,12 +233,13 @@ const CompanyInformationForm = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Yetkili soyadını giriniz !"
+                    message: "Yetkili soyadını giriniz !",
                   },
                   {
                     type: "string",
                     whitespace: true,
-                    message: "Yetkili adı soyadını boşluk karakteri içermemelidir !"
+                    message:
+                      "Yetkili adı soyadını boşluk karakteri içermemelidir !",
                   },
                   {
                     max: 20,
@@ -232,11 +260,11 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: "Çalışan kişi sayısını giriniz !"
+              message: "Çalışan kişi sayısını giriniz !",
             },
             {
               pattern: /^[0-9]+$/,
-              message: "Çalışan sayısı sadece sayı içerebilir !"
+              message: "Çalışan sayısı sadece sayı içerebilir !",
             },
             {
               max: 5,
@@ -254,11 +282,11 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: "İş Yeri vergi numarasını giriniz !"
+              message: "İş Yeri vergi numarasını giriniz !",
             },
             {
               pattern: /^[0-9]+$/,
-              message: "Vergi numarası sadece sayı içerebilir !"
+              message: "Vergi numarası sadece sayı içerebilir !",
             },
             {
               max: 10,
@@ -276,12 +304,12 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: "İş yeri adresini giriniz !"
+              message: "İş yeri adresini giriniz !",
             },
             {
               type: "string",
               whitespace: true,
-              message: "İş yeri adresi sadece boşluk karakteri içermemelidir !"
+              message: "İş yeri adresi sadece boşluk karakteri içermemelidir !",
             },
             {
               min: 10,
@@ -313,9 +341,7 @@ const CompanyInformationForm = () => {
           </Form.Item>
         </ConfigProvider>
 
-        <Form.Item 
-          {...tailFormItemLayout}
-        >
+        <Form.Item {...tailFormItemLayout}>
           <Button
             type="primary"
             htmlType="submit"
@@ -340,6 +366,6 @@ const CompanyInformationForm = () => {
         </Form.Item>
       </Form>
     </>
-  )
-}
-export default CompanyInformationForm
+  );
+};
+export default CompanyInformationForm;

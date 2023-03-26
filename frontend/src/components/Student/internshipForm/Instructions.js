@@ -1,20 +1,26 @@
 import { useState } from "react";
 import { Space, Button, Alert, Typography } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { SyncOutlined } from "@ant-design/icons";
 import PdfViewer from "../../System/PdfViewer";
 
 function Instructions() {
   const [approval, setApproval] = useState(false);
   const [loadings, setLoadings] = useState(false);
-  const navigate = useNavigate();
   const { Title } = Typography;
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const instructionsAndInternship = {
+    internship: location.state.internship,
+    instructions : approval
+  }
 
   const handleLoading = () => {
     setLoadings(true);
     setTimeout(() => {
       setLoadings(false);
-      navigate("/student/internshipForm/companyInformation");
+      navigate("/student/internshipForm/companyInformation", {state: {instructionsAndInternship}});
     }, 3000);
   };
 

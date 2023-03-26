@@ -1,10 +1,10 @@
+import { useState } from "react";
+import { SyncOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import { Avatar, Segmented, Space, Alert, Typography, Button } from "antd";
 import software from "../../../assets/img/software.png";
 import hardware from "../../../assets/img/hardware.png";
 import intorn from "../../../assets/img/intorn.png";
-import { useState } from "react";
-import { SyncOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
 
 const VarietySelection = () => {
   const [variety, setVariety] = useState({ description: "", value: "" });
@@ -13,12 +13,13 @@ const VarietySelection = () => {
   const navigate = useNavigate();
 
   const handleLoading = () => {
+    const internship = variety.value
     setLoadings(true);
     setTimeout(() => {
       setLoadings(false);
       // burada veritabanı işlemi gerçekleştirilecek
       // internshipDocuments modeli oluşturulacak staj çeşidi isVariety olarak tutulacak
-      navigate("/student/internshipForm/instructions");
+      navigate("/student/internshipForm/instructions", {state: {internship}});
     }, 3000);
   };
 
