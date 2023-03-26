@@ -2,7 +2,7 @@
 const Internship = require("../models/Internship");
 
 // Staj oluşturma endpointi
-exports.createInternshipById = async (req, res) => {
+exports.createInternship = async (req, res) => {
   // Öğrenci id'sine göre staj arama
   const userInternship = await Internship.findOne({studentID: req.body.studentID});
 

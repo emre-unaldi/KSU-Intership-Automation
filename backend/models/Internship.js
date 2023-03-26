@@ -12,14 +12,11 @@ const InternshipSchema = new Schema(
     companyPersonalCount: Number,
     companyTaxNumber: String,
     companyAddress: String,
-    internshipDateRange: String,
+    internshipDateRange: Array,
+    instructions: Boolean,
     internship: {
       type: String,
       enum: ["software", "hardware", "intorn"]
-    },
-    instructions: {
-      type: Boolean,
-      default: false
     },
     companyApproval: {
       type: Boolean,
