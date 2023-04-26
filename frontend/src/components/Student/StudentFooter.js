@@ -1,24 +1,23 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React from 'react'
+import { useSelector } from 'react-redux'
 
 function StudentFooter() {
-  const ksuLink = useSelector((state) => state.system.ksuLink);
+  const ksuLink = useSelector((state) => state.system.ksuLink)
 
   return (
     <footer id="footer" className="footer">
       <div className="copyright">
-        Tüm hakları{" "}
+        Tüm hakları{' '}
         <strong>
           <span>KSÜ</span>
-        </strong>{" "}
+        </strong>{' '}
         tarafından saklıdır. &copy; 2022
       </div>
       <div className="credits">
         Tasarım ve Geliştirme: <a href={ksuLink}>Öğrenci</a>
       </div>
     </footer>
-  );
+  )
 }
 
-export default StudentFooter;
-
+export default StudentFooter

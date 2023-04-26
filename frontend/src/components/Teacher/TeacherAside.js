@@ -1,5 +1,5 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 function TeacherAside() {
   return (
@@ -7,9 +7,9 @@ function TeacherAside() {
       <ul className="sidebar-nav" id="sidebar-nav">
         <li className="nav-item">
           <NavLink
-            to={"/teacher/home"}
+            to={'/teacher/home'}
             className={({ isActive }) =>
-              isActive ? "nav-link" : "nav-link collapsed"
+              isActive ? 'nav-link' : 'nav-link collapsed'
             }
           >
             <i className="bi bi-house-fill" />
@@ -18,9 +18,9 @@ function TeacherAside() {
         </li>
         <li className="nav-item">
           <NavLink
-            to={"/teacher/internshipApplications"}
+            to={'/teacher/internshipApplications'}
             className={({ isActive }) =>
-              isActive ? "nav-link" : "nav-link collapsed"
+              isActive ? 'nav-link' : 'nav-link collapsed'
             }
           >
             <i className="bi bi-calendar-plus-fill" />
@@ -29,9 +29,9 @@ function TeacherAside() {
         </li>
         <li className="nav-item">
           <NavLink
-            to={"/teacher/internshipStudentsView"}
+            to={'/teacher/internshipStudentsView'}
             className={({ isActive }) =>
-              isActive ? "nav-link" : "nav-link collapsed"
+              isActive ? 'nav-link' : 'nav-link collapsed'
             }
           >
             <i className="bi bi-folder-symlink-fill" />
@@ -40,9 +40,9 @@ function TeacherAside() {
         </li>
         <li className="nav-item">
           <NavLink
-            to={"/teacher/internshipTeam"}
+            to={'/teacher/internshipTeam'}
             className={({ isActive }) =>
-              isActive ? "nav-link" : "nav-link collapsed"
+              isActive ? 'nav-link' : 'nav-link collapsed'
             }
           >
             <i className="bi bi-collection-fill" />

@@ -1,43 +1,44 @@
-import { useFormik } from "formik";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { studentRegisterValidationSchema } from "./FormikValidations";
-import { registerStudent } from "../../redux/userConfigurationSlice";
+import { useFormik } from 'formik'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { studentRegisterValidationSchema } from '../System/FormikValidations'
+import { registerStudent } from '../../redux/userSlice'
 
 const StudentRegisterForm = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { handleSubmit, handleChange, handleBlur, values, errors, touched } =
+    useFormik({
       initialValues: {
-        studentName: "",
-        studentSurname: "",
-        schoolNumber: "",
-        studentEmail: "",
-        studentPassword: "",
-        studentPasswordConfirm: "",
-        userType: "student"
+        studentName: '',
+        studentSurname: '',
+        schoolNumber: '',
+        studentEmail: '',
+        studentPassword: '',
+        studentPasswordConfirm: '',
+        userType: 'student',
       },
       onSubmit: (values) => {
         dispatch(registerStudent(values))
           .then((registration) => {
-            if (registration?.meta?.requestStatus === "fulfilled") {
-              if (registration?.payload?.status === "success") {
-                console.log(registration.payload.message);
-                navigate("/");
+            if (registration?.meta?.requestStatus === 'fulfilled') {
+              if (registration?.payload?.status === 'success') {
+                console.log(registration.payload.message)
+                navigate('/')
               } else {
-                console.log(registration.payload.message);
-                navigate("/register");
+                console.log(registration.payload.message)
+                navigate('/register')
               }
             } else {
-              console.log("User register failed. Try registered in again");
+              console.log('User register failed. Try registered in again')
             }
           })
           .catch((err) => {
-            console.log(err);
-          });
+            console.log(err)
+          })
       },
-      validationSchema: studentRegisterValidationSchema
-  });
+      validationSchema: studentRegisterValidationSchema,
+    })
 
   return (
     <>
@@ -66,7 +67,7 @@ const StudentRegisterForm = () => {
                   onBlur={handleBlur}
                 />
                 {errors.studentName && touched.studentName && (
-                  <div style={{ color: "red" }}>
+                  <div style={{ color: 'red' }}>
                     <label className="bi bi-exclamation-circle-fill">
                       &nbsp;{errors.studentName}
                     </label>
@@ -87,7 +88,7 @@ const StudentRegisterForm = () => {
                   onBlur={handleBlur}
                 />
                 {errors.studentSurname && touched.studentSurname && (
-                  <div style={{ color: "red" }}>
+                  <div style={{ color: 'red' }}>
                     <label className="bi bi-exclamation-circle-fill">
                       &nbsp;{errors.studentSurname}
                     </label>
@@ -111,7 +112,7 @@ const StudentRegisterForm = () => {
               onBlur={handleBlur}
             />
             {errors.schoolNumber && touched.schoolNumber && (
-              <div style={{ color: "red" }}>
+              <div style={{ color: 'red' }}>
                 <label className="bi bi-exclamation-circle-fill">
                   &nbsp;{errors.schoolNumber}
                 </label>
@@ -132,7 +133,7 @@ const StudentRegisterForm = () => {
               onBlur={handleBlur}
             />
             {errors.studentEmail && touched.studentEmail && (
-              <div style={{ color: "red" }}>
+              <div style={{ color: 'red' }}>
                 <label className="bi bi-exclamation-circle-fill">
                   &nbsp;{errors.studentEmail}
                 </label>
@@ -153,7 +154,7 @@ const StudentRegisterForm = () => {
               onBlur={handleBlur}
             />
             {errors.studentPassword && touched.studentPassword && (
-              <div style={{ color: "red" }}>
+              <div style={{ color: 'red' }}>
                 <label className="bi bi-exclamation-circle-fill">
                   &nbsp;{errors.studentPassword}
                 </label>
@@ -175,7 +176,7 @@ const StudentRegisterForm = () => {
             />
             {errors.studentPasswordConfirm &&
               touched.studentPasswordConfirm && (
-                <div style={{ color: "red" }}>
+                <div style={{ color: 'red' }}>
                   <label className="bi bi-exclamation-circle-fill">
                     &nbsp;{errors.studentPasswordConfirm}
                   </label>
@@ -189,13 +190,13 @@ const StudentRegisterForm = () => {
           </div>
           <div className="col-12">
             <p className="small mb-0">
-              Zaten hesabın var mı ?<Link to={"/"}> Giriş Yap</Link>
+              Zaten hesabın var mı ?<Link to={'/'}> Giriş Yap</Link>
             </p>
           </div>
         </form>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default StudentRegisterForm;
+export default StudentRegisterForm

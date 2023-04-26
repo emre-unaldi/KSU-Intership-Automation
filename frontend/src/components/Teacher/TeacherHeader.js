@@ -1,18 +1,18 @@
-import React from "react";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { sideBarMenuOpen } from "../../redux/systemConfigurationSlice";
-import { logoutUser } from "../../redux/userConfigurationSlice";
-import ksuLogo from "../../assets/img/ksu.png";
-import profile from "../../assets/img/profile-img.jpg";
-import messagesProfile from "../../assets/img/messages-1.jpg";
-axios.defaults.withCredentials = true;
+import React from 'react'
+import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { sideBarMenuOpen } from '../../redux/systemSlice'
+import { logoutUser } from '../../redux/userSlice'
+import ksuLogo from '../../assets/img/ksu.png'
+import profile from '../../assets/img/profile-img.jpg'
+import messagesProfile from '../../assets/img/messages-1.jpg'
+axios.defaults.withCredentials = true
 
 function TeacherHeader() {
-  const ksuLink = useSelector((state) => state.system.ksuLink);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const ksuLink = useSelector((state) => state.system.ksuLink)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   return (
     <header id="header" className="header fixed-top d-flex align-items-center">
@@ -24,7 +24,7 @@ function TeacherHeader() {
         <i
           className="bi bi-list toggle-sidebar-btn"
           onClick={() => {
-            dispatch(sideBarMenuOpen());
+            dispatch(sideBarMenuOpen())
           }}
         ></i>
       </div>
@@ -226,21 +226,23 @@ function TeacherHeader() {
                   onClick={() => {
                     dispatch(logoutUser())
                       .then((loggedOut) => {
-                        if (loggedOut?.meta?.requestStatus === "fulfilled") {
-                          if (loggedOut?.payload?.status === "success") {
-                            console.log(loggedOut.payload.message);
-                            navigate("/");
+                        if (loggedOut?.meta?.requestStatus === 'fulfilled') {
+                          if (loggedOut?.payload?.status === 'success') {
+                            console.log(loggedOut.payload.message)
+                            navigate('/')
                           } else {
-                            console.log(loggedOut.payload.message);
-                            navigate("/teacher/home");
+                            console.log(loggedOut.payload.message)
+                            navigate('/teacher/home')
                           }
                         } else {
-                          console.log("User logout failed. Try logging out again");
+                          console.log(
+                            'User logout failed. Try logging out again'
+                          )
                         }
                       })
                       .catch((err) => {
-                        console.log(err);
-                      });
+                        console.log(err)
+                      })
                   }}
                 >
                   <i className="bi bi-box-arrow-right"></i>
@@ -252,7 +254,7 @@ function TeacherHeader() {
         </ul>
       </nav>
     </header>
-  );
+  )
 }
 
-export default TeacherHeader;
+export default TeacherHeader

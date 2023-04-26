@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const Schema = mongoose.Schema;
+import { Schema, model } from 'mongoose'
+import { genSalt, hash as bcryptHash } from 'bcrypt'
 
 const UserSchema = new Schema(
   {
@@ -12,29 +11,29 @@ const UserSchema = new Schema(
     password: String,
     role: {
       type: String,
-      enum: ["student", "teacher", "admin"],
-      default: "student"
+      enum: ['student', 'teacher', 'admin'],
+      default: 'student'
     }
   },
   {
-    collection: "Users",
+    collection: 'Users',
     timestamps: true
   }
-);
+)
 
 // kayıt olmadan önce gerçekleştir - model içersinde middleware oluşturur.
-UserSchema.pre("save", function (next) {
-  const currentUser = this;
-  const saltRounds = 10;
+UserSchema.pre('save', function (next) {
+  const currentUser = this
+  const saltRounds = 10
 
-  bcrypt.genSalt(saltRounds, function (err, salt) {
-    if (err) return next(err);
-    bcrypt.hash(currentUser.password, salt, function (err, hash) {
-      if (err) return next(err);
-      currentUser.password = hash;
-      next();
-    });
-  });
-});
+  genSalt(saltRounds, function (err, salt) {
+    if (err) return next(err)
+    bcryptHash(currentUser.password, salt, function (err, hash) {
+      if (err) return next(err)
+      currentUser.password = hash
+      next()
+    })
+  })
+})
 
-module.exports = mongoose.model("User", UserSchema);
+export default model('User', UserSchema)

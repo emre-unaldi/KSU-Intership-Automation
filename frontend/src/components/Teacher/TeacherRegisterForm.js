@@ -1,43 +1,44 @@
-import { useFormik } from "formik";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { teacherRegisterValidationSchema } from "./FormikValidations";
-import { registerTeacher } from "../../redux/userConfigurationSlice";
+import { useFormik } from 'formik'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { teacherRegisterValidationSchema } from '../System/FormikValidations'
+import { registerTeacher } from '../../redux/userSlice'
 
 const TeacherRegisterForm = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { handleSubmit, handleChange, handleBlur, values, errors, touched } =
+    useFormik({
       initialValues: {
-        teacherName: "",
-        teacherSurname: "",
-        teacherPhoneNumber: "",
-        teacherEmail: "",
-        teacherPassword: "",
-        teacherPasswordConfirm: "",
-        userType: "teacher"
+        teacherName: '',
+        teacherSurname: '',
+        teacherPhoneNumber: '',
+        teacherEmail: '',
+        teacherPassword: '',
+        teacherPasswordConfirm: '',
+        userType: 'teacher',
       },
       onSubmit: (values) => {
         dispatch(registerTeacher(values))
           .then((registration) => {
-            if (registration?.meta?.requestStatus === "fulfilled") {
-              if (registration?.payload?.status === "success") {
-                console.log(registration.payload.message);
-                navigate("/");
+            if (registration?.meta?.requestStatus === 'fulfilled') {
+              if (registration?.payload?.status === 'success') {
+                console.log(registration.payload.message)
+                navigate('/')
               } else {
-                console.log(registration.payload.message);
-                navigate("/register");
+                console.log(registration.payload.message)
+                navigate('/register')
               }
             } else {
-              console.log("User register failed. Try registered in again");
+              console.log('User register failed. Try registered in again')
             }
           })
           .catch((err) => {
-            console.log(err);
-          });
+            console.log(err)
+          })
       },
-      validationSchema: teacherRegisterValidationSchema
-  });
+      validationSchema: teacherRegisterValidationSchema,
+    })
 
   return (
     <>
@@ -66,7 +67,7 @@ const TeacherRegisterForm = () => {
                   onBlur={handleBlur}
                 />
                 {errors.teacherName && touched.teacherName && (
-                  <div style={{ color: "red" }}>
+                  <div style={{ color: 'red' }}>
                     <label className="bi bi-exclamation-circle-fill">
                       &nbsp;{errors.teacherName}
                     </label>
@@ -87,7 +88,7 @@ const TeacherRegisterForm = () => {
                   onBlur={handleBlur}
                 />
                 {errors.teacherSurname && touched.teacherSurname && (
-                  <div style={{ color: "red" }}>
+                  <div style={{ color: 'red' }}>
                     <label className="bi bi-exclamation-circle-fill">
                       &nbsp;{errors.teacherSurname}
                     </label>
@@ -111,7 +112,7 @@ const TeacherRegisterForm = () => {
               onBlur={handleBlur}
             />
             {errors.teacherPhoneNumber && touched.teacherPhoneNumber && (
-              <div style={{ color: "red" }}>
+              <div style={{ color: 'red' }}>
                 <label className="bi bi-exclamation-circle-fill">
                   &nbsp;{errors.teacherPhoneNumber}
                 </label>
@@ -132,7 +133,7 @@ const TeacherRegisterForm = () => {
               onBlur={handleBlur}
             />
             {errors.teacherEmail && touched.teacherEmail && (
-              <div style={{ color: "red" }}>
+              <div style={{ color: 'red' }}>
                 <label className="bi bi-exclamation-circle-fill">
                   &nbsp;{errors.teacherEmail}
                 </label>
@@ -153,7 +154,7 @@ const TeacherRegisterForm = () => {
               onBlur={handleBlur}
             />
             {errors.teacherPassword && touched.teacherPassword && (
-              <div style={{ color: "red" }}>
+              <div style={{ color: 'red' }}>
                 <label className="bi bi-exclamation-circle-fill">
                   &nbsp;{errors.teacherPassword}
                 </label>
@@ -175,7 +176,7 @@ const TeacherRegisterForm = () => {
             />
             {errors.teacherPasswordConfirm &&
               touched.teacherPasswordConfirm && (
-                <div style={{ color: "red" }}>
+                <div style={{ color: 'red' }}>
                   <label className="bi bi-exclamation-circle-fill">
                     &nbsp;{errors.teacherPasswordConfirm}
                   </label>
@@ -189,13 +190,13 @@ const TeacherRegisterForm = () => {
           </div>
           <div className="col-12">
             <p className="small mb-0">
-              Zaten hesabın var mı ?<Link to={"/"}> Giriş Yap</Link>
+              Zaten hesabın var mı ?<Link to={'/'}> Giriş Yap</Link>
             </p>
           </div>
         </form>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default TeacherRegisterForm;
+export default TeacherRegisterForm

@@ -1,158 +1,218 @@
-// Models
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import User from '../models/User.js'
+import { compare } from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
-const maxAge = 60 * 60 * 24;
-
+const maxAge = 60 * 60 * 24
 // JWT token oluşturma endpointi
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET_KEY, {
     expiresIn: maxAge,
-  });
-};
+  })
+}
+
+const convertToTR = (role) => {
+  if (role === 'student') {
+    return 'Öğrenci'
+  } else {
+    return 'Öğretmen'
+  }
+}
 
 // Kullanıcı ekleme endpointi
-exports.registerUser = async (req, res) => {
-  // E-posta adresine göre kullanıcı arama
-  const existingUser = await User.findOne({ email: req.body.email });
+const registerUser = async (req, res) => {
+  const { email } = await req.body
+  const existingUser = await User.find({ email })
 
-  if (existingUser) {
+  if (existingUser[0]) {
     // E-posta adresiyle eşleşen kullanıcı varsa hata döndürün
     return res.json({
-      status: "fail",
-      message: "This email address is already in use",
-      existingUser,
-    });
+      status: 'fail',
+      message: 'Bu email adresi zaten kullanımda. Farklı bir email adresi girin',
+      existingUser: existingUser[0]
+    })
   } else {
-    const user = new User(req.body);
     // Eşleşen kullanıcı yoksa yeni kullanıcıyı kaydet
+    const user = new User(req.body)
+
     await user
       .save()
       .then((user) => {
         return res.json({
-          status: "success",
-          message: `${user.role} user registered`,
-          user,
-        });
+          status: 'success',
+          message: `${convertToTR(user.role)} ${user.name} ${user.surname} kullanıcısı başarıyla kaydedildi`,
+          user
+        })
       })
-      .catch((err) => {
+      .catch((error) => {
         return res.json({
-          status: "fail",
-          message: `The ${user.role} user could not be registered`,
-          err,
-        });
-      });
+          status: 'fail',
+          message: `${convertToTR(user.role)} kullanıcısı kaydedilemedi`,
+          error
+        })
+      })
   }
-};
+}
 
 // Kullanıcı giriş yap endpointi
-exports.loginUser = async (req, res) => {
-  const { email, password } = req.body;
-  const user = User.findOne({ email });
+const loginUser = async (req, res) => {
+  const { email, password } = await req.body
+  const existingUser = User.find({ email })
 
-  user
+  existingUser
     .then((user) => {
       // kullanıcı varsa
-      bcrypt.compare(password, user.password, (err, same) => {
+      compare(password, user[0].password, (error, same) => {
         if (same) {
           // parola doğruysa
-          const token = generateToken(user._id);
+          const token = generateToken(user[0]._id)
 
-          res.cookie("CONNECT_UID", token, {
+          res.cookie('CONNECT_UID', token, {
             withCredentials: true,
             httpOnly: true,
-            maxAge: maxAge * 1000,
-          });
+            maxAge: maxAge * 1000
+          })
 
           return res.json({
-            status: "success",
-            message: `${user.role} successfully logged in`,
-            user,
-          });
+            status: 'success',
+            message: `${convertToTR(user[0].role)} kullanıcısı başarıyla giriş yaptı. Yönlendiriliyor`,
+            user
+          })
         } else {
           // parola yanlışsa
           return res.json({
-            status: "fail",
-            message: "Password is not correct",
-          });
+            status: 'fail',
+            message: 'Kullanıcının email adresi veya parolası doğru değil'
+          })
         }
-      });
+      })
     })
     .catch(() => {
       // kullanıcı yoksa
       return res.json({
-        status: "fail",
-        message: "User not found",
-      });
-    });
-};
+        status: 'fail',
+        message: 'Girilen bilgilere ait kullanıcı bulunamadı'
+      })
+    })
+}
 
 // Kullanıcı çıkış yap endpointi
-exports.logoutUser = (req, res) => {
-  res.clearCookie("CONNECT_UID");
+const logoutUser = async (req, res) => {
+  await res.clearCookie('CONNECT_UID')
   return res.json({
-    status: "success",
-    message: "User logged out",
-  });
-};
+    status: 'success',
+    message: 'Kullanıcı çıkış yaptı',
+  })
+}
 
 // Kullanıcı kontrol endpointi
-exports.checkUser = (req, res) => {
-  const token = req.cookies.CONNECT_UID;
+const checkUser = async (req, res) => {
+  const token = await req.cookies.CONNECT_UID
 
   if (token) {
     // token var
-    jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, decodedToken) => {
-      if (err) {
-        return res.json({
-          status: "fail",
-          message: "Failed to verify token",
-          err,
-        });
-      } else {
-        const user = await User.findById(decodedToken.userId);
-
-        if (user) {
+    jwt.verify(token, process.env.JWT_SECRET_KEY, async (error, decodedToken) => {
+        if (error) {
           return res.json({
-            status: "success",
-            message: "User found",
-            user,
-          });
+            status: 'fail',
+            message: 'Token doğrulaması başarısız',
+            error
+          })
         } else {
-          return res.json({
-            status: "fail",
-            message: "User not found && Token could not be verified",
-          });
+          const existingUser = await User.findById(decodedToken.userId)
+
+          if (existingUser) {
+            return res.json({
+              status: 'success',
+              message: `Kullanıcı bulundu. Mevcut kullanıcı ${existingUser.name} ${existingUser.surname}`,
+              user: existingUser
+            })
+          } else {
+            return res.json({
+              status: 'fail',
+              message: 'Kullanıcı bulunamadı'
+            })
+          }
         }
       }
-    });
+    )
   } else {
     // token yok
     return res.json({
-      status: "fail",
-      message: "Token not found",
-    });
-  }
-};
-
-// Kullanıcıları listeleme endpointi
-exports.getAllUsers = async (req, res) => {
-  const users = User.find({});
-
-  await users
-    .then((users) => {
-      return res.json({
-        status: "success",
-        message: "All users found",
-        users
-      });
+      status: 'fail',
+      message: 'Token bulunamadı'
     })
-    .catch((err) => {
-      return res.json({
-        status: "fail",
-        message: "All users not found",
-        err
-      });
-    });
-};
+  }
+}
+
+const getAllUserAndInternships = async (req, res) => {
+  const UserAndInternships = User.aggregate([
+    {
+      $lookup: {
+        from: 'Internships',
+        localField: '_id',
+        foreignField: 'studentID',
+        as: 'internships'
+      }
+    },
+    {
+      $unwind: {
+        path: '$internships',
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    {
+      $group: {
+        _id: {
+          _id: '$_id',
+          name: '$name',
+          surname: '$surname',
+          schoolNumber: '$schoolNumber',
+          email: '$email',
+          password: '$password',
+          role: '$role',
+          createdAt: '$createdAt',
+          updatedAt: '$updatedAt'
+        },
+        internships: {
+          $push: '$internships'
+        }
+      }
+    },
+    {
+      $project: {
+        _id: '$_id._id',
+        name: '$_id.name',
+        surname: '$_id.surname',
+        schoolNumber: '$_id.schoolNumber',
+        email: '$_id.email',
+        password: '$_id.password',
+        role: '$_id.role',
+        createdAt: '$_id.createdAt',
+        updatedAt: '$_id.updatedAt',
+        internships: '$internships'
+      }
+    }
+  ])
+
+  await UserAndInternships.then((data) => {
+    return res.json({
+      status: 'success',
+      message: 'Kullanıcılar mevcut stajlarıyla birlikte başarıyla getirildi',
+      data
+    })
+  }).catch((error) => {
+    return res.json({
+      status: 'fail',
+      message: 'Kullanıcılar mevcut stajlarıyla birlikte getirilemedi',
+      error
+    })
+  })
+}
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  checkUser,
+  getAllUserAndInternships
+}

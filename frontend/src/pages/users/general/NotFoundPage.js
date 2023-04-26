@@ -1,10 +1,10 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import notFound from "../../../assets/img/not-found.svg";
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import notFound from '../../../assets/img/not-found.svg'
 
 const NotFoundPage = () => {
-  const ksuLink = useSelector((state) => state.system.ksuLink);
+  const ksuLink = useSelector((state) => state.system.ksuLink)
 
   return (
     <>
@@ -13,7 +13,7 @@ const NotFoundPage = () => {
           <section className="section error-404 min-vh-100 d-flex flex-column align-items-center justify-content-center">
             <h1>404</h1>
             <h2>Aradığınız genel sayfa mevcut değil.</h2>
-            <Link className="btn" to={"/student/home"}>
+            <Link className="btn" to={'/student/home'}>
               Anasayfaya Dön
             </Link>
             <img
@@ -34,7 +34,7 @@ const NotFoundPage = () => {
         <i className="bi bi-arrow-up-short"></i>
       </a>
     </>
-  );
-};
+  )
+}
 
-export default NotFoundPage;
+export default NotFoundPage

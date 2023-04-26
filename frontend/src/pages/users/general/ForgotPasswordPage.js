@@ -1,41 +1,41 @@
-import { useSelector } from "react-redux";
-import ksuLogo from "../../../assets/img/ksu.png";
-import ForgotPasswordForm from "../../../components/Form/ForgotPasswordForm";
-import axios from "axios";
-axios.defaults.withCredentials = true;
+import { useSelector } from 'react-redux'
+import ksuLogo from '../../../assets/img/ksu.png'
+import ForgotPasswordForm from '../../../components/System/ForgotPasswordForm'
+import axios from 'axios'
+axios.defaults.withCredentials = true
 
 const ForgotPassword = () => {
-  const ksuLink = useSelector((state) => state.system.ksuLink);
+  const ksuLink = useSelector((state) => state.system.ksuLink)
 
   return (
-      <main>
-        <div className="container">
-          <section className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-                  <div className="d-flex justify-content-center py-3">
-                    <a
-                      href={ksuLink}
-                      className="logo d-flex align-items-center w-auto"
-                    >
-                      <img src={ksuLogo} alt="ksü logo" />
-                      <span className="d-none d-lg-block">KSÜ</span>
-                    </a>
-                  </div>
-                  <ForgotPasswordForm />
-                  <div className="credits" align="center">
-                    Tüm Hakları Saklıdır © 2022
-                    <br />
-                    <a href={ksuLink}>Kahramanmaraş Sütçü İmam Üniversitesi</a>
-                  </div>
+    <main>
+      <div className="container">
+        <section className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                <div className="d-flex justify-content-center py-3">
+                  <a
+                    href={ksuLink}
+                    className="logo d-flex align-items-center w-auto"
+                  >
+                    <img src={ksuLogo} alt="ksü logo" />
+                    <span className="d-none d-lg-block">KSÜ</span>
+                  </a>
+                </div>
+                <ForgotPasswordForm />
+                <div className="credits" align="center">
+                  Tüm Hakları Saklıdır © 2022
+                  <br />
+                  <a href={ksuLink}>Kahramanmaraş Sütçü İmam Üniversitesi</a>
                 </div>
               </div>
             </div>
-          </section>
-        </div>
-      </main>
-  );
-};
+          </div>
+        </section>
+      </div>
+    </main>
+  )
+}
 
-export default ForgotPassword;
+export default ForgotPassword
