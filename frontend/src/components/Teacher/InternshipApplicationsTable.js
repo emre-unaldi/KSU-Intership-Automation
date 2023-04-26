@@ -1,73 +1,51 @@
-import { useRef, useState } from "react";
-import {Button, Input, Space, Table, Tag, Typography, Modal, message} from "antd";
-import { SearchOutlined } from "@ant-design/icons";
-import Highlighter from "react-highlight-words";
-import ViewCompanyStudentApplied from "./ViewCompanyStudentApplied";
+import { useEffect, useRef, useState } from 'react'
+import { Button, Input, Space, Table, Tag, Typography } from 'antd'
+import { useDispatch } from 'react-redux'
+import { getAllUserAndInternships } from '../../redux/userSlice'
+import { SearchOutlined } from '@ant-design/icons'
+import Highlighter from 'react-highlight-words'
+import ViewCompanyStudentApplied from './ViewCompanyStudentApplied'
 
 const InternshipApplicationsTable = () => {
-  const [messageApi, contextHolder] = message.useMessage();
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
-  const [open, setOpen] = useState(false);
-  const searchInput = useRef(null);
-  const { Title } = Typography;
+  const [searchText, setSearchText] = useState('')
+  const [searchedColumn, setSearchedColumn] = useState('')
+  const [open, setOpen] = useState(false)
+  const [users, setUsers] = useState([])
+  const [userIds, setUserIds] = useState([])
+  const [selectedInternshipId, setSelectedInternshipId] = useState()
+  const searchInput = useRef(null)
+  const dispatch = useDispatch()
+  const { Title } = Typography
 
-  const modalHandleOk = () => {
-    messageApi
-      .open({
-        type: "loading",
-        content: "İşlem Kaydediliyor...",
-        duration: 2,
+  useEffect(() => {
+    dispatch(getAllUserAndInternships())
+      .then(async (getAll) => {
+        if (getAll?.meta?.requestStatus === 'fulfilled') {
+          if (getAll?.payload?.status === 'success') {
+            const userIds = await getAll.payload.data
+              .map((user) =>
+                user.internships.filter(
+                  (internship) =>
+                    internship.companyApproval === true &&
+                    internship.consultantApproval === false
+                )
+              )
+              .flat()
+              .map((internship) => internship.studentID)
+              .filter((item, index, userId) => userId.indexOf(item) === index)
+            setUserIds(userIds)
+            setUsers(getAll.payload.data)
+          } else {
+            throw new Error(getAll.payload.message)
+          }
+        } else {
+          throw new Error('Failed request to fetch user and internships')
+        }
       })
-      .then(() => setOpen(false))
-      .then(() => message.success("Staj Başvurusu Onaylandı", 2))
-  }
-
-  const modalHandleCancel = () => {
-    messageApi
-      .open({
-        type: "loading",
-        content: "İşlem Kaydediliyor...",
-        duration: 2,
+      .catch((err) => {
+        console.error(err)
       })
-      .then(() => setOpen(false))
-      .then(() => message.error("Staj Başvurusu Reddedildi", 2))
-  }
-
-  const data = [
-    {
-      key: "1",
-      schollNumber: 19110131045,
-      applicationDate: "12-12-2022",
-      name: "John",
-      surname: "Brown",
-      class: 2
-    },
-    {
-      key: "2",
-      schollNumber: 19110131046,
-      applicationDate: "12-11-2022",
-      name: "Joe",
-      surname: "Black",
-      class: 2
-    },
-    {
-      key: "3",
-      schollNumber: 19110131047,
-      applicationDate: "10-12-2022",
-      name: "Jim",
-      surname: "Green",
-      class: 3
-    },
-    {
-      key: "4",
-      schollNumber: 19110131048,
-      applicationDate: "11-12-2022",
-      name: "Jim",
-      surname: "Red",
-      class: 4
-    },
-  ]
+  }, [dispatch])
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
@@ -77,7 +55,7 @@ const InternshipApplicationsTable = () => {
 
   const handleReset = (clearFilters) => {
     clearFilters()
-    setSearchText("")
+    setSearchText('')
   }
 
   const getColumnSearchProps = (data) => ({
@@ -89,7 +67,7 @@ const InternshipApplicationsTable = () => {
     }) => (
       <div
         style={{
-          padding: 8,
+          padding: 8
         }}
         onKeyDown={(e) => e.stopPropagation()}
       >
@@ -105,7 +83,7 @@ const InternshipApplicationsTable = () => {
           }
           style={{
             marginBottom: 8,
-            display: "block"
+            display: 'block'
           }}
         />
         <Space>
@@ -116,9 +94,9 @@ const InternshipApplicationsTable = () => {
             size="small"
             style={{
               width: 90,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
             }}
           >
             Ara
@@ -138,7 +116,7 @@ const InternshipApplicationsTable = () => {
     filterIcon: (filtered) => (
       <SearchOutlined
         style={{
-          color: filtered ? "#1890ff" : undefined,
+          color: filtered ? '#1890ff' : undefined
         }}
       />
     ),
@@ -149,19 +127,19 @@ const InternshipApplicationsTable = () => {
         .includes(value.toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
+        setTimeout(() => searchInput.current?.select(), 100)
       }
     },
     render: (text) =>
       searchedColumn === data.dataIndex ? (
         <Highlighter
           highlightStyle={{
-            backgroundColor: "#ffc069",
-            padding: 0
+            backgroundColor: '#ffc069',
+            padding: 0,
           }}
           searchWords={[searchText]}
           autoEscape
-          textToHighlight={text ? text.toString() : ""}
+          textToHighlight={text ? text.toString() : ''}
         />
       ) : (
         text
@@ -170,120 +148,143 @@ const InternshipApplicationsTable = () => {
 
   const columns = [
     {
-      title: "Öğrenci Numarası",
-      dataIndex: "schollNumber",
-      key: "schollNumber",
-      ...getColumnSearchProps({ dataIndex: "schollNumber", title: "Öğrenci Numarası" })
+      title: 'Öğrenci Numarası',
+      dataIndex: 'schollNumber',
+      key: 'schollNumber',
+      ...getColumnSearchProps({
+        dataIndex: 'schollNumber',
+        title: 'Öğrenci Numarası'
+      })
     },
     {
-      title: "Öğrenci Adı",
-      dataIndex: "name",
-      key: "name",
-      ...getColumnSearchProps({ dataIndex: "name", title: "Öğrenci Adı" })
+      title: 'Öğrenci Adı',
+      dataIndex: 'name',
+      key: 'name',
+      ...getColumnSearchProps({ 
+        dataIndex: 'name', 
+        title: 'Öğrenci Adı' 
+      })
     },
     {
-      title: "Öğrenci Soyadı",
-      dataIndex: "surname",
-      key: "surname",
-      ...getColumnSearchProps({ dataIndex: "surname", title: "Öğrenci Soyadı" })
+      title: 'Öğrenci Soyadı',
+      dataIndex: 'surname',
+      key: 'surname',
+      ...getColumnSearchProps({
+        dataIndex: 'surname',
+        title: 'Öğrenci Soyadı'
+      })
     },
     {
-      title: "Öğrenci Sınıfı",
-      dataIndex: "class",
-      key: "class",
-      ...getColumnSearchProps({ dataIndex: "class", title: "Öğrenci Sınıfı" })
+      title: 'Başvurulan Staj',
+      dataIndex: 'internshipVariety',
+      key: 'internshipVariety',
+      ...getColumnSearchProps({
+        dataIndex: 'internshipVariety',
+        title: 'Başvurulan Staj'
+      })
     },
     {
-      title: "Başvuru Tarihi",
-      dataIndex: "applicationDate",
-      key: "applicationDate",
-      ...getColumnSearchProps({ dataIndex: "applicationDate", title: "Başvuru Tarihi" })
+      title: 'Başvuru Tarihi',
+      dataIndex: 'applicationDate',
+      key: 'applicationDate',
+      ...getColumnSearchProps({
+        dataIndex: 'applicationDate',
+        title: 'Başvuru Tarihi'
+      })
     },
     {
-      title: "İş Yeri",
-      key: "company",
-      render: () => (
+      title: 'İş Yeri',
+      key: 'company',
+      render: (internship) => (
         <Tag
-          color={"geekblue"}
+          color={'geekblue'}
           style={{
-            cursor: "pointer",
-            padding: "3px 6px",
+            cursor: 'pointer',
+            padding: '3px 6px'
           }}
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            setOpen(true)
+            setSelectedInternshipId(internship.key)
+          }}
         >
-          <span>{"Görüntüle".toUpperCase()}</span>
+          <span>{'Görüntüle'.toUpperCase()}</span>
         </Tag>
       )
     }
   ]
 
+  const formatDate = (applicationDate) => {
+    const date = new Date(applicationDate)
+    const day = date.getUTCDate().toString().padStart(2, '0')
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0')
+    const year = date.getUTCFullYear().toString()
+    const hours = date.getUTCHours().toString().padStart(2, '0')
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0')
+    const seconds = date.getUTCSeconds().toString().padStart(2, '0')
+
+    return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`
+  }
+
+  const convertToTR = (internshipSelection) => {
+    if (internshipSelection === 'software') {
+      return 'Yazılım'
+    } else if (internshipSelection === 'hardware') {
+      return 'Donanım'
+    } else {
+      return 'UME'
+    }
+  }
+
   return (
     <>
-      {contextHolder}
-      <Title 
-        className="card-title" 
-        style={{ 
-          textAlign: "center", 
-          color: "#193164" 
-        }} 
+      <Title
+        className="card-title"
+        style={{
+          textAlign: 'center',
+          color: '#193164'
+        }}
         level={4}
       >
         Danışman Onayı Bekleyen Öğrenciler
       </Title>
+
       <Table
         bordered="true"
         loading="true"
-        style={{ width: "100%" }}
+        style={{ width: '100%' }}
         size="small"
         scroll={{
-          x: "100%",
+          x: '100%'
         }}
         columns={columns}
-        dataSource={data}
+        dataSource={users
+          .filter((user) => userIds.includes(user._id))
+          .flatMap((user) =>
+            user.internships
+              .filter(
+                (item) =>
+                  item.companyApproval === true &&
+                  item.consultantApproval === false &&
+                  item.consultantApprovalUpdate === false
+              )
+              .map((item) => ({
+                key: item._id,
+                schollNumber: user.schoolNumber,
+                name: user.name,
+                surname: user.surname,
+                internshipVariety: convertToTR(item.internship),
+                applicationDate: formatDate(item.createdAt)
+              }))
+          )}
       />
-      <Modal
-        centered
+
+      <ViewCompanyStudentApplied
         open={open}
-        width={600}
-        onCancel={() => {
-          setOpen(false);
-        }}
-        footer={[
-          <Space
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <Button
-              style={{
-                width: 100
-              }}
-              key="back"
-              type="default"
-              onClick={modalHandleCancel}
-              value
-            >
-              Reddet
-            </Button>
-            <Button
-              style={{
-                width: 100
-              }}
-              key="submit"
-              type="primary"
-              onClick={modalHandleOk}
-            >
-              Onayla
-            </Button>
-          </Space>
-        ]}
-      >
-        <ViewCompanyStudentApplied />
-      </Modal>
+        setOpen={setOpen}
+        selectedInternshipId={selectedInternshipId}
+      />
     </>
   )
 }
 
-export default InternshipApplicationsTable;
+export default InternshipApplicationsTable

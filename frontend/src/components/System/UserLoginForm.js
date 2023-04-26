@@ -1,49 +1,57 @@
-import React, { useRef } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
-import { loginValidationSchema } from "./FormikValidations";
-import { useDispatch, useSelector } from "react-redux";
-import { verifyReCaptcha, checkReCaptchaValue } from "../../redux/systemConfigurationSlice";
-import { loginUser } from "../../redux/userConfigurationSlice";
-axios.defaults.withCredentials = true;
+import React, { useRef } from 'react'
+import ReCAPTCHA from 'react-google-recaptcha'
+import axios from 'axios'
+import { Link, useNavigate } from 'react-router-dom'
+import { useFormik } from 'formik'
+import { loginValidationSchema } from './FormikValidations'
+import { useDispatch, useSelector } from 'react-redux'
+import { verifyReCaptcha, checkReCaptchaValue } from '../../redux/systemSlice'
+import { loginUser } from '../../redux/userSlice'
+axios.defaults.withCredentials = true
 
 const UserLoginForm = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const captchaRef = useRef(null);
-  const googleRecaptcha = useSelector((state) => state.system.recaptcha);
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const captchaRef = useRef(null)
+  const googleRecaptcha = useSelector((state) => state.system.recaptcha)
 
-  const { handleSubmit, handleChange, handleBlur, values, errors, touched, resetForm } = useFormik({
+  const {
+    handleSubmit,
+    handleChange,
+    handleBlur,
+    values,
+    errors,
+    touched,
+    resetForm,
+  } = useFormik({
     initialValues: {
-      loginEmail: "",
-      loginPassword: ""
+      loginEmail: '',
+      loginPassword: '',
     },
     onSubmit: (values) => {
       dispatch(loginUser(values))
         .then((loggedIn) => {
-          if (loggedIn?.meta?.requestStatus === "fulfilled") {
-            if (loggedIn?.payload?.status === "success") {
-              console.log(loggedIn.payload.message);
-              navigate(`${loggedIn.payload.user.role}/home`);
+          if (loggedIn?.meta?.requestStatus === 'fulfilled') {
+            if (loggedIn?.payload?.status === 'success') {
+              console.log(loggedIn.payload.message)
+              navigate(`${loggedIn.payload.user[0].role}/home`)
             } else {
-              console.log(loggedIn.payload.message);
-              navigate("/");
+              console.log(loggedIn.payload.message)
+              navigate('/')
             }
           } else {
-            console.log("User login failed. Try logging in again");
+            console.log('User login failed. Try logging in again')
           }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-      resetForm(values = {});
-      captchaRef.current.reset();
-      dispatch(checkReCaptchaValue());
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      resetForm((values = {}))
+      captchaRef.current.reset()
+      dispatch(checkReCaptchaValue())
     },
-    validationSchema: loginValidationSchema
-  });
+    validationSchema: loginValidationSchema,
+  })
 
   return (
     <>
@@ -76,7 +84,7 @@ const UserLoginForm = () => {
                 onBlur={handleBlur}
               />
               {errors.loginEmail && touched.loginEmail && (
-                <div style={{ color: "red" }}>
+                <div style={{ color: 'red' }}>
                   <label className="bi bi-exclamation-octagon">
                     &nbsp;{errors.loginEmail}
                   </label>
@@ -97,7 +105,7 @@ const UserLoginForm = () => {
                 onBlur={handleBlur}
               />
               {errors.loginPassword && touched.loginPassword && (
-                <div style={{ color: "red" }}>
+                <div style={{ color: 'red' }}>
                   <label className="bi bi-exclamation-octagon">
                     &nbsp;{errors.loginPassword}
                   </label>
@@ -107,10 +115,10 @@ const UserLoginForm = () => {
             <div
               className="col-12 pb-1 pt-1"
               style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
               }}
             >
               <div>
@@ -120,7 +128,7 @@ const UserLoginForm = () => {
                   onChange={(value) => {
                     value
                       ? dispatch(verifyReCaptcha(value))
-                      : dispatch(checkReCaptchaValue());
+                      : dispatch(checkReCaptchaValue())
                   }}
                 />
               </div>
@@ -128,9 +136,9 @@ const UserLoginForm = () => {
                 {googleRecaptcha.data === false ? (
                   <div
                     style={{
-                      color: "#4169E1",
-                      fontSize: "17px",
-                      paddingTop: "5px",
+                      color: '#4169E1',
+                      fontSize: '17px',
+                      paddingTop: '5px',
                     }}
                   >
                     <label className="bi bi-shield-fill-check">
@@ -152,17 +160,17 @@ const UserLoginForm = () => {
             <div className="col-12">
               <p className="small mb-0">
                 Hesabınız yok mu?
-                <Link to={"/register"}> Hesap Oluştur</Link>
+                <Link to={'/register'}> Hesap Oluştur</Link>
               </p>
             </div>
             <div className="col-12" align="right">
-              <Link to={"/forgotPassword"}>Şifremi Unuttum</Link>
+              <Link to={'/forgotPassword'}>Şifremi Unuttum</Link>
             </div>
           </form>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default UserLoginForm;
+export default UserLoginForm

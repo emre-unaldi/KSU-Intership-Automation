@@ -1,12 +1,12 @@
-import { configureStore } from "@reduxjs/toolkit";
-import systemConfigurationSlice from "../redux/systemConfigurationSlice";
-import userConfigurationSlice from "../redux/userConfigurationSlice";
-import internshipConfigurationSlice from "../redux/internshipConfigurationSlice";
+import { configureStore } from '@reduxjs/toolkit'
+import systemSlice from '../redux/systemSlice'
+import userSlice from '../redux/userSlice'
+import internshipSlice from '../redux/internshipSlice'
 
 export default configureStore({
   reducer: {
-    system: systemConfigurationSlice,
-    user: userConfigurationSlice,
-    internship: internshipConfigurationSlice
+    system: systemSlice,
+    user: userSlice,
+    internship: internshipSlice,
   },
-});
+})

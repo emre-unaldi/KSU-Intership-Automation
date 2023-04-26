@@ -1,9 +1,8 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema, model } from 'mongoose'
 
 const InternshipSchema = new Schema(
   {
-    studentID: String,
+    studentID: Schema.Types.ObjectId,
     companyName: String,
     companyEmail: String,
     companyPhone: String,
@@ -14,9 +13,17 @@ const InternshipSchema = new Schema(
     companyAddress: String,
     internshipDateRange: Array,
     instructions: Boolean,
+    companyApprovalUpdate: {
+      type: Boolean,
+      default: false
+    },
+    consultantApprovalUpdate: {
+      type: Boolean,
+      default: false
+    },
     internship: {
       type: String,
-      enum: ["software", "hardware", "intorn"]
+      enum: ['software', 'hardware', 'intorn']
     },
     companyApproval: {
       type: Boolean,
@@ -28,9 +35,9 @@ const InternshipSchema = new Schema(
     },
   },
   {
-    collection: "Internships",
+    collection: 'Internships',
     timestamps: true
   }
-);
+)
 
-module.exports = mongoose.model("Internship", InternshipSchema);
+export default model('Internship', InternshipSchema)

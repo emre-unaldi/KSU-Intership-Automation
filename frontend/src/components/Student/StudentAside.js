@@ -1,5 +1,5 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 function StudentAside() {
   return (
@@ -7,9 +7,9 @@ function StudentAside() {
       <ul className="sidebar-nav" id="sidebar-nav">
         <li className="nav-item">
           <NavLink
-            to={"/student/home"}
+            to={'/student/home'}
             className={({ isActive }) =>
-              isActive ? "nav-link" : "nav-link collapsed"
+              isActive ? 'nav-link' : 'nav-link collapsed'
             }
           >
             <i className="bi bi-house-fill" />
@@ -18,9 +18,9 @@ function StudentAside() {
         </li>
         <li className="nav-item">
           <NavLink
-            to={"/student/internshipForm/selection"}
+            to={'/student/internshipForm/selection'}
             className={({ isActive }) =>
-              isActive ? "nav-link" : "nav-link collapsed"
+              isActive ? 'nav-link' : 'nav-link collapsed'
             }
           >
             <i className="bi bi-calendar-plus-fill" />
@@ -29,9 +29,9 @@ function StudentAside() {
         </li>
         <li className="nav-item">
           <NavLink
-            to={"/student/internshipDocuments"}
+            to={'/student/internshipDocuments'}
             className={({ isActive }) =>
-              isActive ? "nav-link" : "nav-link collapsed"
+              isActive ? 'nav-link' : 'nav-link collapsed'
             }
           >
             <i className="bi bi-folder-symlink-fill" />
@@ -40,9 +40,9 @@ function StudentAside() {
         </li>
         <li className="nav-item">
           <NavLink
-            to={"/student/internshipProcess"}
+            to={'/student/internshipProcess'}
             className={({ isActive }) =>
-              isActive ? "nav-link" : "nav-link collapsed"
+              isActive ? 'nav-link' : 'nav-link collapsed'
             }
           >
             <i className="bi bi-collection-fill" />
@@ -51,7 +51,7 @@ function StudentAside() {
         </li>
       </ul>
     </aside>
-  );
+  )
 }
 
-export default StudentAside;
+export default StudentAside

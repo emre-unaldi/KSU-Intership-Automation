@@ -1,11 +1,11 @@
-import axios from "axios";
-import { useSelector } from "react-redux";
-import ksuLogo from "../../../assets/img/ksu.png";
-import UserLoginForm from "../../../components/Form/UserLoginForm";
-axios.defaults.withCredentials = true;
+import axios from 'axios'
+import { useSelector } from 'react-redux'
+import ksuLogo from '../../../assets/img/ksu.png'
+import UserLoginForm from '../../../components/System/UserLoginForm'
+axios.defaults.withCredentials = true
 
 const UserLogin = () => {
-  const ksuLink = useSelector((state) => state.system.ksuLink);
+  const ksuLink = useSelector((state) => state.system.ksuLink)
 
   return (
     <>
@@ -42,7 +42,7 @@ const UserLogin = () => {
         <i className="bi bi-arrow-up-short"></i>
       </a>
     </>
-  );
-};
+  )
+}
 
-export default UserLogin;
+export default UserLogin

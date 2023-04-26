@@ -1,29 +1,36 @@
-import React, { useRef } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
-import { Link } from "react-router-dom";
-import { useFormik } from "formik";
-import { forgotPasswordValidationSchema } from "./FormikValidations";
-import { useDispatch, useSelector } from "react-redux";
-import { verifyReCaptcha, checkReCaptchaValue } from "../../redux/systemConfigurationSlice";
-
+import React, { useRef } from 'react'
+import ReCAPTCHA from 'react-google-recaptcha'
+import { Link } from 'react-router-dom'
+import { useFormik } from 'formik'
+import { useDispatch, useSelector } from 'react-redux'
+import { forgotPasswordValidationSchema } from './FormikValidations'
+import { verifyReCaptcha, checkReCaptchaValue } from '../../redux/systemSlice'
 
 const ForgotPasswordForm = () => {
-  const dispatch = useDispatch();
-  const captchaRef = useRef(null);
-  const googleRecaptcha = useSelector((state) => state.system.recaptcha);
+  const dispatch = useDispatch()
+  const captchaRef = useRef(null)
+  const googleRecaptcha = useSelector((state) => state.system.recaptcha)
 
-  const { handleSubmit, handleChange, handleBlur, values, errors, touched, resetForm } = useFormik({
+  const {
+    handleSubmit,
+    handleChange,
+    handleBlur,
+    values,
+    errors,
+    touched,
+    resetForm,
+  } = useFormik({
     initialValues: {
-      schoolNumber: "",
-      userEmail: ""
+      schoolNumber: '',
+      userEmail: ''
     },
     onSubmit: (values) => {
-      resetForm(values = {});
-      captchaRef.current.reset();
-      dispatch(checkReCaptchaValue());
+      resetForm((values = {}))
+      captchaRef.current.reset()
+      dispatch(checkReCaptchaValue())
     },
-    validationSchema: forgotPasswordValidationSchema
-  });
+    validationSchema: forgotPasswordValidationSchema,
+  })
 
   return (
     <>
@@ -57,7 +64,7 @@ const ForgotPasswordForm = () => {
                 onBlur={handleBlur}
               />
               {errors.schoolNumber && touched.schoolNumber && (
-                <div style={{ color: "red" }}>
+                <div style={{ color: 'red' }}>
                   <label className="bi bi-exclamation-circle-fill">
                     &nbsp;{errors.schoolNumber}
                   </label>
@@ -78,7 +85,7 @@ const ForgotPasswordForm = () => {
                 onBlur={handleBlur}
               />
               {errors.userEmail && touched.userEmail && (
-                <div style={{ color: "red" }}>
+                <div style={{ color: 'red' }}>
                   <label className="bi bi-exclamation-circle-fill">
                     &nbsp;{errors.userEmail}
                   </label>
@@ -88,10 +95,10 @@ const ForgotPasswordForm = () => {
             <div
               className="col-12 pb-1 pt-1"
               style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
               }}
             >
               <div>
@@ -101,7 +108,7 @@ const ForgotPasswordForm = () => {
                   onChange={(value) => {
                     value
                       ? dispatch(verifyReCaptcha(value))
-                      : dispatch(checkReCaptchaValue());
+                      : dispatch(checkReCaptchaValue())
                   }}
                 />
               </div>
@@ -109,9 +116,9 @@ const ForgotPasswordForm = () => {
                 {googleRecaptcha.data === false ? (
                   <div
                     style={{
-                      color: "#4169E1",
-                      fontSize: "17px",
-                      paddingTop: "5px",
+                      color: '#4169E1',
+                      fontSize: '17px',
+                      paddingTop: '5px',
                     }}
                   >
                     <label className="bi bi-shield-fill-check">
@@ -132,14 +139,14 @@ const ForgotPasswordForm = () => {
             </div>
             <div className="col-12" align="center">
               <p>
-                <Link to={"/"}>Giriş Yap</Link>
+                <Link to={'/'}>Giriş Yap</Link>
               </p>
             </div>
           </form>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default ForgotPasswordForm;
+export default ForgotPasswordForm

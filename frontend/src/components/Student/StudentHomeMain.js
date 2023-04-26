@@ -1,5 +1,5 @@
-import React from "react";
-import PdfViewer from "../System/PdfViewer";
+import React from 'react'
+import PdfViewer from '../System/PdfViewer'
 
 function StudentHomeMain() {
   return (
@@ -23,7 +23,8 @@ function StudentHomeMain() {
                   <i className="bi bi-calendar-week-fill me-1"></i>
                   <b>
                     Staj başvuruları 20.01.2023 tarihinde sonlandırılacaktır.
-                    Öğrencilerin staj evraklarını zamanında teslim etmek zorundadır.
+                    Öğrencilerin staj evraklarını zamanında teslim etmek
+                    zorundadır.
                   </b>
                 </div>
               </div>
@@ -31,7 +32,8 @@ function StudentHomeMain() {
                 <div className="alert alert-warning">
                   <i className="bi bi-info-square-fill me-1"></i>
                   <b>
-                    Öğrencilerin staj evraklarını zamanında teslim etmek zorundadır.
+                    Öğrencilerin staj evraklarını zamanında teslim etmek
+                    zorundadır.
                   </b>
                 </div>
               </div>
@@ -39,7 +41,8 @@ function StudentHomeMain() {
                 <div className="alert alert-warning">
                   <i className="bi bi-info-square-fill me-1"></i>
                   <b>
-                    Öğrencilerin staj evraklarını zamanında teslim etmek zorundadır.
+                    Öğrencilerin staj evraklarını zamanında teslim etmek
+                    zorundadır.
                   </b>
                 </div>
               </div>
@@ -47,7 +50,8 @@ function StudentHomeMain() {
                 <div className="alert alert-warning">
                   <i className="bi bi-info-square-fill me-1"></i>
                   <b>
-                    Öğrencilerin staj evraklarını zamanında teslim etmek zorundadır.
+                    Öğrencilerin staj evraklarını zamanında teslim etmek
+                    zorundadır.
                   </b>
                 </div>
               </div>
@@ -56,7 +60,7 @@ function StudentHomeMain() {
         </div>
       </section>
     </main>
-  );
+  )
 }
 
-export default StudentHomeMain;
+export default StudentHomeMain

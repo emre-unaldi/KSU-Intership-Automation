@@ -1,12 +1,11 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
-import { checkUser } from "../../redux/userConfigurationSlice";
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { Navigate } from "react-router-dom"
+import { checkUser } from "../../redux/userSlice"
 
 export default function TeacherPrivateRoute({ children }) {
     const dispatch = useDispatch()
     const currentUser = useSelector((state) => state.user.check)
-    //console.log("Teacher : " , currentUser)
 
     useEffect(() => {
       dispatch(checkUser())
@@ -21,6 +20,7 @@ export default function TeacherPrivateRoute({ children }) {
           />
         )
     }
+
     // kullanıcı rolü varsa ve teacher değilse mevcut kullanıcı anasayfasına yönlendir
     if (currentUser?.data?.user?.role && currentUser?.data?.user?.role !== 'teacher') {
       console.log("Teacher User Not Defined")
@@ -31,5 +31,5 @@ export default function TeacherPrivateRoute({ children }) {
         )
     }
       
-  return children;
+  return children
 }

@@ -1,7 +1,11 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { createInternship } from "../../../redux/internshipConfigurationSlice";
+import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  createInternship,
+  sendInternshipConfirmationMail,
+} from '../../../redux/internshipSlice'
+import { ToastContainer, toast } from 'react-toastify'
 import {
   Button,
   Form,
@@ -10,8 +14,8 @@ import {
   Typography,
   ConfigProvider,
   Row,
-  Col
-} from "antd";
+  Col,
+} from 'antd'
 import {
   FieldNumberOutlined,
   HomeOutlined,
@@ -19,42 +23,42 @@ import {
   PhoneOutlined,
   SyncOutlined,
   TeamOutlined,
-  UserOutlined
-} from "@ant-design/icons";
-import trTR from "antd/es/locale/tr_TR";
-import "./internshForm.css";
+  UserOutlined,
+} from '@ant-design/icons'
+import trTR from 'antd/es/locale/tr_TR'
+import './internshForm.css'
 
 const CompanyInformationForm = () => {
-  const [loadings, setLoadings] = useState(false);
-  const [formFieldError, setFormFieldError] = useState(false);
-  const { RangePicker } = DatePicker;
-  const { Title } = Typography;
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const dispatch = useDispatch();
-
-  const currentUser = useSelector((state) => state.user.check.data.user);
-  const instructionsAndInternship = location.state.instructionsAndInternship;
+  const [loading, setLoading] = useState(false)
+  const [formFieldError, setFormFieldError] = useState(false)
+  const { RangePicker } = DatePicker
+  const { Title, Text } = Typography
+  const [form] = Form.useForm()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const currentUserId = useSelector((state) => state.user.check.data?.user?._id)
+  const internship = localStorage.getItem('internship')
+  const instructions = localStorage.getItem('instructions')
+  let toastId = useRef(null)
 
   const formItemLayout = {
     labelCol: {
       xs: {
-        span: 24,
+        span: 24
       },
       sm: {
         span: 8
-      },
+      }
     },
     wrapperCol: {
       xs: {
-        span: 24,
+        span: 24
       },
       sm: {
         span: 16
       }
-    }
-  };
+    },
+  }
   const tailFormItemLayout = {
     wrapperCol: {
       xs: {
@@ -66,55 +70,138 @@ const CompanyInformationForm = () => {
         offset: 8
       }
     }
-  };
+  }
+
+  const toastConfig = (message, type) => {
+    return {
+      render: message,
+      type: type,
+      isLoading: false,
+      position: 'top-right',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: 'colored'
+    }
+  }
 
   const onFinish = (values) => {
     const internshipValues = {
-      ...instructionsAndInternship,
       ...values,
-      studentID: currentUser?._id
-    };
-    setFormFieldError(false);
-    form.resetFields();
-    setTimeout(() => {
-      dispatch(createInternship(internshipValues))
-        .then((create) => {
-          if (create?.meta?.requestStatus === "fulfilled") {
-            if (create?.payload?.status === "success") {
-              console.log(create.payload.message);
-              navigate("/student/internshipForm/companyApprovalWait");
-            } else {
-              console.log(create.payload.message);
-            }
-          } else {
-            console.log("Internship create failed. Try created in again");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }, 3000);
-  };
+      studentID: currentUserId,
+      internship,
+      instructions
+    }
+    setFormFieldError(false)
+    form.resetFields()
+
+    const createInternshipPromise = () =>
+      new Promise((resolve, reject) =>
+        setTimeout(() => {
+
+          dispatch(createInternship(internshipValues))
+            .then((create) => {
+              if (create?.meta?.requestStatus === 'fulfilled') {
+                if (create?.payload?.status === 'success') {
+                  toastId = toast.loading('Başvuru Maili Gönderiliyor...')
+                  dispatch(sendInternshipConfirmationMail(internshipValues))
+                    .then((sendMail) => {
+                      if (sendMail?.meta?.requestStatus === 'fulfilled') {
+                        if (sendMail?.payload?.status === 'success') {
+                          setTimeout(() => {
+                            navigate(
+                              '/student/internshipForm/companyApprovalWait'
+                            )
+                          }, 3000)
+                          toast.update(
+                            toastId,
+                            toastConfig(sendMail.payload.message, 'success')
+                          )
+                        } else {
+                          toast.update(
+                            toastId,
+                            toastConfig(sendMail.payload.message, 'error')
+                          )
+                        }
+                      } else {
+                        setTimeout(() => {
+                          toast.update(
+                            toastId,
+                            toastConfig(
+                              'Başvuru Maili gönderilemedi. Tekrar göndermeyi deneyin !',
+                              'error'
+                            )
+                          )
+                          throw new Error('Send mail request failed')
+                        }, 3000)
+                      }
+                    })
+                    .catch((err) => {
+                      console.error(err)
+                    })
+                  resolve(create.payload.message)
+                } else {
+                  reject(create.payload.message)
+                }
+              } else {
+                reject('Staj başvurusu oluşturulamadı')
+                throw new Error('Internship creation request failed')
+              }
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+        }, 3000))
+
+    toast.promise(createInternshipPromise, {
+      pending: 'Staj Başvurusu Yapılıyor...',
+      success: {
+        render({ data }) {
+          return data
+        }
+      },
+      error: {
+        render({ data }) {
+          return data
+        }
+      }
+    })
+  }
 
   const onFinishFailed = (values) => {
-    setFormFieldError(true);
-    console.log("onFinishFailed Values: ", values);
-  };
+    setFormFieldError(true)
+    console.log('onFinishFailed Values: ', values)
+  }
 
   const handleLoading = () => {
-    setLoadings(true);
+    setLoading(true)
     setTimeout(() => {
-      setLoadings(false);
-    }, 3000);
-  };
+      setLoading(false)
+    }, 3000)
+  }
 
   return (
     <>
-      <Title className="card-title" style={{ color: "#193164" }} level={4}>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="colored"
+      />
+      <Title className="card-title" style={{ color: '#193164' }} level={4}>
         Staj Yapılacak Şirket Bilgileri
       </Title>
       <Form
-        {...formItemLayout}
+        { ...formItemLayout }
         form={form}
         name="company"
         onFinish={onFinish}
@@ -124,10 +211,10 @@ const CompanyInformationForm = () => {
         labelAlign="left"
         style={{
           maxWidth: 650,
-          width: "100%",
-          boxShadow: "1px 2px 20px #d4d4d4",
+          width: '100%',
+          boxShadow: '1px 2px 20px #d4d4d4',
           borderRadius: 10,
-          padding: "25px 25px 0 25px",
+          padding: '25px 25px 0 25px',
           marginBottom: 35
         }}
         scrollToFirstError
@@ -139,20 +226,20 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: "İş yeri adını giriniz !",
+              message: 'İş yeri adını giriniz !',
             },
             {
-              type: "string",
+              type: 'string',
               whitespace: true,
-              message: "İş yeri adı sadece boşluk karakteri içermemelidir !",
+              message: 'İş yeri adı sadece boşluk karakteri içermemelidir !',
             },
             {
               max: 20,
-              message: "İş yeri adı sadece 20 karakter içerebilir !"
-            }
+              message: 'İş yeri adı sadece 20 karakter içerebilir !',
+            },
           ]}
         >
-          <Input prefix={<HomeOutlined style={{ color: "gray" }} />} />
+          <Input prefix={<HomeOutlined style={{ color: 'gray' }} />} />
         </Form.Item>
 
         <Form.Item
@@ -162,16 +249,16 @@ const CompanyInformationForm = () => {
           hasFeedback
           rules={[
             {
-              type: "email",
-              message: "E-Posta girişi geçerli değil !",
+              type: 'email',
+              message: 'E-Posta girişi geçerli değil !'
             },
             {
               required: true,
-              message: "E-posta adresini giriniz !"
+              message: 'E-posta adresini giriniz !'
             }
           ]}
         >
-          <Input prefix={<MailOutlined style={{ color: "gray" }} />} />
+          <Input prefix={<MailOutlined style={{ color: 'gray' }} />} />
         </Form.Item>
 
         <Form.Item
@@ -181,15 +268,15 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: "Telefon numarası giriniz !",
+              message: 'Telefon numarası giriniz !'
             },
             {
               pattern: /^\+?\d{1,3}[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
-              message: "Telefon numarası formatı doğru değil !"
+              message: 'Telefon numarası formatı doğru değil !'
             }
           ]}
         >
-          <Input prefix={<PhoneOutlined style={{ color: "gray" }} />} />
+          <Input prefix={<PhoneOutlined style={{ color: 'gray' }} />} />
         </Form.Item>
 
         <Form.Item
@@ -198,7 +285,7 @@ const CompanyInformationForm = () => {
           className="responsible"
           hasFeedback
           style={{
-            marginBottom: 0,
+            marginBottom: 0
           }}
         >
           <Row gutter={8}>
@@ -209,21 +296,21 @@ const CompanyInformationForm = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Yetkili adını giriniz !",
+                    message: 'Yetkili adını giriniz !'
                   },
                   {
-                    type: "string",
+                    type: 'string',
                     whitespace: true,
                     message:
-                      "Yetkili adı sadece boşluk karakteri içermemelidir !",
+                      'Yetkili adı sadece boşluk karakteri içermemelidir !'
                   },
                   {
                     max: 20,
-                    message: "Yetkili adı sadece 20 karakter içerebilir !"
+                    message: 'Yetkili adı sadece 20 karakter içerebilir !'
                   }
                 ]}
               >
-                <Input prefix={<UserOutlined style={{ color: "gray" }} />} />
+                <Input prefix={<UserOutlined style={{ color: 'gray' }} />} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -233,46 +320,45 @@ const CompanyInformationForm = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Yetkili soyadını giriniz !",
+                    message: 'Yetkili soyadını giriniz !'
                   },
                   {
-                    type: "string",
+                    type: 'string',
                     whitespace: true,
-                    message:
-                      "Yetkili adı soyadını boşluk karakteri içermemelidir !",
+                    message: 'Yetkili adı soyadını boşluk karakteri içermemelidir !'
                   },
                   {
                     max: 20,
-                    message: "Yetkili soyadını sadece 20 karakter içerebilir !"
+                    message: 'Yetkili soyadını sadece 20 karakter içerebilir !'
                   }
                 ]}
               >
-                <Input prefix={<UserOutlined style={{ color: "gray" }} />} />
+                <Input prefix={<UserOutlined style={{ color: 'gray' }} />} />
               </Form.Item>
             </Col>
           </Row>
         </Form.Item>
 
         <Form.Item
-          name="companyPersonalNumber"
+          name="companyPersonalCount"
           label="Çalışan Sayısı"
           hasFeedback
           rules={[
             {
               required: true,
-              message: "Çalışan kişi sayısını giriniz !",
+              message: 'Çalışan kişi sayısını giriniz !',
             },
             {
               pattern: /^[0-9]+$/,
-              message: "Çalışan sayısı sadece sayı içerebilir !",
+              message: 'Çalışan sayısı sadece sayı içerebilir !',
             },
             {
               max: 5,
-              message: "Çalışan sayısı en fazla 5 haneli olabilir !"
-            }
+              message: 'Çalışan sayısı en fazla 5 haneli olabilir !',
+            },
           ]}
         >
-          <Input prefix={<TeamOutlined style={{ color: "gray" }} />} />
+          <Input prefix={<TeamOutlined style={{ color: 'gray' }} />} />
         </Form.Item>
 
         <Form.Item
@@ -282,19 +368,19 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: "İş Yeri vergi numarasını giriniz !",
+              message: 'İş Yeri vergi numarasını giriniz !'
             },
             {
               pattern: /^[0-9]+$/,
-              message: "Vergi numarası sadece sayı içerebilir !",
+              message: 'Vergi numarası sadece sayı içerebilir !'
             },
             {
               max: 10,
-              message: "Vergi numarası en fazla 10 haneli olabilir !"
+              message: 'Vergi numarası en fazla 10 haneli olabilir !'
             }
           ]}
         >
-          <Input prefix={<FieldNumberOutlined style={{ color: "gray" }} />} />
+          <Input prefix={<FieldNumberOutlined style={{ color: 'gray' }} />} />
         </Form.Item>
 
         <Form.Item
@@ -304,16 +390,16 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: "İş yeri adresini giriniz !",
+              message: 'İş yeri adresini giriniz !'
             },
             {
-              type: "string",
+              type: 'string',
               whitespace: true,
-              message: "İş yeri adresi sadece boşluk karakteri içermemelidir !",
+              message: 'İş yeri adresi sadece boşluk karakteri içermemelidir !'
             },
             {
               min: 10,
-              message: "İş yeri adresi en az 10 karakter girilmelidir !"
+              message: 'İş yeri adresi en az 10 karakter girilmelidir !'
             }
           ]}
         >
@@ -328,14 +414,14 @@ const CompanyInformationForm = () => {
             rules={[
               {
                 required: true,
-                message: "Staj yapılacak tarih aralığını giriniz !"
+                message: 'Staj yapılacak tarih aralığını giriniz !'
               }
             ]}
           >
             <RangePicker
-              format={"DD/MM/YYYY"}
+              format={'DD/MM/YYYY'}
               style={{
-                width: "100%"
+                width: '100%'
               }}
             />
           </Form.Item>
@@ -347,25 +433,36 @@ const CompanyInformationForm = () => {
             htmlType="submit"
             size="large"
             onClick={() => {
-              handleLoading();
+              handleLoading()
             }}
             style={{
-              width: "100%",
+              width: '100%',
               fontSize: 18,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
           >
-            {loadings && formFieldError === false ? (
-              <SyncOutlined spin={loadings} />
+            {loading && formFieldError === false ? (
+              <Text
+                style={{
+                  width: '100%',
+                  fontSize: 18,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white'
+                }}
+              >
+                Gönderiliyor... &nbsp; <SyncOutlined spin={loading} />
+              </Text>
             ) : (
-              "Devam Et"
+              'Başvuru Yap'
             )}
           </Button>
         </Form.Item>
       </Form>
     </>
-  );
-};
-export default CompanyInformationForm;
+  )
+}
+export default CompanyInformationForm
