@@ -1,7 +1,7 @@
 import Internship from '../models/Internship.js'
 import User from '../models/User.js'
 import { createTransport } from 'nodemailer'
-import confirmationMailTemplate from '../public/confirmationMailTemplate.js'
+import confirmationMailTemplate from '../public/templates/confirmationMailTemplate.js'
 
 const convertToTR = (internship) => {
   if (internship === 'software') {

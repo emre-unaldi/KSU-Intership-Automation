@@ -4,12 +4,16 @@ import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import { config } from 'dotenv'
 import cors from 'cors'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import mongoDB from './helper/mongoDB.js'
 import recaptchaRouter from './routes/recaptcha.routes.js'
 import userRoutes from './routes/user.routes.js'
 import internshipRoutes from './routes/internship.routes.js'
+import fileRoutes from './routes/file.routes.js'
 
 const app = express()
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // dotenv
 config()
@@ -25,17 +29,22 @@ app.use(
 // Database
 mongoDB()
 
+// public/uploads export
+app.use(express.static(path.join(__dirname, 'public')))
+app.use('/uploads', express.static(__dirname))
+
 app.use(logger('dev'))
 
 // Parse data
-app.use(json())
-app.use(urlencoded({ extended: true }))
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 
 // Routes
 app.use('/api/recaptcha', recaptchaRouter)
 app.use('/api/users', userRoutes)
 app.use('/api/internship', internshipRoutes)
+app.use('/api/file', fileRoutes)
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
