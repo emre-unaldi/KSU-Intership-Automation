@@ -2,7 +2,7 @@ import React from 'react'
 import StudentHeader from '../../../components/Student/StudentHeader'
 import StudentAside from '../../../components/Student/StudentAside'
 import StudentFooter from '../../../components/Student/StudentFooter'
-import InternshipDocuments from '../../../components/Student/InternshipDocuments'
+import InternshipDocuments from '../../../components/Student/internshipDocuments/InternshipDocuments'
 
 const InternshipDocumentsPage = () => {
   return (
