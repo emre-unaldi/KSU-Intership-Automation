@@ -5,20 +5,23 @@ import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { v4 as uuidv4 } from 'uuid';
 import { fileUploadByUserId, fileFetchByUserId } from '../../../redux/documentSlice'
-import { Link } from 'react-router-dom'
 import FileDelete from './FileDelete'
 import FileView from './FileView'
 
 const FileUpload = (props) => {
     const [ files, setFiles ] = useState()
-    const { documentType } = props
+    const { documentType, internshipType } = props
     const { Dragger } = Upload
     const { Text } = Typography
     const dispatch = useDispatch()
     const currentUserId = useSelector((state) => state.user.check?.data?.user?._id)
 
     useEffect(() => {
-        dispatch(fileFetchByUserId({ studentID : currentUserId }))
+        dispatch(fileFetchByUserId({ 
+            studentID : currentUserId, 
+            documentType, 
+            internshipType 
+        }))
         .then((fetch) => {
             if (fetch?.meta?.requestStatus === 'fulfilled') {
                 if (fetch.payload.status === 'success') {
@@ -37,9 +40,11 @@ const FileUpload = (props) => {
         .catch((error) => {
             console.error(error);
         })
-    }, [dispatch, currentUserId])
+    }, [dispatch, currentUserId, documentType, internshipType])
 
-    const customUploadRequest = (options, fileToUpload, currentUserId) => {
+    console.log(files);
+
+    const customUploadRequest = (options, documentType, internshipType, currentUserId) => {        
         const { file, onSuccess, onError } = options
         const reader = new FileReader()
         let renamedFile
@@ -50,31 +55,11 @@ const FileUpload = (props) => {
         if (isPdfFile) {
             reader.readAsArrayBuffer(file)
             reader.onload = () => {
-                switch (fileToUpload) {
-                    case 'notebook':
-                        renamedFile = new File(
-                            [reader.result],
-                            `notebook_${currentUserId}.pdf`,
-                            { type: file.type }
-                        )
-                    break
-                    case 'chart':
-                        renamedFile = new File(
-                            [reader.result],
-                            `chart_${currentUserId}.pdf`,
-                            { type: file.type }
-                        )
-                    break
-                    case 'report':
-                        renamedFile = new File(
-                            [reader.result],
-                            `report_${currentUserId}.pdf`,
-                            { type: file.type }
-                        )
-                    break
-                    default:
-                    break
-                }
+                renamedFile = new File(
+                    [reader.result],
+                    `${internshipType}_${documentType}_${currentUserId}.pdf`,
+                    { type: file.type }
+                )
 
                 const formData = new FormData()
                 formData.append('file', renamedFile)
@@ -121,7 +106,9 @@ const FileUpload = (props) => {
         <Dragger
             listType="picture"
             showUploadList={false}
-            customRequest={(options) => customUploadRequest(options, documentType, currentUserId)}
+            customRequest={(options) => customUploadRequest(
+                options, documentType, internshipType, currentUserId
+            )}
         >
             <Space
                 style={{
@@ -150,7 +137,11 @@ const FileUpload = (props) => {
         </Dragger>
         {
             files ? 
-            files.filter((file) => file.type === documentType)
+            files.filter((file) => 
+                file.internshipType === internshipType 
+                && 
+                file.documentType === documentType
+            )
             .map((file) =>             
                 (
                     <Space
@@ -173,14 +164,17 @@ const FileUpload = (props) => {
                                 }}
                             />
                             <Text>
-                                <Link href={`http://localhost:3001/uploads/${file.type}s/${file.name}`} target='_blank'>
-                                    {file.name.split('_')[0] + '.pdf'}
-                                </Link>
+                                <a 
+                                    href={`http://localhost:3001/uploads/${file.internshipType}/${file.documentType}/${file.name}`} 
+                                    target='_blank' rel='noopener noreferrer'
+                                >
+                                    {file.name}
+                                </a>
                             </Text>
                         </Space>
                         <Space>
-                            <FileDelete titleConvertToTR={titleConvertToTR(file.type)} file={file} />
-                            <FileView titleConvertToTR={titleConvertToTR(file.type)} file={file} />
+                            <FileDelete titleConvertToTR={titleConvertToTR(file.documentType)} file={file} />
+                            <FileView titleConvertToTR={titleConvertToTR(file.documentType)} file={file} />
                         </Space>
                     </Space>
                 )

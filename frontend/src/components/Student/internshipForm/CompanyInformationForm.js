@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   createInternship,
+  getAllInternships,
   sendInternshipConfirmationMail,
 } from '../../../redux/internshipSlice'
 import { ToastContainer, toast } from 'react-toastify'
@@ -31,6 +32,7 @@ import './internshForm.css'
 const CompanyInformationForm = () => {
   const [loading, setLoading] = useState(false)
   const [formFieldError, setFormFieldError] = useState(false)
+  const [currentUserInternships, setCurrentUserInternships] = useState([])
   const { RangePicker } = DatePicker
   const { Title, Text } = Typography
   const [form] = Form.useForm()
@@ -59,6 +61,7 @@ const CompanyInformationForm = () => {
       }
     },
   }
+
   const tailFormItemLayout = {
     wrapperCol: {
       xs: {
@@ -77,7 +80,7 @@ const CompanyInformationForm = () => {
       render: message,
       type: type,
       isLoading: false,
-      position: 'top-right',
+      position: 'top-center',
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -88,87 +91,125 @@ const CompanyInformationForm = () => {
     }
   }
 
-  const onFinish = (values) => {
+  useEffect(() => {
+    dispatch(getAllInternships())
+      .then(async (getAll) => {
+        if (getAll?.meta?.requestStatus === 'fulfilled') {
+          if (getAll?.payload?.status === 'success') {
+            const data = await getAll.payload.data
+            const userInternships = await data.filter(
+              (item) => item?.studentID === currentUserId
+            )
+            setCurrentUserInternships(userInternships)
+          } else {
+            throw new Error(getAll.payload.message)
+          }
+        } else {
+          throw new Error('User internship fetch request failed')
+        }
+      }).catch((err) => {
+        console.error(err)
+      })
+  }, [dispatch, currentUserId])
+
+  const onFinish = async (values) => {
+    setFormFieldError(false)
+    let isDateRange = []
     const internshipValues = {
       ...values,
       studentID: currentUserId,
       internship,
       instructions
     }
-    setFormFieldError(false)
-    form.resetFields()
+    
+    currentUserInternships.forEach((item) => {
+      const internshipStartDate = new Date(item.internshipDateRange[0])
+      const internshipEndDate = new Date(item.internshipDateRange[1])
+      const startDate = new Date(values.internshipDateRange[0])
+      const endDate = new Date(values.internshipDateRange[1])
 
-    const createInternshipPromise = () =>
-      new Promise((resolve, reject) =>
-        setTimeout(() => {
-
-          dispatch(createInternship(internshipValues))
-            .then((create) => {
-              if (create?.meta?.requestStatus === 'fulfilled') {
-                if (create?.payload?.status === 'success') {
-                  toastId = toast.loading('Başvuru Maili Gönderiliyor...')
-                  dispatch(sendInternshipConfirmationMail(internshipValues))
-                    .then((sendMail) => {
-                      if (sendMail?.meta?.requestStatus === 'fulfilled') {
-                        if (sendMail?.payload?.status === 'success') {
-                          setTimeout(() => {
-                            navigate(
-                              '/student/internshipForm/companyApprovalWait'
-                            )
-                          }, 3000)
-                          toast.update(
-                            toastId,
-                            toastConfig(sendMail.payload.message, 'success')
-                          )
-                        } else {
-                          toast.update(
-                            toastId,
-                            toastConfig(sendMail.payload.message, 'error')
-                          )
-                        }
-                      } else {
-                        setTimeout(() => {
-                          toast.update(
-                            toastId,
-                            toastConfig(
-                              'Başvuru Maili gönderilemedi. Tekrar göndermeyi deneyin !',
-                              'error'
-                            )
-                          )
-                          throw new Error('Send mail request failed')
-                        }, 3000)
-                      }
-                    })
-                    .catch((err) => {
-                      console.error(err)
-                    })
-                  resolve(create.payload.message)
-                } else {
-                  reject(create.payload.message)
-                }
-              } else {
-                reject('Staj başvurusu oluşturulamadı')
-                throw new Error('Internship creation request failed')
-              }
-            })
-            .catch((err) => {
-              console.error(err)
-            })
-        }, 3000))
-
-    toast.promise(createInternshipPromise, {
-      pending: 'Staj Başvurusu Yapılıyor...',
-      success: {
-        render({ data }) {
-          return data
-        }
-      },
-      error: {
-        render({ data }) {
-          return data
-        }
-      }
+      const startDateCondition = internshipStartDate >= startDate && internshipStartDate <= endDate
+      const endDateCondition = internshipEndDate >= startDate && internshipEndDate <= endDate
+      const isDateRangeCondition = startDateCondition || endDateCondition
+      
+      isDateRange = [...isDateRange, isDateRangeCondition]
     })
+
+    if (!isDateRange.includes(true)) {
+      form.resetFields()
+      const createInternshipPromise = () =>
+        new Promise((resolve, reject) =>
+          setTimeout(() => {
+            dispatch(createInternship(internshipValues))
+              .then((create) => {
+                if (create?.meta?.requestStatus === 'fulfilled') {
+                  if (create?.payload?.status === 'success') {
+                    toastId = toast.loading('Başvuru Maili Gönderiliyor...')
+                    dispatch(sendInternshipConfirmationMail(internshipValues))
+                      .then((sendMail) => {
+                        if (sendMail?.meta?.requestStatus === 'fulfilled') {
+                          if (sendMail?.payload?.status === 'success') {
+                            setTimeout(() => {
+                              navigate(
+                                '/student/internshipForm/companyApprovalWait'
+                              )
+                            }, 3000)
+                            toast.update(
+                              toastId,
+                              toastConfig(sendMail.payload.message, 'success')
+                            )
+                          } else {
+                            toast.update(
+                              toastId,
+                              toastConfig(sendMail.payload.message, 'error')
+                            )
+                          }
+                        } else {
+                          setTimeout(() => {
+                            toast.update(
+                              toastId,
+                              toastConfig(
+                                'Başvuru Maili gönderilemedi. Tekrar göndermeyi deneyin !',
+                                'error'
+                              )
+                            )
+                            throw new Error('Send mail request failed')
+                          }, 3000)
+                        }
+                      })
+                      .catch((err) => {
+                        console.error(err)
+                      })
+                    resolve(create.payload.message)
+                  } else {
+                    reject(create.payload.message)
+                  }
+                } else {
+                  reject('Staj başvurusu oluşturulamadı')
+                  throw new Error('Internship creation request failed')
+                }
+              })
+              .catch((err) => {
+                console.error(err)
+              })
+          }, 3000))
+
+          toast.promise(createInternshipPromise, {
+            pending: 'Staj Başvurusu Yapılıyor...',
+            success: {
+              render({ data }) {
+                return data
+              }
+            },
+            error: {
+              render({ data }) {
+                return data
+              }
+            }
+          })
+    } else {
+      toast.error("Girilen tarih aralığında devam eden stajınız bulunmaktadır")
+    }
   }
 
   const onFinishFailed = (values) => {
@@ -186,7 +227,7 @@ const CompanyInformationForm = () => {
   return (
     <>
       <ToastContainer
-        position="top-right"
+        position="top-center"
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop

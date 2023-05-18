@@ -18,23 +18,12 @@ const fileFilter = (req, file, callback) => {
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         const rootDir = path.dirname(fileURLToPath(import.meta.url))
-        const fileToUpload = file.originalname.split("_")[0]
+        const internshipType = file.originalname.split("_")[0]
+        const fileToUpload = file.originalname.split("_")[1]
 
-        switch (fileToUpload) {
-            case 'notebook':
-                fs.mkdirSync(path.join(rootDir, '..', 'public', 'uploads', 'notebooks'), { recursive: true })
-                callback(null, path.join(rootDir, '..', 'public', 'uploads', 'notebooks'))
-            break
-            case 'chart':
-                fs.mkdirSync(path.join(rootDir, '..', 'public', 'uploads', 'charts'), { recursive: true })
-                callback(null, path.join(rootDir, '..', 'public', 'uploads', 'charts'))
-            break
-            case 'report':
-                fs.mkdirSync(path.join(rootDir, '..', 'public', 'uploads', 'reports'), { recursive: true })
-                callback(null, path.join(rootDir, '..', 'public', 'uploads', 'reports'))
-            break
-            default: break
-        }
+        fs.mkdirSync(path.join(rootDir, '..', 'public', 'uploads', internshipType, fileToUpload), { recursive: true })
+        callback(null, path.join(rootDir, '..', 'public', 'uploads', internshipType, fileToUpload))
+
     },
     filename: (req, file, callback) => {
         const extension = file.mimetype.split('/')[1]
@@ -47,28 +36,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage, fileFilter }).single('file')
 
-// Dosya yükleme endpointi
-const fileUpload = (req, res) => {
-    upload(req, res, (error) => {
-        if (error instanceof multer.MulterError) {
-            return res.json({
-                status: 'fail',
-                message: `Multer Errors : ${error}`
-            })
-        } else if (error) {
-            return res.json({
-                status: 'fail',
-                message: error
-            })
-        } else {
-            let fileName = convertToTR(req.file.originalname.split('_')[0])
-            return res.json({
-                status: 'success',
-                data: req.file,
-                message: `${fileName} başarıyla yüklendi`
-            })
-        }
-    })
+const convertToTR = (documentType) => {
+    if (documentType === 'notebook') {
+        return 'Staj defteri'
+    } else if (documentType === 'chart') {
+        return 'Staj çizelgesi'
+    } else if (documentType === 'report') {
+        return 'Staj raporu'
+    }
 }
 
 const readDirectory = (dirPath, studentID) => {
@@ -78,17 +53,16 @@ const readDirectory = (dirPath, studentID) => {
             try {
                 const dirFiles = fs.readdirSync(dirPath)
             
-                dirFiles.forEach((file) => {        
+                dirFiles.forEach((file) => {       
                     const filePath = path.join(dirPath, file)
                     const fileStat = fs.statSync(filePath)
             
                     if (fileStat.isDirectory()) {
                         const subFiles = readDirectory(filePath, studentID)
-
                         files = files.concat(subFiles)
                     } else {
                         const fileNameParts = file.split('.')[0]
-                        const fileNameStudentID = fileNameParts.split('_')[1]
+                        const fileNameStudentID = fileNameParts.split('_')[2]
                         
                         if (fileNameStudentID === studentID) {
                             files.push({
@@ -96,7 +70,8 @@ const readDirectory = (dirPath, studentID) => {
                                 size: fileStat.size,
                                 path: filePath,
                                 studentID: studentID,
-                                type: file.split('_')[0],
+                                internshipType: file.split('_')[0],
+                                documentType: file.split('_')[1],                                
                                 createdAt: fileStat.birthtime,
                                 modifiedAt: fileStat.mtime
                             })
@@ -113,7 +88,31 @@ const readDirectory = (dirPath, studentID) => {
     return files
 }
 
-// Dosya görüntüleme endpointi
+// File Upload Endpoint
+const fileUpload = (req, res) => {
+    upload(req, res, (error) => {
+        if (error instanceof multer.MulterError) {
+            return res.json({
+                status: 'fail',
+                message: `Multer Errors : ${error}`
+            })
+        } else if (error) {
+            return res.json({
+                status: 'fail',
+                message: error
+            })
+        } else {
+            let fileName = convertToTR(req.file.originalname.split('_')[1])
+            return res.json({
+                status: 'success',
+                data: req.file,
+                message: `${fileName} başarıyla yüklendi`
+            })
+        }
+    })
+}
+
+// File Fetch And View Endpoint
 const fileFetch = async (req, res) => {
     const { studentID } = await req.body
     const _dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -143,25 +142,14 @@ const fileFetch = async (req, res) => {
     }
 }
 
-const convertToTR = (fileType) => {
-    if (fileType === 'notebook') {
-        return 'Staj defteri'
-    } else if (fileType === 'chart') {
-        return 'Staj çizelgesi'
-    } else if (fileType === 'report') {
-        return 'Staj raporu'
-    }
-}
-
-// Dosya silme endpointi
+// File Deletion Endpoint
 const fileDelete = async (req, res) => {
-    const { fileType, fileName } = await req.body
+    const { fileName, documentType, internshipType } = await req.body
 
     if (typeof fileName === 'string') {
         const _dirname = path.dirname(fileURLToPath(import.meta.url))
         const dirPath = path.join(_dirname, '..', 'public', 'uploads')
-        const fileFolder = fileType + 's'
-        const filePath = path.join(dirPath, fileFolder, fileName)
+        const filePath = path.join(dirPath, internshipType, documentType, fileName)
     
         fs.unlink(filePath, (error) => {
             if (error) {
@@ -172,7 +160,7 @@ const fileDelete = async (req, res) => {
             } else {
                 return res.json({
                     'status' : 'success',
-                    'message' : `${convertToTR(fileName.split('_')[0])} başarıyla silindi`,
+                    'message' : `${convertToTR(fileName.split('_')[1])} başarıyla silindi`,
                     'data' : fileName
                 })
             }

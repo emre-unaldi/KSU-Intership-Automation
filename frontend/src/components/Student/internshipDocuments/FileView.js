@@ -27,7 +27,7 @@ const FileView = (props) => {
                 centered
             >
                 <embed
-                    src={`http://localhost:3001/uploads/${file.type}s/${file.name}`}
+                    src={`http://localhost:3001/uploads/${file.internshipType}/${file.documentType}/${file.name}`}
                     width="100%"
                     height="500"
                     type="application/pdf"
