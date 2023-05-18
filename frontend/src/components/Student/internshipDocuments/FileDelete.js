@@ -32,10 +32,15 @@ function FileDelete(props) {
             onOk: async () => {
                 return await new Promise((Resolve, Reject) => {
                     setTimeout(
-                        dispatch(fileDeleteByUser({name : file.name, type : file.type}))
+                        dispatch(fileDeleteByUser({
+                            name : file.name, 
+                            documentType : file.documentType,
+                            internshipType : file.internshipType
+                        }))
                         .then((deletion) => {
                             if (deletion?.meta?.requestStatus === 'fulfilled') {
                                 if (deletion.payload.status === 'success') {
+                                    console.log(deletion);
                                     toast.success(deletion.payload.message)
                                     setTimeout(() => {
                                         window.location.reload()

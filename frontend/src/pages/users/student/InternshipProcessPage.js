@@ -2,6 +2,7 @@ import React from 'react'
 import StudentHeader from '../../../components/Student/StudentHeader'
 import StudentAside from '../../../components/Student/StudentAside'
 import StudentFooter from '../../../components/Student/StudentFooter'
+import ViewProcess from '../../../components/Student/internshipProcess/ViewProcess'
 
 const InternshipProcessPage = () => {
   return (
@@ -14,7 +15,7 @@ const InternshipProcessPage = () => {
             <div className="col-xl-12">
               <div className="card">
                 <div className="card-body pt-2 d-flex flex-column align-items-center">
-                  <div>Process Page</div>
+                  <ViewProcess/>
                 </div>
               </div>
             </div>
