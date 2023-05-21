@@ -42,8 +42,6 @@ const FileUpload = (props) => {
         })
     }, [dispatch, currentUserId, documentType, internshipType])
 
-    console.log(files);
-
     const customUploadRequest = (options, documentType, internshipType, currentUserId) => {        
         const { file, onSuccess, onError } = options
         const reader = new FileReader()

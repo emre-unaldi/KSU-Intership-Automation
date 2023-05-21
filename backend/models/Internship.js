@@ -13,6 +13,18 @@ const InternshipSchema = new Schema(
     companyAddress: String,
     internshipDateRange: Array,
     instructions: Boolean,
+    isNotebookFileLoaded: {
+      type: Boolean,
+      default: false
+    },
+    isChartFileLoaded: {
+      type: Boolean,
+      default: false
+    },
+    isReportFileLoaded: {
+      type: Boolean,
+      default: false
+    },
     companyApprovalUpdate: {
       type: Boolean,
       default: false
@@ -23,7 +35,7 @@ const InternshipSchema = new Schema(
     },
     internship: {
       type: String,
-      enum: ['software', 'hardware', 'intorn']
+      enum: ['software', 'hardware', 'ume']
     },
     companyApproval: {
       type: Boolean,

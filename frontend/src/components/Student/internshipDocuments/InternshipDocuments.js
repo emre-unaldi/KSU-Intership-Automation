@@ -138,13 +138,13 @@ const Documents = () => {
                         }}
                       >
                         <Card title="UME Stajı Defter Yükle" size="small">
-                          <FileUpload internshipType={'umes'} documentType={'notebook'} />    
-                        </Card>
-                        <Card title="UME Stajı Çizelges Yükle" size="small">
-                          <FileUpload internshipType={'umes'} documentType={'chart'} />    
+                          <FileUpload internshipType={'ume'} documentType={'notebook'} />    
                         </Card>
                         <Card title="UME Stajı İş Yeri Değerlendirme Raporu Yükle" size="small">
-                          <FileUpload internshipType={'umes'} documentType={'report'} />    
+                          <FileUpload internshipType={'ume'} documentType={'report'} />    
+                        </Card>
+                        <Card title="UME Stajı Çizelge Yükle" size="small">
+                          <FileUpload internshipType={'ume'} documentType={'chart'} />    
                         </Card>
                       </Space>
                     )

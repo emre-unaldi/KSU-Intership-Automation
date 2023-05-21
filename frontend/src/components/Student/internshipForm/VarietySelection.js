@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Avatar, Segmented, Space, Alert, Typography, Button } from 'antd'
 import software from '../../../assets/img/software.png'
 import hardware from '../../../assets/img/hardware.png'
-import intorn from '../../../assets/img/intorn.png'
+import ume from '../../../assets/img/ume.png'
 
 const VarietySelection = () => {
   const [variety, setVariety] = useState({ description: '', value: '' })
@@ -27,7 +27,8 @@ const VarietySelection = () => {
       setVariety({ description: 'Yazılım', value: getValue })
     getValue === 'hardware' &&
       setVariety({ description: 'Donanım', value: getValue })
-    getValue === 'intorn' && setVariety({ description: 'UME', value: getValue })
+    getValue === 'ume' && 
+      setVariety({ description: 'UME', value: getValue })
   }
 
   const options = [
@@ -65,7 +66,7 @@ const VarietySelection = () => {
       label: (
         <div style={{ padding: 4, width: '20vw' }}>
           <Avatar
-            src={intorn}
+            src={ume}
             size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
             shape="square"
           />
@@ -74,7 +75,7 @@ const VarietySelection = () => {
           </div>
         </div>
       ),
-      value: 'intorn'
+      value: 'ume'
     }
   ]
   return (
