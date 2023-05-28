@@ -1,8 +1,123 @@
 
+/*--------------------------------------------------------------
+# Ant Design
+--------------------------------------------------------------*/ 
 .ant-pagination-item-link > span, .ant-modal-close-x > span {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/*--------------------------------------------------------------
+# Ant Design Internship Form
+--------------------------------------------------------------*/ 
+.ant-picker-suffix > span ,.ant-input-textarea-suffix >span , .ant-input-suffix > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ant-steps-item-icon > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2px;
+}
+
+.ant-picker-separator > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.responsible > div > div > label::before {
+  display: inline-block;
+  margin-inline-end: 4px;
+  color: #ff4d4f;
+  font-size: 14px;
+  font-family: SimSun,sans-serif;
+  line-height: 1;
+  content: "*";
+}
+
+.ant-result-extra > button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ant-btn-loading > .ant-btn-loading-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} 
+
+.ant-form-item-label, 
+.ant-form-item-explain-error,
+.ant-picker-input,
+.ant-input {
+  font-family: open sans;
+}
+
+/*--------------------------------------------------------------
+# Scrollbar
+--------------------------------------------------------------*/ 
+/* Scrollbar'ın kendisi */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+/* Hareketli kısım */
+::-webkit-scrollbar-thumb {
+  background-color: #9c9c9c;
+  border-radius: 6px;
+}
+
+/* Hareketli kısımın üzerine gelindiğinde */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #828282;
+}
+
+/* Sabit kısım */
+::-webkit-scrollbar-track {
+  background-color: #cfcfcf;
+}
+
+/* Sabit kısımın üzerine gelindiğinde */
+::-webkit-scrollbar-track:hover {
+  background-color: #b5b5b5;
+}
+
+/* Scrollbar'ın yatay versiyonu */
+::-webkit-scrollbar-horizontal {
+  height: 12px;
+}
+
+/* Yatay hareketli kısım */
+::-webkit-scrollbar-thumb:horizontal {
+  background-color: #9c9c9c;
+  border-radius: 6px;
+}
+
+/* Yatay hareketli kısımın üzerine gelindiğinde */
+::-webkit-scrollbar-thumb:hover:horizontal {
+  background-color: #828282;
+}
+
+/* Yatay sabit kısım */
+::-webkit-scrollbar-track:horizontal {
+  background-color: #cfcfcf;
+}
+
+/* Yatay sabit kısımın üzerine gelindiğinde */
+::-webkit-scrollbar-track:hover:horizontal {
+  background-color: #b5b5b5;
+}
+
+/* Scrollbar düğmeleri */
+::-webkit-scrollbar-button {
+  display: none;
 }
 
 /*--------------------------------------------------------------

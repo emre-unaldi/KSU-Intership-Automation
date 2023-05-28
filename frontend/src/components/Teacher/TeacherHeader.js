@@ -11,8 +11,44 @@ axios.defaults.withCredentials = true
 
 function TeacherHeader() {
   const ksuLink = useSelector((state) => state.system.ksuLink)
+  const currentUser = useSelector((state) => state.user.check?.data?.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const formattedUsername = currentUser?.name.slice(0,1).toUpperCase() + '. ' + currentUser?.surname.toUpperCase()
+  const username = currentUser?.name + ' ' + currentUser?.surname
+  const userRole = currentUser?.role
+
+  const handleLogoutClick = () => {
+    dispatch(logoutUser())
+    .then((loggedOut) => {
+      if (loggedOut?.meta?.requestStatus === 'fulfilled') {
+        if (loggedOut?.payload?.status === 'success') {
+          console.log(loggedOut.payload.message)
+          navigate('/')
+        } else {
+          console.log(loggedOut.payload.message)
+          navigate('/student/home')
+        }
+      } else {
+        console.log(
+          'User logout failed. Try logging out again'
+        )
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
+
+  const userRoleConvertToTR = (userRole) => {
+    if (userRole === 'student') {
+      return 'Öğrenci'
+    } else if (userRole === 'teacher') {
+      return 'Öğretmen'
+    } else {
+      return 'Admin'
+    }
+  }
 
   return (
     <header id="header" className="header fixed-top d-flex align-items-center">
@@ -185,13 +221,23 @@ function TeacherHeader() {
             >
               <img src={profile} alt="Profile" className="rounded-circle" />
               <span className="d-none d-md-block dropdown-toggle ps-2">
-                E. ÜNALDI
+                {
+                  formattedUsername
+                }
               </span>
             </a>
             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li className="dropdown-header">
-                <h6>Emre ÜNALDI</h6>
-                <span>Öğretmen</span>
+                <h6>
+                  {
+                    username
+                  }
+                </h6>
+                <span>
+                  {
+                    userRoleConvertToTR(userRole)
+                  }
+                </span>
               </li>
               <li>
                 <hr className="dropdown-divider" />
@@ -209,41 +255,9 @@ function TeacherHeader() {
                 <hr className="dropdown-divider" />
               </li>
               <li>
-                <a
-                  className="dropdown-item d-flex align-items-center"
-                  href="users-profile.html"
-                >
-                  <i className="bi bi-gear"></i>
-                  <span>Hesap Ayarları</span>
-                </a>
-              </li>
-              <li>
-                <hr className="dropdown-divider" />
-              </li>
-              <li>
                 <button
                   className="dropdown-item d-flex align-items-center"
-                  onClick={() => {
-                    dispatch(logoutUser())
-                      .then((loggedOut) => {
-                        if (loggedOut?.meta?.requestStatus === 'fulfilled') {
-                          if (loggedOut?.payload?.status === 'success') {
-                            console.log(loggedOut.payload.message)
-                            navigate('/')
-                          } else {
-                            console.log(loggedOut.payload.message)
-                            navigate('/teacher/home')
-                          }
-                        } else {
-                          console.log(
-                            'User logout failed. Try logging out again'
-                          )
-                        }
-                      })
-                      .catch((err) => {
-                        console.log(err)
-                      })
-                  }}
+                  onClick={handleLogoutClick}
                 >
                   <i className="bi bi-box-arrow-right"></i>
                   <span>Çıkış Yap</span>

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Result, Space, Card, Image, Divider, Button } from 'antd'
 import { useDispatch } from 'react-redux'
-import { SyncOutlined } from '@ant-design/icons'
+import { LoadingOutlined } from '@ant-design/icons'
 import { ToastContainer, toast } from 'react-toastify'
 import { companyApprovalStatus } from '../../../../redux/internshipSlice'
 import ksu from '../../../../assets/img/ksu.png'
@@ -19,7 +19,6 @@ const CompanyApprovalStatus = () => {
 
   const statusHandle = (Status) => {
     Status ? setConfirmedLoading(true) : setRefusedLoading(true)
-    console.log(studentID);
 
     const statusPromise = () => {
       return new Promise((resolve, reject) => {
@@ -91,14 +90,16 @@ const CompanyApprovalStatus = () => {
           justifyContent: 'center',
           alignItems: 'center',
           width: '100%',
-          height: '100vh'
+          height: '100vh',
+          fontFamily: 'open sans'
         }}
       >
         <Card
           style={{
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            fontFamily: 'open sans'
           }}
         >
           <Space
@@ -115,6 +116,9 @@ const CompanyApprovalStatus = () => {
                 visible: false,
                 mask: false
               }}
+              style={{
+                fontFamily: 'open sans'
+              }}
             />
           </Space>
           <Divider
@@ -129,7 +133,8 @@ const CompanyApprovalStatus = () => {
               title="Staj Onay Durumu Belirleme"
               subTitle="Lütfen öğrencinin şirkette yapacağı stajın onay durumunu belirtiniz. Onay durumunu sadec bir kez güncelleyebilirsiniz !"
               style={{
-                padding: '20px 30px 0px 30px'
+                padding: '20px 30px 0px 30px',
+                fontFamily: 'open sans'
               }}
               extra={
                 <Space
@@ -152,14 +157,14 @@ const CompanyApprovalStatus = () => {
                       display: 'flex',
                       fontSize: '18px',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      fontFamily: 'open sans'
                     }}
                   >
-                    {confirmedLoading ? (
-                      <SyncOutlined spin={confirmedLoading} />
-                    ) : (
-                      'Onayla'
-                    )}
+                    Onayla
+                    {
+                      confirmedLoading ?  <LoadingOutlined spin={confirmedLoading} /> : null
+                    }
                   </Button>
 
                   <Button
@@ -176,14 +181,14 @@ const CompanyApprovalStatus = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       backgroundColor: 'red',
-                      color: 'white'
+                      color: 'white',
+                      fontFamily: 'open sans'
                     }}
                   >
-                    {refusedLoading ? (
-                      <SyncOutlined spin={refusedLoading} />
-                    ) : (
-                      'Reddet'
-                    )}
+                    Reddet
+                    {
+                      refusedLoading ? <LoadingOutlined spin={refusedLoading} /> : null
+                    }
                   </Button>
                 </Space>
               }
@@ -200,7 +205,8 @@ const CompanyApprovalStatus = () => {
                   : 'Öğrencinin stajı şirket tarafından reddedildi. Sayfadan ayrılabilirsiniz.'
               }
               style={{
-                padding: '20px 30px 0px 30px'
+                padding: '20px 30px 0px 30px',
+                fontFamily: 'open sans'
               }}
             />
           )}

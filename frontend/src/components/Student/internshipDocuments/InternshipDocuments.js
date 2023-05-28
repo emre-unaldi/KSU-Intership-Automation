@@ -1,26 +1,38 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Space, Tabs, Typography } from 'antd'
+import { Alert, Card, Space, Tabs, Typography } from 'antd'
 import { ToastContainer } from 'react-toastify'
+import { getAllInternships } from '../../../redux/internshipSlice'
+import { useSelector, useDispatch } from 'react-redux'
 import FileUpload from './FileUpload'
-import Loading from '../../System/Loading'
 
 const Documents = () => {
+  const [currentUserInternships, setCurrentUserInternships] = useState([])
+  const currentUserId = useSelector((state) => state.user.check?.data?.user?._id)
+  const dispatch = useDispatch()
   const { Title } = Typography
-  const [ isPageLoading, setIsPageLoading ] = useState(true)
-  const [ isOnTabLoading, setIsOnTabLoading ] = useState(false)
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsPageLoading(false)
-    }, 1500)
-  }, [])
+    dispatch(getAllInternships())
+    .then(async (getAll) => {
+        if (getAll?.meta?.requestStatus === 'fulfilled') {
+        if (getAll?.payload?.status === 'success') {
+            const internships = await getAll.payload.data.filter(
+                (item) => item.studentID === currentUserId
+            )
+            setCurrentUserInternships(internships)
+        } else {
+            throw new Error(getAll.payload.message)
+        }
+        } else {
+        throw new Error('User internship fetch request failed')
+        }
+    })
+    .catch((err) => {
+        console.error(err)
+    })
+}, [dispatch, currentUserId])
 
-  const onTabClick = () => {
-    setIsOnTabLoading(true)
-    setTimeout(() => {
-      setIsOnTabLoading(false)
-    }, 1500)
-  }
+console.log(currentUserInternships);
 
   return (
     <>
@@ -36,8 +48,6 @@ const Documents = () => {
         pauseOnHover={false}
         theme="colored"
       />
-      {
-        !isPageLoading ? (
           <Space
             direction="vertical"
             size="large"
@@ -48,121 +58,222 @@ const Documents = () => {
           >
             <Title
               className="card-title"
-              level={4}
+              level={3}
               style={{
                 color: '#193164',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginBottom: 0,
-                paddingBottom: 0
+                paddingBottom: 0,
+                fontFamily: 'open sans'
               }}
             >
               Staj Evraklarını Yükleme
             </Title>
-            <Tabs
-              onTabClick={onTabClick}
-              centered
-              items={[
-                {
-                  label: 'Yazılım Stajı',
-                  key: '1',
-                  children: (
-                    !isOnTabLoading ? (
-                      <Space
-                        direction="vertical"
-                        size="large"
-                        style={{
-                          display: 'flex',
-                          width: '100%'
-                        }}
-                      >
-                        <Card title="Yazılım Stajı Defter Yükle" size="small">
-                          <FileUpload internshipType={'software'} documentType={'notebook'} />    
-                        </Card>
-                        <Card title="Yazılım Stajı İş Yeri Değerlendirme Raporu Yükle" size="small">
-                          <FileUpload internshipType={'software'} documentType={'report'} />    
-                        </Card>
-                        <Card title="Yazılım Stajı Çizelge Yükle" size="small">
-                          <FileUpload internshipType={'software'} documentType={'chart'} />    
-                        </Card>
-                      </Space>
-                    ) 
-                    : 
+            {
+              currentUserInternships.length !== 0 ?
+              (
+                <Tabs
+                  items={[
+                      currentUserInternships.find((item) => item.internship === 'software') && 
+                      (
+                        {
+                          label: 'Yazılım Stajı',
+                          key: '1',
+                          children: (
+                            <Space
+                              direction="vertical"
+                              size="large"
+                              style={{
+                                display: 'flex',
+                                width: '100%'
+                              }}
+                            >
+                              <Card 
+                                title="Yazılım Stajı Defter Yükle" 
+                                size="small"
+                                style={{ 
+                                  fontFamily: 'open sans' 
+                                }}
+                              >
+                                <FileUpload 
+                                  internshipType={'software'} 
+                                  documentType={'notebook'}   
+                                />    
+                              </Card>
+
+                              <Card 
+                                title="Yazılım Stajı İş Yeri Değerlendirme Raporu Yükle" 
+                                size="small"
+                                style={{ 
+                                  fontFamily: 'open sans' 
+                                }}
+                              >
+                                <FileUpload 
+                                  internshipType={'software'} 
+                                  documentType={'report'}   
+                                />    
+                              </Card>
+
+                              <Card 
+                                title="Yazılım Stajı Çizelge Yükle" 
+                                size="small"
+                                style={{ 
+                                  fontFamily: 'open sans' 
+                                }}
+                              >
+                                <FileUpload 
+                                  internshipType={'software'} 
+                                  documentType={'chart'}   
+                                />    
+                              </Card>
+                            </Space>
+                          )
+                        }
+                      )
+                    ,
+                    currentUserInternships.find((item) => item.internship === 'hardware') && 
                     (
-                      <Loading isPageLoading={isOnTabLoading} />
+                      {
+                        label: 'Donanım Stajı',
+                        key: '2',
+                        children: (
+                          <Space
+                            direction="vertical"
+                            size="large"
+                            style={{
+                              display: 'flex',
+                              width: '100%'
+                            }}
+                          >
+                            <Card 
+                              title="Donanım Stajı Defter Yükle" 
+                              size="small" 
+                              style={{ 
+                                fontFamily: 'open sans' 
+                              }}
+                            >
+                              <FileUpload 
+                                internshipType={'hardware'} 
+                                documentType={'notebook'}   
+                              />    
+                            </Card>
+
+                            <Card 
+                              title="Donanım Stajı İş Yeri Değerlendirme Raporu Yükle" 
+                              size="small" 
+                              style={{ 
+                                fontFamily: 'open sans' 
+                              }} 
+                            >
+                              <FileUpload 
+                                internshipType={'hardware'} 
+                                documentType={'report'}   
+                              />    
+                            </Card>
+
+                            <Card 
+                              title="Donanım Stajı Çizelge Yükle" 
+                              size="small" 
+                              style={{ 
+                                fontFamily: 'open sans' 
+                              }} 
+                            >
+                              <FileUpload 
+                                internshipType={'hardware'} 
+                                documentType={'chart'}   
+                              />    
+                            </Card>
+                          </Space>
+                        )                
+                      }
                     )
-                  )
-                },
-                {
-                  label: 'Donanım Stajı',
-                  key: '2',
-                  children: (
-                    !isOnTabLoading ? (
-                      <Space
-                        direction="vertical"
-                        size="large"
-                        style={{
-                          display: 'flex',
-                          width: '100%'
-                        }}
-                      >
-                        <Card title="Donanım Stajı Defter Yükle" size="small">
-                          <FileUpload internshipType={'hardware'} documentType={'notebook'} />    
-                        </Card>
-                        <Card title="Donanım Stajı İş Yeri Değerlendirme Raporu Yükle" size="small">
-                          <FileUpload internshipType={'hardware'} documentType={'report'} />    
-                        </Card>
-                        <Card title="Donanım Stajı Çizelge Yükle" size="small">
-                          <FileUpload internshipType={'hardware'} documentType={'chart'} />    
-                        </Card>
-                      </Space>
-                    )
-                    : 
+                    ,
+                    currentUserInternships.find((item) => item.internship === 'ume') &&
                     (
-                      <Loading isPageLoading={isOnTabLoading} />
+                      {
+                        label: 'UME Stajı',
+                        key: '3',
+                        children: (
+                          <Space
+                            direction="vertical"
+                            size="large"
+                            style={{
+                              display: 'flex',
+                              width: '100%',
+                              fontFamily: 'open sans'
+                            }}
+                          >
+                            <Card 
+                              title="UME Stajı Defter Yükle" 
+                              size="small" 
+                              style={{ 
+                                fontFamily: 'open sans' 
+                              }} 
+                            >
+                              <FileUpload 
+                                internshipType={'ume'} 
+                                documentType={'notebook'}
+                              />    
+                            </Card>
+
+                            <Card 
+                              title="UME Stajı İş Yeri Değerlendirme Raporu Yükle" 
+                              size="small" 
+                              style={{ 
+                                fontFamily: 'open sans' 
+                              }} 
+                            >
+                              <FileUpload 
+                                internshipType={'ume'} 
+                                documentType={'report'}   
+                              />    
+                            </Card>
+
+                            <Card 
+                              title="UME Stajı Çizelge Yükle" 
+                              size="small" 
+                              style={{ 
+                                fontFamily: 'open sans' 
+                              }} 
+                            >
+                              <FileUpload 
+                                internshipType={'ume'} 
+                                documentType={'chart'}   
+                              />    
+                            </Card>
+                          </Space>
+                        )                
+                      }
                     )
-                  )                
-                },
-                {
-                  label: 'UME Stajı',
-                  key: '3',
-                  children: (
-                    !isOnTabLoading ? (
-                      <Space
-                        direction="vertical"
-                        size="large"
+                  ]}
+                  centered
+                  style={{
+                    fontFamily: 'open sans'
+                  }}
+                />
+              )
+              :
+              (
+                <Space 
+                    direction="vertical" 
+                    style={{ 
+                        width: '100%',
+                    }}
+                >
+                    <Alert 
+                        message="Herhangi bir staj kaydınız bulunmamaktadır." 
+                        type="info"     
+                        showIcon
                         style={{
-                          display: 'flex',
-                          width: '100%'
+                            fontFamily: 'open sans'
                         }}
-                      >
-                        <Card title="UME Stajı Defter Yükle" size="small">
-                          <FileUpload internshipType={'ume'} documentType={'notebook'} />    
-                        </Card>
-                        <Card title="UME Stajı İş Yeri Değerlendirme Raporu Yükle" size="small">
-                          <FileUpload internshipType={'ume'} documentType={'report'} />    
-                        </Card>
-                        <Card title="UME Stajı Çizelge Yükle" size="small">
-                          <FileUpload internshipType={'ume'} documentType={'chart'} />    
-                        </Card>
-                      </Space>
-                    )
-                    :
-                    (
-                      <Loading isPageLoading={isOnTabLoading} />
-                    )
-                  )                
-                }
-              ]}
-            />
+                    />
+                </Space>
+              )
+            }
           </Space>
-        )
-        : 
-        (
-          <Loading isPageLoading={isPageLoading} />
-        )
-      }
     </>
   )
 }

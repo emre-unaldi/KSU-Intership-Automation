@@ -7,7 +7,6 @@ import {
   ProfileFilled,
   ReconciliationFilled,
 } from '@ant-design/icons'
-import './internshForm.css'
 
 const InternshipStatus = (props) => {
   const [status, setStatus] = useState(['wait', 'wait', 'wait', 'wait', 'wait'])
@@ -53,8 +52,12 @@ const InternshipStatus = (props) => {
           title: 'Danışman Onayı',
           status: status[4],
           icon: <ReconciliationFilled />
-        },
+        }
       ]}
+      style={{
+        fontFamily: 'open sans',
+        paddingTop: 20
+      }}
     />
   )
 }

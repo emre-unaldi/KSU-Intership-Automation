@@ -1,25 +1,25 @@
 import { useState } from 'react'
-import { SyncOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { Avatar, Segmented, Space, Alert, Typography, Button } from 'antd'
 import software from '../../../assets/img/software.png'
 import hardware from '../../../assets/img/hardware.png'
 import ume from '../../../assets/img/ume.png'
+import { LoadingOutlined } from '@ant-design/icons'
 
 const VarietySelection = () => {
   const [variety, setVariety] = useState({ description: '', value: '' })
-  const [loadings, setLoadings] = useState(false)
+  const [buttonLoading, setButtonLoading] = useState(false)
   const { Title } = Typography
   const navigate = useNavigate()
 
   const handleLoading = () => {
     localStorage.setItem('internship', variety.value)
-    setLoadings(true)
-    
+    setButtonLoading(true)
+
     setTimeout(() => {
-      setLoadings(false)
+      setButtonLoading(false)
       navigate('/student/internshipForm/instructions')
-    }, 3000)
+    }, 2500)
   }
 
   const changeValue = (getValue) => {
@@ -27,8 +27,7 @@ const VarietySelection = () => {
       setVariety({ description: 'Yazılım', value: getValue })
     getValue === 'hardware' &&
       setVariety({ description: 'Donanım', value: getValue })
-    getValue === 'ume' && 
-      setVariety({ description: 'UME', value: getValue })
+    getValue === 'ume' && setVariety({ description: 'UME', value: getValue })
   }
 
   const options = [
@@ -40,7 +39,7 @@ const VarietySelection = () => {
             size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
             shape="square"
           />
-          <div style={{ color: '#274374', fontFamily: 'monospace' }}>
+          <div style={{ color: '#274374', fontFamily: 'open sans' }}>
             <b>Yazılım</b>
           </div>
         </div>
@@ -55,7 +54,7 @@ const VarietySelection = () => {
             size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
             shape="square"
           />
-          <div style={{ color: '#274374', fontFamily: 'monospace' }}>
+          <div style={{ color: '#274374', fontFamily: 'open sans' }}>
             <b>Donanım</b>
           </div>
         </div>
@@ -70,78 +69,79 @@ const VarietySelection = () => {
             size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
             shape="square"
           />
-          <div style={{ color: '#274374', fontFamily: 'monospace' }}>
+          <div style={{ color: '#274374', fontFamily: 'open sans' }}>
             <b>UME</b>
           </div>
         </div>
       ),
       value: 'ume'
-    }
+    },
   ]
   return (
-    <>
-      <Title className="card-title" style={{ color: '#193164' }} level={4}>
+    <Space
+      direction="vertical"
+      align="center"
+      style={{
+        width: '100%',
+      }}
+    >
+      <Title
+        className="card-title"
+        style={{
+          color: '#193164',
+          paddingBottom: 0,
+          fontFamily: 'open sans',
+        }}
+        level={3}
+      >
         Staj Çeşitleri
       </Title>
-      <Space
-        direction="vertical"
-        align="center"
+      <Segmented
         style={{
-          width: '100%'
+          padding: 10,
+          fontFamily: 'open sans'
         }}
-      >
-        <Segmented
-          style={{ padding: 10 }}
-          options={options}
-          defaultValue=""
-          onChange={(getValue) => changeValue(getValue)}
-        />
-      </Space>
-
-      <Space direction="vertical" style={{ padding: 10, width: '90%' }}>
-        <Alert
-          message={
-            variety.description
-              ? `${variety.description} stajını seçtiniz. Başvuruya devam edebilirsiniz`
-              : 'Başvuruya devam etmek için staj çeşidini seçmelisiniz'
-          }
-          type={variety.value ? 'success' : 'info'}
-          style={{
-            fontSize: '16px',
-            display: 'flex'
-          }}
-          showIcon
-        />
-      </Space>
-
-      <Space
-        direction="vertical"
-        align="center"
+        options={options}
+        defaultValue=""
+        onChange={(getValue) => changeValue(getValue)}
+      />
+      <Alert
+        showIcon
+        message={
+          variety.description
+            ? `${variety.description} stajını seçtiniz. Başvuruya devam edebilirsiniz`
+            : 'Başvuruya devam etmek için staj türünü seçmelisiniz'
+        }
+        type={variety.value ? 'success' : 'info'}
         style={{
-          width: '100%'
+          padding: '5px 10px',
+          fontFamily: 'open sans',
         }}
+      />
+      <Button
+        type="primary"
+        size="middle"
+        onClick={() => {
+          handleLoading()
+        }}
+        style={{
+          fontSize: 16,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: 'open sans',
+        }}
+        disabled={variety.value === '' ? true : false}
       >
-        <Button
-          type="primary"
-          size="large"
-          onClick={() => {
-            handleLoading()
-          }}
-          style={{
-            width: '20vw',
-            paddingBottom: 8,
-            fontSize: 18,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          disabled={variety.value === '' ? true : false}
-          block
-        >
-          {loadings ? <SyncOutlined spin={loadings} /> : 'Devam Et'}
-        </Button>
-      </Space>
-    </>
+        Devam Et
+        {
+          buttonLoading ? 
+            <LoadingOutlined/>
+            : 
+            null
+        }
+      </Button>
+    </Space>
   )
 }
 export default VarietySelection
