@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import {
   createInternship,
   getAllInternships,
-  sendInternshipConfirmationMail,
+  sendInternshipConfirmationMail
 } from '../../../redux/internshipSlice'
 import { ToastContainer, toast } from 'react-toastify'
 import {
@@ -16,25 +16,25 @@ import {
   ConfigProvider,
   Row,
   Col,
+  Space
 } from 'antd'
 import {
   FieldNumberOutlined,
   HomeOutlined,
+  LoadingOutlined,
   MailOutlined,
   PhoneOutlined,
-  SyncOutlined,
   TeamOutlined,
-  UserOutlined,
+  UserOutlined
 } from '@ant-design/icons'
 import trTR from 'antd/es/locale/tr_TR'
-import './internshForm.css'
 
 const CompanyInformationForm = () => {
-  const [loading, setLoading] = useState(false)
-  const [formFieldError, setFormFieldError] = useState(false)
+  const [buttonLoading, setButtonLoading] = useState(false)
+  const [formFieldError, setFormFieldError] = useState(true)
   const [currentUserInternships, setCurrentUserInternships] = useState([])
   const { RangePicker } = DatePicker
-  const { Title, Text } = Typography
+  const { Title } = Typography
   const [form] = Form.useForm()
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -107,13 +107,14 @@ const CompanyInformationForm = () => {
         } else {
           throw new Error('User internship fetch request failed')
         }
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.error(err)
       })
   }, [dispatch, currentUserId])
 
   const onFinish = async (values) => {
-    setFormFieldError(false)
+    setFormFieldError(true)
     let isDateRange = []
     const internshipValues = {
       ...values,
@@ -121,7 +122,7 @@ const CompanyInformationForm = () => {
       internship,
       instructions
     }
-    
+
     currentUserInternships.forEach((item) => {
       const internshipStartDate = new Date(item.internshipDateRange[0])
       const internshipEndDate = new Date(item.internshipDateRange[1])
@@ -131,12 +132,12 @@ const CompanyInformationForm = () => {
       const startDateCondition = internshipStartDate >= startDate && internshipStartDate <= endDate
       const endDateCondition = internshipEndDate >= startDate && internshipEndDate <= endDate
       const isDateRangeCondition = startDateCondition || endDateCondition
-      
+
       isDateRange = [...isDateRange, isDateRangeCondition]
     })
 
     if (!isDateRange.includes(true)) {
-      form.resetFields()
+      //form.resetFields()
       const createInternshipPromise = () =>
         new Promise((resolve, reject) =>
           setTimeout(() => {
@@ -192,40 +193,49 @@ const CompanyInformationForm = () => {
               .catch((err) => {
                 console.error(err)
               })
-          }, 3000))
+          }, 3000)
+        )
 
-          toast.promise(createInternshipPromise, {
-            pending: 'Staj Başvurusu Yapılıyor...',
-            success: {
-              render({ data }) {
-                return data
-              }
-            },
-            error: {
-              render({ data }) {
-                return data
-              }
-            }
-          })
+      toast.promise(createInternshipPromise, {
+        pending: 'Staj Başvurusu Yapılıyor...',
+        success: {
+          render({ data }) {
+            return data
+          }
+        },
+        error: {
+          render({ data }) {
+            return data
+          }
+        }
+      })
     } else {
-      toast.error("Girilen tarih aralığında devam eden stajınız bulunmaktadır")
+      toast.error('Girilen tarih aralığında devam eden stajınız bulunmaktadır')
     }
   }
 
   const onFinishFailed = (values) => {
-    setFormFieldError(true)
+    setFormFieldError(false)
     console.log('onFinishFailed Values: ', values)
   }
 
   const handleLoading = () => {
-    setLoading(true)
+    setButtonLoading(true)
     setTimeout(() => {
-      setLoading(false)
+      setButtonLoading(false)
     }, 3000)
   }
 
   return (
-    <>
+    <Space
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        marginBottom: 10
+      }}
+    >
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -238,11 +248,19 @@ const CompanyInformationForm = () => {
         pauseOnHover={false}
         theme="colored"
       />
-      <Title className="card-title" style={{ color: '#193164' }} level={4}>
+      <Title
+        className="card-title"
+        style={{
+          color: '#193164',
+          fontFamily: 'open sans',
+          padding: 10
+        }}
+        level={3}
+      >
         Staj Yapılacak Şirket Bilgileri
       </Title>
       <Form
-        { ...formItemLayout }
+        {...formItemLayout}
         form={form}
         name="company"
         onFinish={onFinish}
@@ -250,15 +268,14 @@ const CompanyInformationForm = () => {
         colon={false}
         size="middle"
         labelAlign="left"
+        scrollToFirstError
         style={{
           maxWidth: 650,
           width: '100%',
           boxShadow: '1px 2px 20px #d4d4d4',
           borderRadius: 10,
-          padding: '25px 25px 0 25px',
-          marginBottom: 35
+          padding: '25px 25px 1px 25px'
         }}
-        scrollToFirstError
       >
         <Form.Item
           name="companyName"
@@ -267,17 +284,17 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: 'İş yeri adını giriniz !',
+              message: 'İş yeri adını giriniz !'
             },
             {
               type: 'string',
               whitespace: true,
-              message: 'İş yeri adı sadece boşluk karakteri içermemelidir !',
+              message: 'İş yeri adı sadece boşluk karakteri içermemelidir !'
             },
             {
               max: 20,
-              message: 'İş yeri adı sadece 20 karakter içerebilir !',
-            },
+              message: 'İş yeri adı sadece 20 karakter içerebilir !'
+            }
           ]}
         >
           <Input prefix={<HomeOutlined style={{ color: 'gray' }} />} />
@@ -326,7 +343,7 @@ const CompanyInformationForm = () => {
           className="responsible"
           hasFeedback
           style={{
-            marginBottom: 0
+            marginBottom: 0,
           }}
         >
           <Row gutter={8}>
@@ -342,8 +359,7 @@ const CompanyInformationForm = () => {
                   {
                     type: 'string',
                     whitespace: true,
-                    message:
-                      'Yetkili adı sadece boşluk karakteri içermemelidir !'
+                    message: 'Yetkili adı sadece boşluk karakteri içermemelidir !'
                   },
                   {
                     max: 20,
@@ -387,16 +403,16 @@ const CompanyInformationForm = () => {
           rules={[
             {
               required: true,
-              message: 'Çalışan kişi sayısını giriniz !',
+              message: 'Çalışan kişi sayısını giriniz !'
             },
             {
               pattern: /^[0-9]+$/,
-              message: 'Çalışan sayısı sadece sayı içerebilir !',
+              message: 'Çalışan sayısı sadece sayı içerebilir !'
             },
             {
               max: 5,
-              message: 'Çalışan sayısı en fazla 5 haneli olabilir !',
-            },
+              message: 'Çalışan sayısı en fazla 5 haneli olabilir !'
+            }
           ]}
         >
           <Input prefix={<TeamOutlined style={{ color: 'gray' }} />} />
@@ -462,7 +478,7 @@ const CompanyInformationForm = () => {
             <RangePicker
               format={'DD/MM/YYYY'}
               style={{
-                width: '100%'
+                width: '100%',
               }}
             />
           </Form.Item>
@@ -472,38 +488,30 @@ const CompanyInformationForm = () => {
           <Button
             type="primary"
             htmlType="submit"
-            size="large"
+            size="middle"
             onClick={() => {
               handleLoading()
             }}
             style={{
               width: '100%',
-              fontSize: 18,
+              fontSize: 16,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              fontFamily: 'open sans',
             }}
           >
-            {loading && formFieldError === false ? (
-              <Text
-                style={{
-                  width: '100%',
-                  fontSize: 18,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white'
-                }}
-              >
-                Gönderiliyor... &nbsp; <SyncOutlined spin={loading} />
-              </Text>
-            ) : (
-              'Başvuru Yap'
-            )}
+            Başvuru Yap
+            {
+              buttonLoading && formFieldError ? 
+                <LoadingOutlined/>
+                : 
+                null
+            }
           </Button>
         </Form.Item>
       </Form>
-    </>
+    </Space>
   )
 }
 export default CompanyInformationForm

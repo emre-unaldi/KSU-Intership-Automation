@@ -113,7 +113,8 @@ const FileUpload = (props) => {
                     display: 'flex', 
                     flexDirection: 'column', 
                     alignItems: 'center',
-                    padding: 10
+                    padding: 10,
+                    fontFamily: 'open sans'
                 }}
             >
                 <DropboxOutlined 
@@ -123,11 +124,15 @@ const FileUpload = (props) => {
                         paddingBottom: 15
                     }}
                 />
-                <Text strong type='secondary'>
+                <Text 
+                    strong 
+                    type='secondary'
+                    style={{
+                        fontFamily: 'open sans'
+                    }}
+                >
                     Dosya yüklemek için bu alana tıklayıp dosya seçin veya 
-                    dosyayı bu alana sürükleyip bırakın
-                </Text>
-                <Text type='secondary'>
+                    dosyayı bu alana sürükleyip bırakın <br />
                     Dosya pdf dosyası olmak zorundadır <br />
                     Yanlış dosya yüklemelerinden öğrenci sorumludur
                 </Text>
@@ -161,7 +166,11 @@ const FileUpload = (props) => {
                                     color: '#fe4c54'
                                 }}
                             />
-                            <Text>
+                            <Text
+                                style={{
+                                    fontFamily: 'open sans'
+                                }}
+                            >
                                 <a 
                                     href={`http://localhost:3001/uploads/${file.internshipType}/${file.documentType}/${file.name}`} 
                                     target='_blank' rel='noopener noreferrer'

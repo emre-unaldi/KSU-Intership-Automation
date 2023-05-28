@@ -1,38 +1,55 @@
 import { useState } from 'react'
 import { Space, Button, Alert, Typography } from 'antd'
 import { useNavigate } from 'react-router-dom'
-import { SyncOutlined } from '@ant-design/icons'
-import PdfViewer from '../../System/PdfViewer'
+import { LoadingOutlined } from '@ant-design/icons'
 
 function Instructions() {
   const [approval, setApproval] = useState(false)
-  const [loadings, setLoadings] = useState(false)
+  const [buttonLoading, setButtonLoading] = useState(false)
   const { Title } = Typography
   const navigate = useNavigate()
 
   const handleLoading = () => {
     localStorage.setItem('instructions', approval)
-    setLoadings(true)
-    
+    setButtonLoading(true)
+
     setTimeout(() => {
-      setLoadings(false)
+      setButtonLoading(false)
       navigate('/student/internshipForm/companyInformation')
     }, 3000)
   }
 
   return (
     <>
-      <Title className="card-title" style={{ color: '#193164' }} level={4}>
-        Staj Uygulama İlkeleri Onayı
-      </Title>
-      <PdfViewer />
       <Space
         direction="vertical"
         style={{
-          width: '98%',
-          paddingBottom: 10
+          width: '100%'
         }}
       >
+        <Title
+          className="card-title"
+          style={{
+            color: '#193164',
+            fontFamily: 'open sans',
+            paddingBottom: 0,
+            textAlign: 'center'
+          }}
+          level={3}
+        >
+          Staj Uygulama İlkeleri Onayı
+        </Title>
+        <embed
+          src={`http://localhost:3001/documents/staj_ilkeleri.pdf`}
+          width="100%"
+          height="500"
+          type="application/pdf"
+          style={{
+            fontFamily: 'open sans',
+            borderRadius: 10,
+            border: '5px solid #323639'
+          }}
+        />
         <Alert
           message={
             approval
@@ -40,10 +57,7 @@ function Instructions() {
               : 'Başvuruya devam etmek için staj uygulama ilkelerini okumalı ve onay vermeniz gerekmektedir'
           }
           style={{
-            fontSize: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
+            fontFamily: 'open sans'
           }}
           type={approval ? 'success' : 'info'}
           showIcon
@@ -51,15 +65,14 @@ function Instructions() {
             <Space>
               {approval ? (
                 <Button
-                  type="default"
-                  style={{
-                    color: 'white',
-                    backgroundColor: '#4fc818',
-                    border: 'none'
-                  }}
-                  size="middle"
+                  type="primary"
+                  size="small"
                   onClick={() => {
                     setApproval(false)
+                  }}
+                  style={{
+                    backgroundColor: '#4fc818',
+                    fontFamily: 'open sans'
                   }}
                 >
                   İptal Et
@@ -67,9 +80,12 @@ function Instructions() {
               ) : (
                 <Button
                   type="primary"
-                  size="middle"
+                  size="small"
                   onClick={() => {
                     setApproval(true)
+                  }}
+                  style={{
+                    fontFamily: 'open sans'
                   }}
                 >
                   Onayla
@@ -78,26 +94,37 @@ function Instructions() {
             </Space>
           }
         />
-      </Space>
-      <Space direction="vertical">
-        <Button
-          type="primary"
-          size="large"
-          onClick={() => {
-            handleLoading()
-          }}
+        <Space
           style={{
-            width: '20vw',
-            paddingBottom: 8,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'center'
           }}
-          disabled={approval ? false : true}
-          block
         >
-          {loadings ? <SyncOutlined spin={loadings} /> : 'Devam Et'}
-        </Button>
+          <Button
+            type="primary"
+            size="middle"
+            onClick={() => {
+              handleLoading()
+            }}
+            style={{
+              fontSize: 16,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: 'open sans'
+            }}
+            disabled={approval ? false : true}
+          >
+            Devam Et
+            {
+              buttonLoading ? 
+                <LoadingOutlined/>
+                : 
+                null
+            }
+          </Button>
+        </Space>
       </Space>
     </>
   )

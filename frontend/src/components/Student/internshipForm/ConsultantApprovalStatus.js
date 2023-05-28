@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { SmileOutlined, SyncOutlined } from '@ant-design/icons'
+import { LoadingOutlined, SmileOutlined } from '@ant-design/icons'
 import { Button, Result, Typography, Spin, Space } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllUserAndInternships } from '../../../redux/userSlice'
 import { useNavigate } from 'react-router-dom'
-import './internshForm.css'
 
 function ConsultantApprovalStatus() {
-  const [loadings, setLoadings] = useState(false)
+  const [buttonLoading, setButtonLoading] = useState(false)
   const [internships, setInternships] = useState([])
-  const { Title, Text } = Typography
+  const { Title } = Typography
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const currentUserId = useSelector(
-    (state) => state.user.check?.data?.user?._id
-  )
+  const currentUserId = useSelector((state) => state.user.check?.data?.user?._id)
 
   useEffect(() => {
     dispatch(getAllUserAndInternships())
@@ -24,7 +21,8 @@ function ConsultantApprovalStatus() {
             const currentUser = await getAll.payload.data.find(
               (user) => user._id === currentUserId
             )
-            const currentUserInternships = await currentUser?.internships || []
+            const currentUserInternships =
+              (await currentUser?.internships) || []
             setInternships(currentUserInternships)
           } else {
             throw new Error(getAll.payload.message)
@@ -38,12 +36,12 @@ function ConsultantApprovalStatus() {
       })
   }, [dispatch, currentUserId])
 
-  const btnTextStyle = {
-    fontSize: 18,
+  const buttonStyle = {
+    fontSize: 16,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: 'white'
+    fontFamily: 'open sans'
   }
 
   const convertToTR = (internship) => {
@@ -57,130 +55,134 @@ function ConsultantApprovalStatus() {
   }
 
   const handleLoading = (approval) => {
-    setLoadings(true)
+    setButtonLoading(true)
     setTimeout(() => {
-      setLoadings(false)
+      setButtonLoading(false)
       navigate('/student/home')
-    }, 3000)
+    }, 2500)
   }
 
   return (
-    <>
-      <Title
-        className="card-title"
-        style={{ color: '#193164', textAlign: 'center' }}
-        level={4}
-      >
-        Danışman Öğretmen Staj Başvurusu Onay Durumu
-      </Title>
-
-      {internships.map((item) => {
-        return item.consultantApprovalUpdate ? (
-          <Result
-            key={item._id}
-            style={{
-              maxWidth: 650,
-              width: '100%',
-              boxShadow: '1px 2px 20px #d4d4d4',
-              borderRadius: 10,
-              marginBottom: 35,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-            status={item.consultantApproval ? 'success' : 'error'}
-            title={
-              item.consultantApproval
-                ? `Üniversite tarafından ${convertToTR(
-                    item.internship
-                  ).toLocaleLowerCase()} stajı başvurun onaylandı`
-                : `Üniversite tarafından ${convertToTR(
-                    item.internship
-                  ).toLocaleLowerCase()} stajı başvurun reddedildi`
-            }
-            subTitle={
-              item.consultantApproval
-                ? `${convertToTR(
-                    item.internship
-                  )} stajı başvuru süreci başarıyla tamamlanmıştır. Öğrenci staj sonunda gerekli evrakları sisteme yüklemelidir`
-                : `Danışman öğretmen ile ${convertToTR(
-                    item.internship
-                  ).toLocaleLowerCase()} stajı için iletişime geçilmeli ve gerekli görülürse staj yeri değiştirilmelidir`
-            }
-            extra={[
-              item.consultantApproval ? (
-                <Button
-                  type="primary"
-                  size="large"
-                  key="btn"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                  onClick={() => {
-                    handleLoading(item.consultantApproval)
-                  }}
-                >
-                  {loadings ? (
-                    <Text style={btnTextStyle}>
-                      Yönlendiriliyor &nbsp; <SyncOutlined spin={loadings} />
-                    </Text>
-                  ) : (
-                    <Text style={btnTextStyle}>Anasayfa</Text>
-                  )}
-                </Button>
-              ) : (
-                <Button
-                  type="primary"
-                  size="large"
-                  key="btn"
-                  onClick={() => {
-                    handleLoading(item.consultantApproval)
-                  }}
-                >
-                  {loadings ? (
-                    <Text style={btnTextStyle}>
-                      Yönlendiriliyor &nbsp; <SyncOutlined spin={loadings} />
-                    </Text>
-                  ) : (
-                    <Text style={btnTextStyle}>Anasayfa</Text>
-                  )}
-                </Button>
-              )
-            ]}
-          />
-        ) : (
-          <Space
-            key={item._id}
-            direction="vertical"
-            align="center"
-            size="large"
-            style={{
-              maxWidth: 650,
-              width: '100%',
-              boxShadow: '1px 2px 20px #d4d4d4',
-              borderRadius: 10,
-              marginBottom: 35
-            }}
-          >
+    <Space
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column'
+      }}
+    >
+      <>
+        <Title
+          className="card-title"
+          style={{
+            color: '#193164',
+            textAlign: 'center',
+            fontFamily: 'open sans'
+          }}
+          level={3}
+        >
+          Danışman Öğretmen Staj Başvurusu Onay Durumu
+        </Title>
+        {internships.map((item) => {
+          return item.consultantApprovalUpdate ? 
+          (
             <Result
-              icon={<SmileOutlined />}
-              title={`${convertToTR(item.internship)} stajı başvurusu yapıldı`}
-              subTitle={`Staj başvurusunu onaylayacak danışman öğretmene başvuru formu bilgileri iletildi`}
-              extra={
-                <Spin
-                  size="large"
-                  style={{ fontSize: '40' }}
-                  tip="Onay Bekleniyor"
-                />
+              key={item._id}
+              style={{
+                maxWidth: 800,
+                width: '100%',
+                boxShadow: '1px 2px 20px #d4d4d4',
+                borderRadius: 10,
+                marginBottom: 35,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                fontFamily: 'open sans'
+              }}
+              status={item.consultantApproval ? 'success' : 'error'}
+              title={
+                item.consultantApproval ? 
+                  `Üniversite tarafından ${
+                    convertToTR(item.internship).toLocaleLowerCase()
+                  } stajı başvurun onaylandı`
+                  : 
+                  `Üniversite tarafından ${
+                    convertToTR(item.internship).toLocaleLowerCase()
+                  } stajı başvurun reddedildi`
               }
+              subTitle={
+                item.consultantApproval ? `${
+                    convertToTR(item.internship)
+                  } stajı başvuru süreci başarıyla tamamlanmıştır. Öğrenci staj sonunda gerekli evrakları sisteme yüklemelidir`
+                  : 
+                  `Danışman öğretmen ile ${
+                    convertToTR(item.internship).toLocaleLowerCase()
+                  } stajı için iletişime geçilmeli ve gerekli görülürse staj yeri değiştirilmelidir`
+              }
+              extra={[
+                <Button
+                  type="primary"
+                  size="middle"
+                  key={item._id}
+                  onClick={() => {
+                    handleLoading(item.consultantApproval)
+                  }}
+                  style={buttonStyle}
+                >
+                  Anasayfa
+                  {
+                    buttonLoading ? 
+                      <LoadingOutlined />
+                      : 
+                      null
+                  }
+                </Button>
+              ]}
             />
-          </Space>
-        )
-      })}
-    </>
+          ) 
+          : 
+          (
+            <Space
+              key={item._id}
+              direction="vertical"
+              align="center"
+              size="large"
+              style={{
+                maxWidth: 800,
+                width: '100%',
+                boxShadow: '1px 2px 20px #d4d4d4',
+                borderRadius: 10,
+                marginBottom: 35,
+                fontFamily: 'open sans'
+              }}
+            >
+              <Result
+                icon={<SmileOutlined />}
+                title={`${
+                  convertToTR(item.internship)
+                  } stajı başvurusu yapıldı`
+                }
+                subTitle={`Staj başvurusunu onaylayacak danışman öğretmene başvuru formu bilgileri iletildi`}
+                style={{
+                  fontFamily: 'open sans'
+                }}
+                extra={
+                  <Spin
+                    size="large"
+                    style={{
+                      fontSize: '40',
+                      fontFamily: 'open sans'
+                    }}
+                    tip="Onay Bekleniyor"
+                  />
+                }
+              />
+            </Space>
+          )
+        })}
+      </>
+    </Space>
   )
 }
 
