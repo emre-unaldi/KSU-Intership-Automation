@@ -81,60 +81,42 @@
         }
     }
 
-    const internshipStatusCheck = (internshipDateRange) => {
-        const internshipStartDate = new Date(internshipDateRange[0])
-        const internshipEndDate = new Date(internshipDateRange[1])
-        const currentDateTime = new Date()
-
-        const internshipDoingCondition =
-        internshipStartDate <= currentDateTime &&
-        internshipEndDate >= currentDateTime
-        const internshipWaitingCondition = internshipStartDate > currentDateTime
-        const internshipFinishingCondition = internshipEndDate < currentDateTime
-
-        if (internshipWaitingCondition) {
+    const internshipStatusCheck = (internshipDateRange, companyApproval,consultantApproval) => {
+        if (companyApproval && consultantApproval) {
+            const internshipStartDate = new Date(internshipDateRange[0])
+            const internshipEndDate = new Date(internshipDateRange[1])
+            const currentDateTime = new Date()
+        
+            const internshipDoingCondition = internshipStartDate <= currentDateTime && internshipEndDate >= currentDateTime
+            const internshipWaitingCondition = internshipStartDate > currentDateTime
+            const internshipFinishingCondition = internshipEndDate < currentDateTime
+        
+            if (internshipWaitingCondition) {
+                return [
+                    <ClockCircleOutlined style={tagIconStyle} />,
+                    'default',
+                    'Staj bekleniyor'
+                ]
+            } else if (internshipDoingCondition) {
+                return [
+                    <SyncOutlined spin style={tagIconStyle} />,
+                    'processing',
+                    'Staj yapılıyor'
+                ]
+            } else if (internshipFinishingCondition) {
+                return [
+                    <CheckCircleOutlined style={tagIconStyle} />,
+                    'success',
+                    'Staj tamamlandı'
+                ]
+            }
+        } else {
             return [
                 <ClockCircleOutlined style={tagIconStyle} />,
-                'error',
-                'Staj bekleniyor',
-            ]
-        } else if (internshipDoingCondition) {
-            return [
-                <SyncOutlined spin style={tagIconStyle} />,
-                'blue',
-                'Staj yapılıyor',
-            ]
-        } else if (internshipFinishingCondition) {
-            return [
-                <CheckCircleOutlined style={tagIconStyle} />,
-                'success',
-                'Staj tamamlandı',
+                'warning',
+                'Staj Pasif'
             ]
         }
-    }
-
-    const tagItemSuccessContent = (message) => {
-        return (
-            <Tag
-                icon={<CheckCircleOutlined style={tagIconStyle} />}
-                color="success"
-                style={tagStyle}
-            >
-                {message}
-            </Tag>
-        )
-    }
-
-    const tagItemErrorContent = (message) => {
-        return (
-            <Tag
-                icon={<CloseCircleOutlined style={tagIconStyle} />}
-                color="error"
-                style={tagStyle}
-            >
-                {message}
-            </Tag>
-        )
     }
 
     const tagItemInternshipStatusContent = (internshipStatus) => {
@@ -149,14 +131,146 @@
         )
     }
 
-    const tagItemInternshipTypeContent = (message) => {
+    const internshipCompanyApprovalCheck = (companyApproval,companyApprovalUpdate) => {
+        if (companyApprovalUpdate) {
+            if (companyApproval) {
+                return [
+                    <CheckCircleOutlined style={tagIconStyle} />,
+                    'success',
+                    'Onayladı'
+                ]
+            } else {
+                return [
+                    <CloseCircleOutlined style={tagIconStyle} />,
+                    'error',
+                    'Reddetti'
+                ]
+            }
+        } else {
+            return [
+                <ClockCircleOutlined style={tagIconStyle} />,
+                'default',
+                'Bekleniyor'
+            ]
+        }
+    }
+
+    const tagItemCompanyApprovalContent = (companyApprovalStatus) => {
         return (
             <Tag
-                icon={<SendOutlined style={tagIconStyle} />}
-                color="default"
+                icon={companyApprovalStatus[0]}
+                color={companyApprovalStatus[1]}
                 style={tagStyle}
             >
-                {message} Stajı
+                <a 
+                    href='http://localhost:3000/student/internshipForm/companyApprovalWait'
+                    target='_blank'
+                    rel="noreferrer"
+                >
+                    {companyApprovalStatus[2]}
+                </a>
+            </Tag>
+        )
+    }
+    
+    const internshipConstultantApprovalCheck = (consultantApproval,consultantApprovalUpdate) => {
+        if (consultantApprovalUpdate) {
+            if (consultantApproval) {
+                return [
+                    <CheckCircleOutlined style={tagIconStyle} />,
+                    'success',
+                    'Onayladı'
+                ]
+            } else {
+                return [
+                    <CloseCircleOutlined style={tagIconStyle} />,
+                    'error',
+                    'Reddetti'
+                ]
+            }
+        } else {
+            return [
+                <ClockCircleOutlined style={tagIconStyle} />,
+                'default',
+                'Bekleniyor'
+            ]
+        }
+    }
+
+    const tagItemConsultantApprovalContent = (consultantApprovalStatus) => {
+        return (
+            <Tag
+                icon={consultantApprovalStatus[0]}
+                color={consultantApprovalStatus[1]}
+                style={tagStyle}
+            >
+                <a 
+                    href='http://localhost:3000/student/internshipForm/consultantApprovalWait'
+                    target='_blank'
+                    rel="noreferrer"
+                >
+                    {consultantApprovalStatus[2]}
+                </a>
+            </Tag>
+        )
+    }
+
+    const internshipNotebookFileCheck = (isNotebookFileLoaded) => {
+        if (isNotebookFileLoaded) {
+            return [
+                <CheckCircleOutlined style={tagIconStyle} />,
+                'success',
+                'Staj Defteri Yüklendi'
+            ]
+        } else {
+            return [
+                <CloseCircleOutlined style={tagIconStyle} />,
+                'error',
+                'Staj Defteri Yüklenmedi'
+            ]
+        }
+    }
+
+    const internshipReportFileCheck = (isReportFileLoaded) => {
+        if (isReportFileLoaded) {
+            return [
+                <CheckCircleOutlined style={tagIconStyle} />,
+                'success',
+                'Staj Raporu Yüklendi'
+            ]
+        } else {
+            return [
+                <CloseCircleOutlined style={tagIconStyle} />,
+                'error',
+                'Staj Raporu Yüklenmedi'
+            ]
+        }
+    }
+
+    const internshipChartFileCheck = (isChartFileLoaded) => {
+        if (isChartFileLoaded) {
+            return [
+                <CheckCircleOutlined style={tagIconStyle} />,
+                'success',
+                'Staj Çizelgesi Yüklendi'
+            ]
+        } else {
+            return [
+                <CloseCircleOutlined style={tagIconStyle} />,
+                'error',
+                'Staj Çizelgesi Yüklenmedi'
+            ]
+        }
+    }
+    
+    const tagItemFilesContent = (fileStatus) => {
+        return (
+            <Tag
+                icon={fileStatus[0]}
+                color={fileStatus[1]}
+                style={tagStyle}
+            >
+                {fileStatus[2]}
             </Tag>
         )
     }
@@ -183,6 +297,21 @@
             >
                 Staj Süreci Görüntüleme
             </Title>
+            <Space 
+                direction="vertical" 
+                style={{ 
+                    width: '100%',
+                }}
+            >
+                <Alert 
+                    message="Onay durumu mesajına tıklayarak başvurudaki ilgili onay sayfasına gidebilirsiniz" 
+                    type="info"     
+                    showIcon
+                    style={{
+                        fontFamily: 'open sans',
+                    }}
+                />
+            </Space>
             {
                 currentUserInternships.length !== 0 ?
                 currentUserInternships.map((item) => (
@@ -198,9 +327,13 @@
                             labelStyle={labelStyle}
                             contentStyle={contentStyle}
                         >
-                            {
-                                tagItemInternshipTypeContent(convertToTR(item.internship))
-                            }
+                            <Tag
+                                icon={<SendOutlined style={tagIconStyle} />}
+                                color="default"
+                                style={tagStyle}
+                            >
+                                {convertToTR(item.internship)} Stajı
+                            </Tag>
                         </Descriptions.Item>
                         <Descriptions.Item
                             label="Şirket Onayı"
@@ -208,10 +341,12 @@
                             contentStyle={contentStyle}
                         >
                             {
-                                item.companyApproval ? 
-                                tagItemSuccessContent('Onaylandı')
-                                : 
-                                tagItemErrorContent('Reddedildi')
+                                tagItemCompanyApprovalContent(
+                                    internshipCompanyApprovalCheck(
+                                        item.companyApproval,
+                                        item.companyApprovalUpdate
+                                    )
+                                )
                             }
                         </Descriptions.Item>
                         <Descriptions.Item
@@ -220,10 +355,12 @@
                             contentStyle={contentStyle}
                         >
                             {
-                                item.consultantApproval ? 
-                                tagItemSuccessContent('Onaylandı')
-                                : 
-                                tagItemErrorContent('Reddedildi')
+                                tagItemConsultantApprovalContent(
+                                    internshipConstultantApprovalCheck(
+                                        item.consultantApproval,
+                                        item.consultantApprovalUpdate
+                                    )
+                                )
                             }
                         </Descriptions.Item>
                         <Descriptions.Item
@@ -233,7 +370,11 @@
                         >
                             {
                                 tagItemInternshipStatusContent(
-                                    internshipStatusCheck(item.internshipDateRange)
+                                    internshipStatusCheck(
+                                        item.internshipDateRange,
+                                        item.companyApproval,
+                                        item.consultantApproval
+                                    )
                                 )
                             }
                         </Descriptions.Item>
@@ -243,22 +384,42 @@
                             contentStyle={contentStyle}
                         >
                             {
-                                item.isNotebookFileLoaded ? 
-                                tagItemSuccessContent('Staj Defteri Yüklendi')
-                                : 
-                                tagItemErrorContent('Staj Defteri Yüklenmedi')
-                            }
-                            {
-                                item.isReportFileLoaded ? 
-                                tagItemSuccessContent('Staj Raporu Yüklendi')
-                                : 
-                                tagItemErrorContent('Staj Raporu Yüklenmedi')
-                            }
-                            {
-                                item.isChartFileLoaded ? 
-                                tagItemSuccessContent('Staj Çizelgesi Yüklendi')
+                                item.companyApproval && item.consultantApproval ? 
+                                (
+                                    <>
+                                        {
+                                            tagItemFilesContent(
+                                                internshipNotebookFileCheck(
+                                                    item.isNotebookFileLoaded
+                                                )
+                                            )
+                                        }
+                                        {
+                                            tagItemFilesContent(
+                                                internshipReportFileCheck(
+                                                    item.isReportFileLoaded
+                                                )
+                                            )
+                                        }
+                                        {
+                                            tagItemFilesContent(
+                                                internshipChartFileCheck(
+                                                    item.isChartFileLoaded
+                                                )
+                                            )
+                                        }
+                                    </>
+                                )
                                 :
-                                tagItemErrorContent('Staj Çizelgesi Yüklenmedi')
+                                (
+                                    <Tag
+                                        icon={<ClockCircleOutlined style={tagIconStyle} />}
+                                        color="default"
+                                        style={tagStyle}
+                                    >
+                                        Stajın Onaylanması Bekleniyor
+                                    </Tag>
+                                )
                             }
                         </Descriptions.Item>
                     </Descriptions>

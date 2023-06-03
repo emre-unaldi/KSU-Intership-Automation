@@ -80,13 +80,27 @@ export const getAllUserAndInternships = createAsyncThunk(
   }
 )
 
+export const getAllUsers = createAsyncThunk(
+  'getAllUsers',
+  async () => {
+    const response = await axios.post(
+      'http://localhost:3001/api/users/getUsers',
+      {
+        withCredentials: true
+      }
+    )
+    return response.data
+  }
+)
+
 const initialState = {
   check: { data: '', loading: false, error: '' },
   login: { data: '', loading: false, error: '' },
   logout: { data: '', loading: false, error: '' },
   student: { data: '', loading: false, error: '' },
   teacher: { data: '', loading: false, error: '' },
-  getAll: { data: '', loading: false, error: '' }
+  getAll: { data: '', loading: false, error: '' },
+  users: { data: '', loading: false, error: '' }
 }
 
 export const userSlice = createSlice({
@@ -176,6 +190,20 @@ export const userSlice = createSlice({
     builder.addCase(getAllUserAndInternships.rejected, (state, action) => {
       state.getAll.loading = false
       state.getAll.error = 'Request Fetching Error'
+    })
+
+    // getAllUsers
+    builder.addCase(getAllUsers.pending, (state, action) => {
+      state.users.loading = true
+      state.users.error = ''
+    })
+    builder.addCase(getAllUsers.fulfilled, (state, action) => {
+      state.users.data = action.payload
+      state.users.loading = false
+    })
+    builder.addCase(getAllUsers.rejected, (state, action) => {
+      state.users.loading = false
+      state.users.error = 'Request Fetching Error'
     })
   },
 })
