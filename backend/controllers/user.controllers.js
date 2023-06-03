@@ -144,6 +144,7 @@ const checkUser = async (req, res) => {
   }
 }
 
+// Kullanıcıları ve stajları çekme endpointi
 const getAllUserAndInternships = async (req, res) => {
   const UserAndInternships = User.aggregate([
     {
@@ -209,10 +210,32 @@ const getAllUserAndInternships = async (req, res) => {
   })
 }
 
+// Tüm Stajları listeleme endpointi
+const getAllUsers = async (req, res) => {
+  const users = User.find({})
+
+  await users
+    .then((data) => {
+      return res.json({
+        status: 'success',
+        message: 'All users found',
+        data
+      })
+    })
+    .catch((error) => {
+      return res.json({
+        status: 'fail',
+        message: 'All users not found',
+        error
+      })
+    })
+}
+
 export {
   registerUser,
   loginUser,
   logoutUser,
   checkUser,
-  getAllUserAndInternships
+  getAllUserAndInternships,
+  getAllUsers
 }
