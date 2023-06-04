@@ -9,7 +9,7 @@ import profile from '../../../assets/img/profile-img.jpg'
 import messagesProfile from '../../../assets/img/messages-1.jpg'
 axios.defaults.withCredentials = true
 
-function TeacherHeader() {
+const TeacherHeader = () => {
   const ksuLink = useSelector((state) => state.system.ksuLink)
   const currentUser = useSelector((state) => state.user.check?.data?.user)
   const dispatch = useDispatch()
@@ -239,18 +239,14 @@ function TeacherHeader() {
                 className="d-none d-md-block dropdown-toggle ps-2" 
                 style={{ fontFamily: 'open sans' }}  
               >
-                {
-                  formattedUsername
-                }
+                { formattedUsername }
               </span>
             </a>
             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li className="dropdown-header">
                 <h6 style={{ fontFamily: 'open sans' }}> { username } </h6>
                 <span>
-                  {
-                    userRoleConvertToTR(userRole)
-                  }
+                  { userRoleConvertToTR(userRole) }
                 </span>
               </li>
               <li>

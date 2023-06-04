@@ -1,7 +1,7 @@
 import { useFormik } from 'formik'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { studentRegisterValidationSchema } from '../System/FormikValidations'
+import { studentRegisterValidationSchema } from './FormikValidations'
 import { registerStudent } from '../../redux/userSlice'
 
 const StudentRegisterForm = () => {

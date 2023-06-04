@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-function StudentFooter() {
+const StudentFooter = () => {
   const ksuLink = useSelector((state) => state.system.ksuLink)
 
   return (

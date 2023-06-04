@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getAllUserAndInternships } from '../../../redux/userSlice'
 import { useNavigate } from 'react-router-dom'
 
-function CompanyApprovalStatus() {
+const CompanyApprovalStatus = () => {
   const [buttonLoading, setButtonLoading] = useState(false)
   const [internships, setInternships] = useState([])
   const { Title } = Typography
@@ -85,130 +85,134 @@ function CompanyApprovalStatus() {
       >
         Staj Yapılacak Şirket Onay Durumu
       </Title>
-      {internships.map((item) => {
-        return item.companyApprovalUpdate ?
-        (
-          <Result
-            key={item._id}
-            style={{
-              maxWidth: 800,
-              width: '100%',
-              boxShadow: '1px 2px 20px #d4d4d4',
-              borderRadius: 10,
-              marginBottom: 35,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontFamily: 'open sans'
-            }}
-            status={item.companyApproval ? 'success' : 'error'}
-            title={
-              item.companyApproval ? 
-                `${item.companyName} şirketi tarafından ${
-                  convertToTR(item.internship).toLocaleLowerCase()
-                } stajı başvurun onaylandı`
-                : 
-                `${item.companyName} şirketi tarafından ${
-                  convertToTR(item.internship).toLocaleLowerCase()
-                } stajı başvurun reddedildi`
-            }
-            subTitle={
-              item.companyApproval ? 
-                `Devam et butonuna basıldığında ${
-                  convertToTR(item.internship).toLocaleLowerCase()
-                } stajı başvuru formun danışman öğretmenin onayı için danışman öğretmene gönderilecektir`
-                : 
-                `${convertToTR(item.internship)} stajı için ${
+      {
+        internships.map((item) => 
+          {
+            return item.companyApprovalUpdate ?
+            (
+              <Result
+                key={item._id}
+                style={{
+                  maxWidth: 800,
+                  width: '100%',
+                  boxShadow: '1px 2px 20px #d4d4d4',
+                  borderRadius: 10,
+                  marginBottom: 35,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  fontFamily: 'open sans'
+                }}
+                status={item.companyApproval ? 'success' : 'error'}
+                title={
+                  item.companyApproval ? 
+                    `${item.companyName} şirketi tarafından ${
+                      convertToTR(item.internship).toLocaleLowerCase()
+                    } stajı başvurun onaylandı`
+                    : 
+                    `${item.companyName} şirketi tarafından ${
+                      convertToTR(item.internship).toLocaleLowerCase()
+                    } stajı başvurun reddedildi`
+                }
+                subTitle={
+                  item.companyApproval ? 
+                    `Devam et butonuna basıldığında ${
+                      convertToTR(item.internship).toLocaleLowerCase()
+                    } stajı başvuru formun danışman öğretmenin onayı için danışman öğretmene gönderilecektir`
+                    : 
+                    `${convertToTR(item.internship)} stajı için ${
+                        item.companyName
+                    } şirketi ile tekrardan iletişime geçilmelidir`
+                }
+                extra={[
+                  item.companyApproval ? 
+                  (
+                    <Button
+                      type="primary"
+                      size="middle"
+                      key={item._id}
+                      onClick={() => {
+                        handleLoading(item.companyApproval)
+                      }}
+                      style={buttonStyle}
+                    >
+                      Devam Et
+                      {
+                        buttonLoading ? 
+                          <LoadingOutlined />
+                          : 
+                          null
+                      }
+                    </Button>
+                  ) 
+                  : 
+                  (
+                    <Button
+                      type="primary"
+                      size="middle"
+                      key={item._id}
+                      loading={buttonLoading}
+                      onClick={() => {
+                        handleLoading(item.companyApproval)
+                      }}
+                      style={buttonStyle}
+                    >
+                      Ansayfa
+                      {
+                        buttonLoading ? 
+                          <LoadingOutlined />
+                          : 
+                          null
+                      }
+                    </Button>
+                  )
+                ]}
+              />
+            ) 
+            : 
+            (
+              <Space
+                key={item._id}
+                direction="vertical"
+                align="center"
+                size="large"
+                style={{
+                  maxWidth: 800,
+                  width: '100%',
+                  boxShadow: '1px 2px 20px #d4d4d4',
+                  borderRadius: 10,
+                  marginBottom: 35,
+                  fontFamily: 'open sans'
+                }}
+              >
+                <Result
+                  icon={<SmileOutlined />}
+                  title={`${convertToTR(item.internship)} stajı başvurusu Yapıldı`}
+                  subTitle={`Staj yapılacak ${
                     item.companyName
-                } şirketi ile tekrardan iletişime geçilmelidir`
-            }
-            extra={[
-              item.companyApproval ? 
-              (
-                <Button
-                  type="primary"
-                  size="middle"
-                  key={item._id}
-                  onClick={() => {
-                    handleLoading(item.companyApproval)
-                  }}
-                  style={buttonStyle}
-                >
-                  Devam Et
-                  {
-                    buttonLoading ? 
-                      <LoadingOutlined />
-                      : 
-                      null
-                  }
-                </Button>
-              ) 
-              : 
-              (
-                <Button
-                  type="primary"
-                  size="middle"
-                  key={item._id}
-                  loading={buttonLoading}
-                  onClick={() => {
-                    handleLoading(item.companyApproval)
-                  }}
-                  style={buttonStyle}
-                >
-                  Ansayfa
-                  {
-                    buttonLoading ? 
-                      <LoadingOutlined />
-                      : 
-                      null
-                  }
-                </Button>
-              )
-            ]}
-          />
-        ) 
-        : 
-        (
-          <Space
-            key={item._id}
-            direction="vertical"
-            align="center"
-            size="large"
-            style={{
-              maxWidth: 800,
-              width: '100%',
-              boxShadow: '1px 2px 20px #d4d4d4',
-              borderRadius: 10,
-              marginBottom: 35,
-              fontFamily: 'open sans'
-            }}
-          >
-            <Result
-              icon={<SmileOutlined />}
-              title={`${convertToTR(item.internship)} stajı başvurusu Yapıldı`}
-              subTitle={`Staj yapılacak ${
-                item.companyName
-              } şirketine ${convertToTR(
-                item.internship
-              ).toLocaleLowerCase()} stajı onayı vermesi için E-Posta gönderildi`}
-              style={{
-                fontFamily: 'open sans'
-              }}
-              extra={
-                <Spin
-                  size="large"
+                  } şirketine ${convertToTR(
+                    item.internship
+                  ).toLocaleLowerCase()} stajı onayı vermesi için E-Posta gönderildi`}
                   style={{
-                    fontSize: '40',
-                    fontFamily: 'open sans',
+                    fontFamily: 'open sans'
                   }}
-                  tip="Onay Bekleniyor"
+                  extra={
+                    <Spin
+                      size="large"
+                      style={{
+                        fontSize: '40',
+                        fontFamily: 'open sans',
+                      }}
+                      tip="Onay Bekleniyor"
+                    />
+                  }
                 />
-              }
-            />
-          </Space>
+              </Space>
+            )
+          }
         )
-      })}
+      }
     </Space>
   )
 }

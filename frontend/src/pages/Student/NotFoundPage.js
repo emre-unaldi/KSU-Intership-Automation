@@ -31,7 +31,7 @@ const NotFoundPage = () => {
         href={ksuLink}
         className="back-to-top d-flex align-items-center justify-content-center"
       >
-        <i className="bi bi-arrow-up-short"></i>
+        <i className="bi bi-arrow-up-short"/>
       </a>
     </>
   )

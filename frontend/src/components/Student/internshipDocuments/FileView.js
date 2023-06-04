@@ -2,9 +2,8 @@ import React, { useState } from 'react'
 import { Button, Modal } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
 
-const FileView = (props) => {
+const FileView = ({ file, titleConvertToTR }) => {
     const [ openViewModal, setOpenViewModal ] = useState(false)
-    const { file, titleConvertToTR } = props
     
     return (
         <>

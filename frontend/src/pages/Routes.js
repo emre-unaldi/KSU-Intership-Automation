@@ -16,7 +16,6 @@ import CompanyInformationPage from './Student/InternshipForm/CompanyInformationP
 import CompanyApprovalPage from './Student/InternshipForm/CompanyApprovalPage'
 import CompanyApprovalWaitPage from './Student/InternshipForm/CompanyApprovalWaitPage'
 import ConsultantApprovalWaitPage from './Student/InternshipForm/ConsultantApprovalWaitPage'
-import ApplicationCompletedPage from './Student/InternshipForm/ApplicationCompletedPage'
 import StudentProfileLayout from './Student/Profile/ProfileLayout'
 import StudentAboutPage from './Student/Profile/AboutPage'
 import StudentEditPage from './Student/Profile/EditPage'
@@ -28,15 +27,27 @@ import TeacherHomePage from './Teacher/HomePage'
 import InternshipApplicationsPage from './Teacher/InternshipApplicationsPage'
 import InternshipStudentsViewPage from './Teacher/InternshipStudentsViewPage'
 import InternshipTeamPage from './Teacher/InternshipTeamPage'
-import TeacherProfileLayout from './Teacher/profile/ProfileLayout'
-import TeacherAboutPage from './Teacher/profile/AboutPage'
-import TeacherEditPage from './Teacher/profile/EditPage'
-import TeacherChangePasswordPage from './Teacher/profile/ChangePasswordPage'
+import TeacherProfileLayout from './Teacher/Profile/ProfileLayout'
+import TeacherAboutPage from './Teacher/Profile/AboutPage'
+import TeacherEditPage from './Teacher/Profile/EditPage'
+import TeacherChangePasswordPage from './Teacher/Profile/ChangePasswordPage'
 import TeacherNotFoundPage from './Teacher/NotFoundPage'
+// Admin
+import AdminLayout from './Admin/AdminLayout'
+import AdminHomePage from './Admin/HomePage'
+import EducationPeriodOpenClosePage from './Admin/EducationPeriodOpenClosePage'
+import InternshipGradeDateRangesPage from './Admin/InternshipGradeDateRangesPage'
+import AnnouncementsPage from './Admin/AnnouncementsPage'
+import AdminProfileLayout from './Admin/Profile/ProfileLayout'
+import AdminAboutPage from './Admin/Profile/AboutPage'
+import AdminEditPage from './Admin/Profile/EditPage'
+import AdminChangePasswordPage from './Admin/Profile/ChangePasswordPage'
+import AdminNotFoundPage from './Admin/NotFoundPage'
 // PrivateRoute
-import AuthPrivateRoute from '../components/System/AuthPrivateRoute'
-import StudentPrivateRoute from '../components/System/StudentPrivateRoute'
-import TeacherPrivateRoute from '../components/System/TeacherPrivateRoute'
+import AuthPrivateRoute from '../components/System/PrivateRoutes/AuthPrivateRoute'
+import StudentPrivateRoute from '../components/System/PrivateRoutes/StudentPrivateRoute'
+import TeacherPrivateRoute from '../components/System/PrivateRoutes/TeacherPrivateRoute'
+import AdminPrivateRoute from '../components/System/PrivateRoutes/AdminPrivateRoute'
 
 const routes = [
   {
@@ -47,6 +58,7 @@ const routes = [
       { index: true, element: <UserLoginPage /> },
       { path: 'register', element: <UserRegisterPage /> },
       { path: 'forgotPassword', element: <ForgotPasswordPage /> },
+      { path: 'companyApproval', element: <CompanyApprovalPage /> },
       { path: '*', element: <GeneralNotFoundPage /> }
     ]
   },
@@ -65,10 +77,8 @@ const routes = [
           { path: 'selection', element: <SelectionPage /> },
           { path: 'instructions', element: <InstructionsPage /> },
           { path: 'companyInformation', element: <CompanyInformationPage /> },
-          { path: 'companyApproval', element: <CompanyApprovalPage /> },
           { path: 'companyApprovalWait', element: <CompanyApprovalWaitPage /> },
-          { path: 'consultantApprovalWait', element: <ConsultantApprovalWaitPage />},
-          { path: 'applicationCompleted', element: <ApplicationCompletedPage />}
+          { path: 'consultantApprovalWait', element: <ConsultantApprovalWaitPage />}
         ]
       },
       {
@@ -103,6 +113,27 @@ const routes = [
       },
       { path: '*', element: <TeacherNotFoundPage /> }
     ]
+  }, 
+  {
+    path: 'admin',
+    element: <AdminLayout />,
+    admin: true,
+    children: [
+      { path: 'home', element: <AdminHomePage /> },
+      { path: 'educationPeriod', element: <EducationPeriodOpenClosePage /> },
+      { path: 'dateRanges', element: <InternshipGradeDateRangesPage /> },
+      { path: 'announcements', element: <AnnouncementsPage /> },
+      {
+        path: 'profile',
+        element: <AdminProfileLayout />,
+        children: [
+          { path: 'about', element: <AdminAboutPage /> },
+          { path: 'edit', element: <AdminEditPage /> },
+          { path: 'changePassword', element: <AdminChangePasswordPage /> }
+        ]
+      },
+      { path: '*', element: <AdminNotFoundPage /> }
+    ]
   }
 ]
 
@@ -116,6 +147,9 @@ const privateRouteMap = (routes) =>
     }
     if (route?.teacher) {
       route.element = <TeacherPrivateRoute>{route.element}</TeacherPrivateRoute>
+    }
+    if (route?.admin) {
+      route.element = <AdminPrivateRoute>{route.element}</AdminPrivateRoute>
     }
     if (route?.children) {
       route.children = privateRouteMap(route.children)

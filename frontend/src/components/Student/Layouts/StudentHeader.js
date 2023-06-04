@@ -9,7 +9,7 @@ import profile from '../../../assets/img/profile-img.jpg'
 import messagesProfile from '../../../assets/img/messages-1.jpg'
 axios.defaults.withCredentials = true
 
-function StudentHeader() {
+const StudentHeader = () => {
   const [ formattedUsername, setFormattedUsername ] = useState('')
   const ksuLink = useSelector((state) => state.system.ksuLink)
   const currentUser = useSelector((state) => state.user.check?.data?.user)
@@ -19,7 +19,11 @@ function StudentHeader() {
   const userRole = currentUser?.role
 
   useEffect(() => {
-    setFormattedUsername(currentUser?.name.slice(0,1).toUpperCase() + '. ' + currentUser?.surname.toUpperCase())
+    setFormattedUsername(
+        currentUser?.name.slice(0,1).toUpperCase()
+        + '. ' + 
+        currentUser?.surname.toUpperCase()
+      )
   }, [formattedUsername, currentUser])
 
   const handleLogoutClick = () => {
@@ -34,9 +38,7 @@ function StudentHeader() {
           navigate('/student/home')
         }
       } else {
-        console.log(
-          'User logout failed. Try logging out again'
-        )
+        console.log('User logout failed. Try logging out again')
       }
     })
     .catch((err) => {
@@ -74,7 +76,7 @@ function StudentHeader() {
           onClick={() => {
             dispatch(sideBarMenuOpen())
           }}
-        ></i>
+        />
       </div>
       <nav className="header-nav ms-auto">
         <ul 
@@ -244,18 +246,16 @@ function StudentHeader() {
                 className="d-none d-md-block dropdown-toggle ps-2" 
                 style={{ fontFamily: 'open sans' }}  
               >
-                {
-                  formattedUsername
-                }
+                { formattedUsername }
               </span>
             </a>
             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
               <li className="dropdown-header" style={{ fontFamily: 'open sans' }}>
-                <h6 style={{ fontFamily: 'open sans' }}> { username } </h6>
+                <h6 style={{ fontFamily: 'open sans' }}> 
+                  { username } 
+                </h6>
                 <span style={{ fontFamily: 'open sans' }}>
-                  {
-                    userRoleConvertToTR(userRole)
-                  }
+                  { userRoleConvertToTR(userRole) }
                 </span>
               </li>
               <li>

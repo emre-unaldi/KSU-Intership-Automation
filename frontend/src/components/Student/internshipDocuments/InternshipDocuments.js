@@ -299,31 +299,31 @@ const Documents = () => {
         pauseOnHover={false}
         theme="colored"
       />
-          <Space
-            direction="vertical"
-            size="large"
-            style={{
-              display: 'flex',
-              width: '100%'
-            }}
-          >
-            <Title
-              className="card-title"
-              level={3}
-              style={{
-                color: '#193164',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: 0,
-                paddingBottom: 0,
-                fontFamily: 'open sans'
-              }}
-            >
-              Staj Evraklarını Yükleme
-            </Title>
-            {
-              currentUserInternships.length !== 0 ?
+      <Space
+        direction="vertical"
+        size="large"
+        style={{
+          display: 'flex',
+          width: '100%'
+        }}
+      >
+        <Title
+          className="card-title"
+          level={3}
+          style={{
+            color: '#193164',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 0,
+            paddingBottom: 0,
+            fontFamily: 'open sans'
+          }}
+        >
+          Staj Evraklarını Yükleme
+        </Title>
+          {
+            currentUserInternships.length !== 0 ?
               (
                 <Tabs
                   items={[
@@ -359,7 +359,7 @@ const Documents = () => {
                 </Space>
               )
             }
-          </Space>
+      </Space>
     </>
   )
 }

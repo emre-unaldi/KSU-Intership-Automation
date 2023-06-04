@@ -36,12 +36,12 @@ const TeacherHome = () => {
           <b>Duyurular</b>
         </h2>
         <div className="alert alert-primary">
-          <i className="bi bi-calendar-week-fill me-1"></i>
+            <i className="bi bi-calendar-week-fill me-1"/>
             Staj başvuruları 20.01.2023 tarihinde sonlandırılacaktır. Öğrencilerin
             staj evraklarını zamanında teslim etmek zorundadır.
         </div>
         <div className="alert alert-warning">
-          <i className="bi bi-info-square-fill me-1"></i>
+            <i className="bi bi-info-square-fill me-1"/>
             Öğrencilerin staj evraklarını zamanında teslim etmek zorundadır.
         </div>
       </div>

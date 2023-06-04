@@ -3,7 +3,7 @@ import { Space, Button, Alert, Typography } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { LoadingOutlined } from '@ant-design/icons'
 
-function Instructions() {
+const Instructions = () => {
   const [approval, setApproval] = useState(false)
   const [buttonLoading, setButtonLoading] = useState(false)
   const { Title } = Typography

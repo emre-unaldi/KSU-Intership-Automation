@@ -5,10 +5,9 @@ import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { fileDeleteByUser } from '../../../redux/documentSlice'
 
-const FileDelete = (props) => {
+const FileDelete = ({ file, titleConvertToTR }) => {
     const [ openDeleteModal, setOpenDeleteModal ] = useState(false)
     const [ loading, setLoading ] = useState(false)
-    const { file, titleConvertToTR } = props
     const dispatch = useDispatch()
 
     const handleFileDelete = (file) => {

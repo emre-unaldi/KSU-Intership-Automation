@@ -1,9 +1,9 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Navigate } from "react-router-dom"
-import { checkUser } from "../../redux/userSlice"
+import { checkUser } from "../../../redux/userSlice"
 
-export default function TeacherPrivateRoute({ children }) {
+const TeacherPrivateRoute = ({ children }) => {
     const dispatch = useDispatch()
     const currentUser = useSelector((state) => state.user.check)
 
@@ -33,3 +33,5 @@ export default function TeacherPrivateRoute({ children }) {
       
   return children
 }
+
+export default TeacherPrivateRoute
