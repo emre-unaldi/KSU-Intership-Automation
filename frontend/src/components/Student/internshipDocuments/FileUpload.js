@@ -8,9 +8,8 @@ import { fileUploadByUserId, fileFetchByUserId } from '../../../redux/documentSl
 import FileDelete from './FileDelete'
 import FileView from './FileView'
 
-const FileUpload = (props) => {
+const FileUpload = ({ documentType, internshipType }) => {
     const [ files, setFiles ] = useState()
-    const { documentType, internshipType } = props
     const { Dragger } = Upload
     const { Text } = Typography
     const dispatch = useDispatch()
@@ -173,15 +172,22 @@ const FileUpload = (props) => {
                             >
                                 <a 
                                     href={`http://localhost:3001/uploads/${file.internshipType}/${file.documentType}/${file.name}`} 
-                                    target='_blank' rel='noopener noreferrer'
+                                    target='_blank' 
+                                    rel='noopener noreferrer'
                                 >
                                     {file.name}
                                 </a>
                             </Text>
                         </Space>
                         <Space>
-                            <FileDelete titleConvertToTR={titleConvertToTR(file.documentType)} file={file} />
-                            <FileView titleConvertToTR={titleConvertToTR(file.documentType)} file={file} />
+                            <FileDelete 
+                                titleConvertToTR={titleConvertToTR(file.documentType)} 
+                                file={file}     
+                            />
+                            <FileView 
+                                titleConvertToTR={titleConvertToTR(file.documentType)} 
+                                file={file}     
+                            />
                         </Space>
                     </Space>
                 )

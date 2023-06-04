@@ -3,7 +3,7 @@ import { Descriptions, Typography, Modal } from 'antd'
 import { useDispatch } from 'react-redux'
 import { getAllInternships } from '../../../redux/internshipSlice'
 
-function ViewStudentCompany({ open, setOpen, selectedInternshipId }) {
+const ViewStudentCompany = ({ open, setOpen, selectedInternshipId }) => {
     const [userInternship, setUserInternship] = useState([])
     const { Text } = Typography
     const dispatch = useDispatch()
@@ -76,78 +76,82 @@ function ViewStudentCompany({ open, setOpen, selectedInternshipId }) {
                 {
                     userInternship
                     .filter((internship) => internship._id === selectedInternshipId)
-                    .map((item) => (
-                        <Descriptions 
-                            bordered 
-                            size="small" 
-                            key={item._id}
-                            style={{
-                                fontFamily: 'open sans'
-                            }}
-                            labelStyle={{
-                                fontWeight: 'bold'
-                            }}
-                        >
-                            <Descriptions.Item 
-                                span={3} 
-                                label="İş Yeri"
+                    .map((item) => 
+                        (
+                            <Descriptions 
+                                bordered 
+                                size="small" 
+                                key={item._id}
+                                style={{
+                                    fontFamily: 'open sans'
+                                }}
+                                labelStyle={{
+                                    fontWeight: 'bold'
+                                }}
                             >
-                                {item.companyName}
-                            </Descriptions.Item>
-                            <Descriptions.Item 
-                                span={3} 
-                                label="E-posta"
-                            >
-                                <a href={`mailto:${item.companyEmail}`}>
-                                    {item.companyEmail}
-                                </a>
-                            </Descriptions.Item>
-                            <Descriptions.Item 
-                                span={3} 
-                                label="Telefon Numarası"
-                            >
-                                {item.companyPhone}
-                            </Descriptions.Item>
-                            <Descriptions.Item 
-                                span={3} 
-                                label="Yetkili"
-                            >
-                                {
-                                    item.companyResponsibleName + ' ' + item.companyResponsibleSurname
-                                } 
-                            </Descriptions.Item>
-                            <Descriptions.Item 
-                                span={3} 
-                                label="Çalışan Sayısı"
-                            >
-                                {item.companyPersonalCount}
-                            </Descriptions.Item>
-                            <Descriptions.Item 
-                                span={3} 
-                                label="Vergi No"
-                            >
-                                {item.companyTaxNumber}
-                            </Descriptions.Item>
-                            <Descriptions.Item 
-                                span={3} 
-                                label="Adres"
-                            >
-                                {item.companyAddress}
-                            </Descriptions.Item>
-                            <Descriptions.Item 
-                                span={3} 
-                                label="Staj Türü"
-                            >
-                                {convertToTR(item.internship)}
-                            </Descriptions.Item>
-                            <Descriptions.Item 
-                                span={3} 
-                                label="Tarih Aralığı"
-                            >
-                                {formatDate(item.internshipDateRange)}
-                            </Descriptions.Item>
-                        </Descriptions>
-                    ))
+                                <Descriptions.Item 
+                                    span={3} 
+                                    label="İş Yeri"
+                                >
+                                    {item.companyName}
+                                </Descriptions.Item>
+                                <Descriptions.Item 
+                                    span={3} 
+                                    label="E-posta"
+                                >
+                                    <a href={`mailto:${item.companyEmail}`}>
+                                        {item.companyEmail}
+                                    </a>
+                                </Descriptions.Item>
+                                <Descriptions.Item 
+                                    span={3} 
+                                    label="Telefon Numarası"
+                                >
+                                    {item.companyPhone}
+                                </Descriptions.Item>
+                                <Descriptions.Item 
+                                    span={3} 
+                                    label="Yetkili"
+                                >
+                                    {
+                                        item.companyResponsibleName 
+                                            + ' ' + 
+                                        item.companyResponsibleSurname
+                                    } 
+                                </Descriptions.Item>
+                                <Descriptions.Item 
+                                    span={3} 
+                                    label="Çalışan Sayısı"
+                                >
+                                    {item.companyPersonalCount}
+                                </Descriptions.Item>
+                                <Descriptions.Item 
+                                    span={3} 
+                                    label="Vergi No"
+                                >
+                                    {item.companyTaxNumber}
+                                </Descriptions.Item>
+                                <Descriptions.Item 
+                                    span={3} 
+                                    label="Adres"
+                                >
+                                    {item.companyAddress}
+                                </Descriptions.Item>
+                                <Descriptions.Item 
+                                    span={3} 
+                                    label="Staj Türü"
+                                >
+                                    {convertToTR(item.internship)}
+                                </Descriptions.Item>
+                                <Descriptions.Item 
+                                    span={3} 
+                                    label="Tarih Aralığı"
+                                >
+                                    {formatDate(item.internshipDateRange)}
+                                </Descriptions.Item>
+                            </Descriptions>
+                        )
+                    )
                 }
             </Modal>
         </>

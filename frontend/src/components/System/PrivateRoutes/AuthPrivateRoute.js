@@ -1,9 +1,9 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Navigate } from "react-router-dom"
-import { checkUser } from "../../redux/userSlice"
+import { checkUser } from "../../../redux/userSlice"
 
-export default function AuthPrivateRoute({ children }) {
+const AuthPrivateRoute = ({ children }) => {
     const dispatch = useDispatch()
     const currentUser = useSelector((state) => state.user.check)
 
@@ -23,3 +23,5 @@ export default function AuthPrivateRoute({ children }) {
       
   return children
 }
+
+export default AuthPrivateRoute

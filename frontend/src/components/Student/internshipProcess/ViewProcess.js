@@ -1,20 +1,21 @@
-    import React, { useEffect, useState } from 'react'
-    import { useSelector, useDispatch } from 'react-redux'
-    import { Space, Typography, Descriptions, Tag, Alert } from 'antd'
-    import { getAllInternships } from '../../../redux/internshipSlice'
-    import {
-    CheckCircleOutlined,
-    ClockCircleOutlined,
-    CloseCircleOutlined,
-    SendOutlined,
-    SyncOutlined
-    } from '@ant-design/icons'
+import React, { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { Space, Typography, Descriptions, Tag, Alert } from 'antd'
+import { getAllInternships } from '../../../redux/internshipSlice'
+import {
+CheckCircleOutlined,
+ClockCircleOutlined,
+CloseCircleOutlined,
+SendOutlined,
+SyncOutlined
+} from '@ant-design/icons'
 
-    const ViewProcess = () => {
+const ViewProcess = () => {
     const [currentUserInternships, setCurrentUserInternships] = useState([])
+    const currentUserId = useSelector((state) => state.user.check?.data?.user?._id)
     const dispatch = useDispatch()
     const { Title } = Typography
-    const currentUserId = useSelector((state) => state.user.check?.data?.user?._id)
+
     const column = {
         xxl: 4,
         xl: 4,
@@ -23,6 +24,7 @@
         sm: 2,
         xs: 2
     }
+
     const labelStyle = {
         fontWeight: 'bold',
         display: 'flex',
@@ -30,6 +32,7 @@
         alignItems: 'center',
         fontFamily: 'open sans'
     }
+
     const contentStyle = {
         display: 'flex',
         justifyContent: 'space-around',
@@ -37,6 +40,7 @@
         flexWrap: 'wrap',
         fontFamily: 'open sans'
     }
+
     const tagStyle = {
         display: 'flex',
         justifyContent: 'center',
@@ -46,6 +50,7 @@
         margin: 5,
         fontFamily: 'open sans'
     }
+
     const tagIconStyle = {
         fontSize: '14px'
     }
@@ -54,14 +59,14 @@
         dispatch(getAllInternships())
         .then(async (getAll) => {
             if (getAll?.meta?.requestStatus === 'fulfilled') {
-            if (getAll?.payload?.status === 'success') {
-                const internships = await getAll.payload.data.filter(
-                    (item) => item.studentID === currentUserId
-                )
-                setCurrentUserInternships(internships)
-            } else {
-                throw new Error(getAll.payload.message)
-            }
+                if (getAll?.payload?.status === 'success') {
+                    const internships = await getAll.payload.data.filter(
+                        (item) => item.studentID === currentUserId
+                    )
+                    setCurrentUserInternships(internships)
+                } else {
+                    throw new Error(getAll.payload.message)
+                }
             } else {
             throw new Error('User internship fetch request failed')
             }
@@ -73,11 +78,11 @@
 
     const convertToTR = (internship) => {
         if (internship === 'software') {
-        return 'Yazılım'
+            return 'Yazılım'
         } else if (internship === 'hardware') {
-        return 'Donanım'
+            return 'Donanım'
         } else {
-        return 'UME'
+            return 'UME'
         }
     }
 
@@ -314,134 +319,136 @@
             </Space>
             {
                 currentUserInternships.length !== 0 ?
-                currentUserInternships.map((item) => (
-                    <Descriptions
-                        layout="vertical"
-                        bordered
-                        size="small"
-                        column={column}
-                        key={item._id}
-                    >
-                        <Descriptions.Item
-                            label="Staj Türü"
-                            labelStyle={labelStyle}
-                            contentStyle={contentStyle}
+                currentUserInternships.map((item) => 
+                    (
+                        <Descriptions
+                            layout="vertical"
+                            bordered
+                            size="small"
+                            column={column}
+                            key={item._id}
                         >
-                            <Tag
-                                icon={<SendOutlined style={tagIconStyle} />}
-                                color="default"
-                                style={tagStyle}
+                            <Descriptions.Item
+                                label="Staj Türü"
+                                labelStyle={labelStyle}
+                                contentStyle={contentStyle}
                             >
-                                {convertToTR(item.internship)} Stajı
-                            </Tag>
-                        </Descriptions.Item>
-                        <Descriptions.Item
-                            label="Şirket Onayı"
-                            labelStyle={labelStyle}
-                            contentStyle={contentStyle}
-                        >
-                            {
-                                tagItemCompanyApprovalContent(
-                                    internshipCompanyApprovalCheck(
-                                        item.companyApproval,
-                                        item.companyApprovalUpdate
+                                <Tag
+                                    icon={<SendOutlined style={tagIconStyle} />}
+                                    color="default"
+                                    style={tagStyle}
+                                >
+                                    {convertToTR(item.internship)} Stajı
+                                </Tag>
+                            </Descriptions.Item>
+                            <Descriptions.Item
+                                label="Şirket Onayı"
+                                labelStyle={labelStyle}
+                                contentStyle={contentStyle}
+                            >
+                                {
+                                    tagItemCompanyApprovalContent(
+                                        internshipCompanyApprovalCheck(
+                                            item.companyApproval,
+                                            item.companyApprovalUpdate
+                                        )
                                     )
-                                )
-                            }
-                        </Descriptions.Item>
-                        <Descriptions.Item
-                            label="Danışman Onayı"
-                            labelStyle={labelStyle}
-                            contentStyle={contentStyle}
-                        >
-                            {
-                                tagItemConsultantApprovalContent(
-                                    internshipConstultantApprovalCheck(
-                                        item.consultantApproval,
-                                        item.consultantApprovalUpdate
+                                }
+                            </Descriptions.Item>
+                            <Descriptions.Item
+                                label="Danışman Onayı"
+                                labelStyle={labelStyle}
+                                contentStyle={contentStyle}
+                            >
+                                {
+                                    tagItemConsultantApprovalContent(
+                                        internshipConstultantApprovalCheck(
+                                            item.consultantApproval,
+                                            item.consultantApprovalUpdate
+                                        )
                                     )
-                                )
-                            }
-                        </Descriptions.Item>
-                        <Descriptions.Item
-                            label="Staj Durumu"
-                            labelStyle={labelStyle}
-                            contentStyle={contentStyle}
-                        >
-                            {
-                                tagItemInternshipStatusContent(
-                                    internshipStatusCheck(
-                                        item.internshipDateRange,
-                                        item.companyApproval,
-                                        item.consultantApproval
+                                }
+                            </Descriptions.Item>
+                            <Descriptions.Item
+                                label="Staj Durumu"
+                                labelStyle={labelStyle}
+                                contentStyle={contentStyle}
+                            >
+                                {
+                                    tagItemInternshipStatusContent(
+                                        internshipStatusCheck(
+                                            item.internshipDateRange,
+                                            item.companyApproval,
+                                            item.consultantApproval
+                                        )
                                     )
-                                )
-                            }
-                        </Descriptions.Item>
-                        <Descriptions.Item
-                            label="Staj Evrakları"
-                            labelStyle={labelStyle}
-                            contentStyle={contentStyle}
-                        >
-                            {
-                                item.companyApproval && item.consultantApproval ? 
-                                (
-                                    <>
-                                        {
-                                            tagItemFilesContent(
-                                                internshipNotebookFileCheck(
-                                                    item.isNotebookFileLoaded
+                                }
+                            </Descriptions.Item>
+                            <Descriptions.Item
+                                label="Staj Evrakları"
+                                labelStyle={labelStyle}
+                                contentStyle={contentStyle}
+                            >
+                                {
+                                    item.companyApproval && item.consultantApproval ? 
+                                    (
+                                        <>
+                                            {
+                                                tagItemFilesContent(
+                                                    internshipNotebookFileCheck(
+                                                        item.isNotebookFileLoaded
+                                                    )
                                                 )
-                                            )
-                                        }
-                                        {
-                                            tagItemFilesContent(
-                                                internshipReportFileCheck(
-                                                    item.isReportFileLoaded
+                                            }
+                                            {
+                                                tagItemFilesContent(
+                                                    internshipReportFileCheck(
+                                                        item.isReportFileLoaded
+                                                    )
                                                 )
-                                            )
-                                        }
-                                        {
-                                            tagItemFilesContent(
-                                                internshipChartFileCheck(
-                                                    item.isChartFileLoaded
+                                            }
+                                            {
+                                                tagItemFilesContent(
+                                                    internshipChartFileCheck(
+                                                        item.isChartFileLoaded
+                                                    )
                                                 )
-                                            )
-                                        }
-                                    </>
-                                )
-                                :
-                                (
-                                    <Tag
-                                        icon={<ClockCircleOutlined style={tagIconStyle} />}
-                                        color="default"
-                                        style={tagStyle}
-                                    >
-                                        Stajın Onaylanması Bekleniyor
-                                    </Tag>
-                                )
-                            }
-                        </Descriptions.Item>
-                    </Descriptions>
-                ))
-            :
-            (
-                <Space 
-                    direction="vertical" 
-                    style={{ 
-                        width: '100%',
-                    }}
-                >
-                    <Alert 
-                        message="Herhangi bir staj kaydınız bulunmamaktadır." 
-                        type="info"     
-                        showIcon
-                        style={{
-                            fontFamily: 'open sans'
+                                            }
+                                        </>
+                                    )
+                                    :
+                                    (
+                                        <Tag
+                                            icon={<ClockCircleOutlined style={tagIconStyle} />}
+                                            color="default"
+                                            style={tagStyle}
+                                        >
+                                            Stajın Onaylanması Bekleniyor
+                                        </Tag>
+                                    )
+                                }
+                            </Descriptions.Item>
+                        </Descriptions>
+                    )
+                )
+                :
+                (
+                    <Space 
+                        direction="vertical" 
+                        style={{ 
+                            width: '100%',
                         }}
-                    />
-                </Space>
-            )
+                    >
+                        <Alert 
+                            message="Herhangi bir staj kaydınız bulunmamaktadır." 
+                            type="info"     
+                            showIcon
+                            style={{
+                                fontFamily: 'open sans'
+                            }}
+                        />
+                    </Space>
+                )
             }
         </Space>
     )

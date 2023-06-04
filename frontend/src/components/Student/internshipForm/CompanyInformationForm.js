@@ -137,15 +137,17 @@ const CompanyInformationForm = () => {
     })
 
     if (!isDateRange.includes(true)) {
-      //form.resetFields()
+      form.resetFields()
       const createInternshipPromise = () =>
         new Promise((resolve, reject) =>
           setTimeout(() => {
+
             dispatch(createInternship(internshipValues))
               .then((create) => {
                 if (create?.meta?.requestStatus === 'fulfilled') {
                   if (create?.payload?.status === 'success') {
                     toastId = toast.loading('Başvuru Maili Gönderiliyor...')
+                    
                     dispatch(sendInternshipConfirmationMail(internshipValues))
                       .then((sendMail) => {
                         if (sendMail?.meta?.requestStatus === 'fulfilled') {
@@ -227,15 +229,7 @@ const CompanyInformationForm = () => {
   }
 
   return (
-    <Space
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        marginBottom: 10
-      }}
-    >
+    <>
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -248,270 +242,281 @@ const CompanyInformationForm = () => {
         pauseOnHover={false}
         theme="colored"
       />
-      <Title
-        className="card-title"
+      <Space
         style={{
-          color: '#193164',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          marginBottom: 10,
           fontFamily: 'open sans',
-          padding: 10
-        }}
-        level={3}
-      >
-        Staj Yapılacak Şirket Bilgileri
-      </Title>
-      <Form
-        {...formItemLayout}
-        form={form}
-        name="company"
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        colon={false}
-        size="middle"
-        labelAlign="left"
-        scrollToFirstError
-        style={{
-          maxWidth: 650,
-          width: '100%',
-          boxShadow: '1px 2px 20px #d4d4d4',
-          borderRadius: 10,
-          padding: '25px 25px 1px 25px'
         }}
       >
-        <Form.Item
-          name="companyName"
-          label="İş Yeri Adı"
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'İş yeri adını giriniz !'
-            },
-            {
-              type: 'string',
-              whitespace: true,
-              message: 'İş yeri adı sadece boşluk karakteri içermemelidir !'
-            },
-            {
-              max: 20,
-              message: 'İş yeri adı sadece 20 karakter içerebilir !'
-            }
-          ]}
-        >
-          <Input prefix={<HomeOutlined style={{ color: 'gray' }} />} />
-        </Form.Item>
-
-        <Form.Item
-          name="companyEmail"
-          label="E-posta"
-          validateTrigger="onChange"
-          hasFeedback
-          rules={[
-            {
-              type: 'email',
-              message: 'E-Posta girişi geçerli değil !'
-            },
-            {
-              required: true,
-              message: 'E-posta adresini giriniz !'
-            }
-          ]}
-        >
-          <Input prefix={<MailOutlined style={{ color: 'gray' }} />} />
-        </Form.Item>
-
-        <Form.Item
-          name="companyPhone"
-          label="Telefon Numarası"
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'Telefon numarası giriniz !'
-            },
-            {
-              pattern: /^\+?\d{1,3}[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
-              message: 'Telefon numarası formatı doğru değil !'
-            }
-          ]}
-        >
-          <Input prefix={<PhoneOutlined style={{ color: 'gray' }} />} />
-        </Form.Item>
-
-        <Form.Item
-          name="companyResponsible"
-          label="Yetkili Ad Soyad"
-          className="responsible"
-          hasFeedback
+        <Title
+          className="card-title"
           style={{
-            marginBottom: 0,
+            color: '#193164',
+            fontFamily: 'open sans',
+            padding: 10
+          }}
+          level={3}
+        >
+          Staj Yapılacak Şirket Bilgileri
+        </Title>
+        <Form
+          {...formItemLayout}
+          form={form}
+          name="company"
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          colon={false}
+          size="middle"
+          labelAlign="left"
+          scrollToFirstError
+          style={{
+            maxWidth: 650,
+            width: '100%',
+            boxShadow: '1px 2px 20px #d4d4d4',
+            borderRadius: 10,
+            padding: '25px 25px 1px 25px'
           }}
         >
-          <Row gutter={8}>
-            <Col span={12}>
-              <Form.Item
-                name="companyResponsibleName"
-                hasFeedback
-                rules={[
-                  {
-                    required: true,
-                    message: 'Yetkili adını giriniz !'
-                  },
-                  {
-                    type: 'string',
-                    whitespace: true,
-                    message: 'Yetkili adı sadece boşluk karakteri içermemelidir !'
-                  },
-                  {
-                    max: 20,
-                    message: 'Yetkili adı sadece 20 karakter içerebilir !'
-                  }
-                ]}
-              >
-                <Input prefix={<UserOutlined style={{ color: 'gray' }} />} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="companyResponsibleSurname"
-                hasFeedback
-                rules={[
-                  {
-                    required: true,
-                    message: 'Yetkili soyadını giriniz !'
-                  },
-                  {
-                    type: 'string',
-                    whitespace: true,
-                    message: 'Yetkili adı soyadını boşluk karakteri içermemelidir !'
-                  },
-                  {
-                    max: 20,
-                    message: 'Yetkili soyadını sadece 20 karakter içerebilir !'
-                  }
-                ]}
-              >
-                <Input prefix={<UserOutlined style={{ color: 'gray' }} />} />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form.Item>
-
-        <Form.Item
-          name="companyPersonalCount"
-          label="Çalışan Sayısı"
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'Çalışan kişi sayısını giriniz !'
-            },
-            {
-              pattern: /^[0-9]+$/,
-              message: 'Çalışan sayısı sadece sayı içerebilir !'
-            },
-            {
-              max: 5,
-              message: 'Çalışan sayısı en fazla 5 haneli olabilir !'
-            }
-          ]}
-        >
-          <Input prefix={<TeamOutlined style={{ color: 'gray' }} />} />
-        </Form.Item>
-
-        <Form.Item
-          name="companyTaxNumber"
-          label="Vergi Numarası"
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'İş Yeri vergi numarasını giriniz !'
-            },
-            {
-              pattern: /^[0-9]+$/,
-              message: 'Vergi numarası sadece sayı içerebilir !'
-            },
-            {
-              max: 10,
-              message: 'Vergi numarası en fazla 10 haneli olabilir !'
-            }
-          ]}
-        >
-          <Input prefix={<FieldNumberOutlined style={{ color: 'gray' }} />} />
-        </Form.Item>
-
-        <Form.Item
-          name="companyAddress"
-          label="Adres"
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'İş yeri adresini giriniz !'
-            },
-            {
-              type: 'string',
-              whitespace: true,
-              message: 'İş yeri adresi sadece boşluk karakteri içermemelidir !'
-            },
-            {
-              min: 10,
-              message: 'İş yeri adresi en az 10 karakter girilmelidir !'
-            }
-          ]}
-        >
-          <Input.TextArea showCount maxLength={100} />
-        </Form.Item>
-
-        <ConfigProvider locale={trTR}>
           <Form.Item
-            name="internshipDateRange"
-            label="Staj Tarihi Aralığı"
+            name="companyName"
+            label="İş Yeri Adı"
             hasFeedback
             rules={[
               {
                 required: true,
-                message: 'Staj yapılacak tarih aralığını giriniz !'
+                message: 'İş yeri adını giriniz !'
+              },
+              {
+                type: 'string',
+                whitespace: true,
+                message: 'İş yeri adı sadece boşluk karakteri içermemelidir !'
+              },
+              {
+                max: 20,
+                message: 'İş yeri adı sadece 20 karakter içerebilir !'
               }
             ]}
           >
-            <RangePicker
-              format={'DD/MM/YYYY'}
-              style={{
-                width: '100%',
-              }}
-            />
+            <Input prefix={<HomeOutlined style={{ color: 'gray' }} />} />
           </Form.Item>
-        </ConfigProvider>
 
-        <Form.Item {...tailFormItemLayout}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            size="middle"
-            onClick={() => {
-              handleLoading()
-            }}
+          <Form.Item
+            name="companyEmail"
+            label="E-posta"
+            validateTrigger="onChange"
+            hasFeedback
+            rules={[
+              {
+                type: 'email',
+                message: 'E-Posta girişi geçerli değil !'
+              },
+              {
+                required: true,
+                message: 'E-posta adresini giriniz !'
+              }
+            ]}
+          >
+            <Input prefix={<MailOutlined style={{ color: 'gray' }} />} />
+          </Form.Item>
+
+          <Form.Item
+            name="companyPhone"
+            label="Telefon Numarası"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'Telefon numarası giriniz !'
+              },
+              {
+                pattern: /^\+?\d{1,3}[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
+                message: 'Telefon numarası formatı doğru değil !'
+              }
+            ]}
+          >
+            <Input prefix={<PhoneOutlined style={{ color: 'gray' }} />} />
+          </Form.Item>
+
+          <Form.Item
+            name="companyResponsible"
+            label="Yetkili Ad Soyad"
+            className="responsible"
+            hasFeedback
             style={{
-              width: '100%',
-              fontSize: 16,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: 'open sans',
+              marginBottom: 0,
             }}
           >
-            Başvuru Yap
-            {
-              buttonLoading && formFieldError ? 
-                <LoadingOutlined/>
-                : 
-                null
-            }
-          </Button>
-        </Form.Item>
-      </Form>
-    </Space>
+            <Row gutter={8}>
+              <Col span={12}>
+                <Form.Item
+                  name="companyResponsibleName"
+                  hasFeedback
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Yetkili adını giriniz !'
+                    },
+                    {
+                      type: 'string',
+                      whitespace: true,
+                      message: 'Yetkili adı sadece boşluk karakteri içermemelidir !'
+                    },
+                    {
+                      max: 20,
+                      message: 'Yetkili adı sadece 20 karakter içerebilir !'
+                    }
+                  ]}
+                >
+                  <Input prefix={<UserOutlined style={{ color: 'gray' }} />} />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="companyResponsibleSurname"
+                  hasFeedback
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Yetkili soyadını giriniz !'
+                    },
+                    {
+                      type: 'string',
+                      whitespace: true,
+                      message: 'Yetkili adı soyadını boşluk karakteri içermemelidir !'
+                    },
+                    {
+                      max: 20,
+                      message: 'Yetkili soyadını sadece 20 karakter içerebilir !'
+                    }
+                  ]}
+                >
+                  <Input prefix={<UserOutlined style={{ color: 'gray' }} />} />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form.Item>
+
+          <Form.Item
+            name="companyPersonalCount"
+            label="Çalışan Sayısı"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'Çalışan kişi sayısını giriniz !'
+              },
+              {
+                pattern: /^[0-9]+$/,
+                message: 'Çalışan sayısı sadece sayı içerebilir !'
+              },
+              {
+                max: 5,
+                message: 'Çalışan sayısı en fazla 5 haneli olabilir !'
+              }
+            ]}
+          >
+            <Input prefix={<TeamOutlined style={{ color: 'gray' }} />} />
+          </Form.Item>
+
+          <Form.Item
+            name="companyTaxNumber"
+            label="Vergi Numarası"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'İş Yeri vergi numarasını giriniz !'
+              },
+              {
+                pattern: /^[0-9]+$/,
+                message: 'Vergi numarası sadece sayı içerebilir !'
+              },
+              {
+                max: 10,
+                message: 'Vergi numarası en fazla 10 haneli olabilir !'
+              }
+            ]}
+          >
+            <Input prefix={<FieldNumberOutlined style={{ color: 'gray' }} />} />
+          </Form.Item>
+
+          <Form.Item
+            name="companyAddress"
+            label="Adres"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'İş yeri adresini giriniz !'
+              },
+              {
+                type: 'string',
+                whitespace: true,
+                message: 'İş yeri adresi sadece boşluk karakteri içermemelidir !'
+              },
+              {
+                min: 10,
+                message: 'İş yeri adresi en az 10 karakter girilmelidir !'
+              }
+            ]}
+          >
+            <Input.TextArea showCount maxLength={100} />
+          </Form.Item>
+
+          <ConfigProvider locale={trTR}>
+            <Form.Item
+              name="internshipDateRange"
+              label="Staj Tarihi Aralığı"
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: 'Staj yapılacak tarih aralığını giriniz !'
+                }
+              ]}
+            >
+              <RangePicker
+                format={'DD/MM/YYYY'}
+                style={{
+                  width: '100%',
+                }}
+              />
+            </Form.Item>
+          </ConfigProvider>
+
+          <Form.Item {...tailFormItemLayout}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="middle"
+              onClick={() => {
+                handleLoading()
+              }}
+              style={{
+                width: '100%',
+                fontSize: 16,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'open sans',
+              }}
+            >
+              Başvuru Yap
+              {
+                buttonLoading && formFieldError ? 
+                  <LoadingOutlined/>
+                  : 
+                  null
+              }
+            </Button>
+          </Form.Item>
+        </Form>
+      </Space>
+    </>
   )
 }
 export default CompanyInformationForm

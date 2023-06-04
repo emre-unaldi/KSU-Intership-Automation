@@ -8,22 +8,22 @@ import {
   ReconciliationFilled,
 } from '@ant-design/icons'
 
-const InternshipStatus = (props) => {
+const InternshipStatus = ({ path }) => {
   const [status, setStatus] = useState(['wait', 'wait', 'wait', 'wait', 'wait'])
 
   useEffect(() => {
-    if (props.path === 'selection') {
+    if (path === 'selection') {
       setStatus(['process', 'wait', 'wait', 'wait', 'wait'])
-    } else if (props.path === 'instructions') {
+    } else if (path === 'instructions') {
       setStatus(['finish', 'process', 'wait', 'wait', 'wait'])
-    } else if (props.path === 'companyInformation') {
+    } else if (path === 'companyInformation') {
       setStatus(['finish', 'finish', 'process', 'wait', 'wait'])
-    } else if (props.path === 'companyApprovalWait') {
+    } else if (path === 'companyApprovalWait') {
       setStatus(['finish', 'finish', 'finish', 'process', 'wait'])
-    } else if (props.path === 'consultantApprovalWait') {
+    } else if (path === 'consultantApprovalWait') {
       setStatus(['finish', 'finish', 'finish', 'finish', 'process'])
     }
-  }, [props])
+  }, [path])
 
   return (
     <Steps

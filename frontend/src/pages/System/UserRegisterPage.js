@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import axios from 'axios'
-import StudentRegisterForm from '../../components/Student/StudentRegisterForm'
-import TeacherRegisterForm from '../../components/Teacher/TeacherRegisterForm'
+import StudentRegisterForm from '../../components/System/StudentRegisterForm'
+import TeacherRegisterForm from '../../components/System/TeacherRegisterForm'
 import ksuLogo from '../../assets/img/ksu.png'
 axios.defaults.withCredentials = true
 

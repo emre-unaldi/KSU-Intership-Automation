@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { Avatar, Card, Col, Descriptions, Row, Space, Typography } from 'antd'
 import { getAllUsers } from '../../../redux/userSlice'
 
-function ViewResponsibleTeacherTeam() {
+const ViewResponsibleTeacherTeam = () => {
     const [users, setUsers] = useState([])
     const { Title } = Typography
     const dispatch = useDispatch()
@@ -27,7 +27,10 @@ function ViewResponsibleTeacherTeam() {
 
 
     const formattedUsername = (name, surname) => {
-        const formattedUsername = name.slice(0,1).toUpperCase() + surname.slice(0,1).toUpperCase()
+        const formattedName = name.slice(0,1).toUpperCase()
+        const formattedSurname = surname.slice(0,1).toUpperCase()
+        const formattedUsername = formattedName + formattedSurname
+
         return formattedUsername
     }
     
@@ -40,8 +43,6 @@ function ViewResponsibleTeacherTeam() {
 
         return colorCode
     }
-
-    const filterUsers = users.filter((item) => item.role === 'teacher')
 
     return (
         <>
@@ -60,75 +61,80 @@ function ViewResponsibleTeacherTeam() {
 
             <Row gutter={[32, 32]}>
                 {
-                    filterUsers.map((item) => (
-                        <Col span={24} sm={12} md={12} lg={12} xl={12} key={item._id}>
-                            <Card
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center', 
-                                    backgroundColor: '#E8E8E8'
-                                }}
-                            >
-                                <Space
+                    users
+                    .filter((item) => item.role === 'teacher')
+                    .map((item) => 
+                        (
+                            <Col span={24} sm={12} md={12} lg={12} xl={12} key={item._id}>
+                                <Card
                                     style={{
                                         display: 'flex',
                                         justifyContent: 'center',
-                                        alignItems: 'center'
+                                        alignItems: 'center', 
+                                        backgroundColor: '#E8E8E8'
                                     }}
                                 >
-                                    <Avatar
-                                        size={{
-                                            xs: 40,
-                                            sm: 40,
-                                            md: 40,
-                                            lg: 64,
-                                            xl: 80,
-                                            xxl: 100,
-                                        }}
+                                    <Space
                                         style={{
                                             display: 'flex',
                                             justifyContent: 'center',
-                                            alignItems: 'center',
-                                            backgroundColor: randomHexColorCode(item._id),
-                                            marginBottom: 25,
-                                            fontFamily: 'open sans'
+                                            alignItems: 'center'
                                         }}
                                     >
-                                        { formattedUsername(item.name, item.surname) }
-                                    </Avatar>
-                                </Space>
-                                <Descriptions
-                                    bordered
-                                    size='small'
-                                    style={{
-                                        fontFamily: 'open sans',
-                                        backgroundColor: 'white',
-                                        borderRadius: 10
-                                    }}
-                                    labelStyle={{
-                                        fontWeight: 'bold'
-                                    }}  
-                                    column={2}  
-                                >
-                                    <Descriptions.Item span={2} label="Ad Soyad">
-                                        {item.name + ' ' + item.surname }
-                                    </Descriptions.Item>
-                                    <Descriptions.Item span={2} label="Telefon Numarası">
-                                        {item.phoneNumber}
-                                    </Descriptions.Item>
-                                    <Descriptions.Item span={2} label="E-Posta">
-                                        <a href={`mailto:${item.email}`}>
-                                            {item.email}
-                                        </a>
-                                    </Descriptions.Item>
-                                </Descriptions>
-                            </Card>
-                        </Col>
-                    ))
+                                        <Avatar
+                                            size={{
+                                                xs: 40,
+                                                sm: 40,
+                                                md: 40,
+                                                lg: 64,
+                                                xl: 80,
+                                                xxl: 100,
+                                            }}
+                                            style={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                backgroundColor: randomHexColorCode(item._id),
+                                                marginBottom: 25,
+                                                fontFamily: 'open sans'
+                                            }}
+                                        >
+                                            { 
+                                                formattedUsername(item.name, item.surname) 
+                                            }
+                                        </Avatar>
+                                    </Space>
+                                    <Descriptions
+                                        bordered
+                                        size='small'
+                                        style={{
+                                            fontFamily: 'open sans',
+                                            backgroundColor: 'white',
+                                            borderRadius: 10
+                                        }}
+                                        labelStyle={{
+                                            fontWeight: 'bold'
+                                        }}  
+                                        column={2}  
+                                    >
+                                        <Descriptions.Item span={2} label="Ad Soyad">
+                                            {item.name + ' ' + item.surname }
+                                        </Descriptions.Item>
+                                        <Descriptions.Item span={2} label="Telefon Numarası">
+                                            {item.phoneNumber}
+                                        </Descriptions.Item>
+                                        <Descriptions.Item span={2} label="E-Posta">
+                                            <a href={`mailto:${item.email}`}>
+                                                {item.email}
+                                            </a>
+                                        </Descriptions.Item>
+                                    </Descriptions>
+                                </Card>
+                            </Col>
+                        )
+                    )
                 }
             </Row>
-
         </>
     )
 }
