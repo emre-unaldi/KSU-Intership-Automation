@@ -1,7 +1,7 @@
 import React from 'react'
-import { Card, Typography } from 'antd'
+import { Typography } from 'antd'
 import { ToastContainer } from 'react-toastify'
-import AnnouncementForm from './AnnouncementForm'
+import AnnouncementAddForm from './AnnouncementAddForm'
 import AnnouncementViewTable from './AnnouncementViewTable'
 
 const Announcements = () => {
@@ -34,25 +34,8 @@ const Announcements = () => {
             >
                 Duyurular
             </Title>
-            <Card
-                style={{
-                    maxWidth: 800,
-                    width: '100%',
-                    margin: '0 auto 20px auto',
-                    backgroundColor: '#F6F9FF',
-                    border: '1px solid #d9d9d9'
-                }}
-            >
-                <AnnouncementForm/>
-            </Card>
-            <Card
-                style={{
-                    border: '1px solid #d9d9d9',
-                    backgroundColor: '#F6F9FF'
-                }}
-            >
-                <AnnouncementViewTable/>
-            </Card>
+            <AnnouncementAddForm/>
+            <AnnouncementViewTable/>
         </>
     )
 }

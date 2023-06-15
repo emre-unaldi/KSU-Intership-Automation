@@ -1,11 +1,15 @@
+import React, { useEffect, useState } from 'react'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Button, Modal, Space } from 'antd'
-import React, { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import { deleteAnnouncement } from '../../../redux/announcementSlice'
+import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
 
 const AnnouncementDelete = ({ openDeleteModal, setOpenDeleteModal, selectedAnnouncement }) => {
     const [ buttonLoading, setButtonLoading ] = useState(false)
     const [announcementValues, setAnnouncementValues] = useState({})
+    const dispatch = useDispatch()
 
     useEffect(() => {
         setAnnouncementValues({
@@ -15,14 +19,59 @@ const AnnouncementDelete = ({ openDeleteModal, setOpenDeleteModal, selectedAnnou
         })
     }, [selectedAnnouncement])
 
-    console.log(announcementValues);
-
-    const handleLoading = () => {
-        setButtonLoading(true)
+    const refreshPage = () => {
         setTimeout(() => {
-            setButtonLoading(false)
+            window.location.reload()
             setOpenDeleteModal(false)
         }, 3000)
+    }
+
+    const handleDelete = () => {
+        setButtonLoading(true)
+
+        const deleteAnnouncementPromise = () => {
+            return new Promise((resolve, reject) => 
+                setTimeout(() => {
+                    dispatch(deleteAnnouncement({ _id: selectedAnnouncement.key }))
+                        .then((deleted) => {
+                            if (deleted?.meta?.requestStatus === 'fulfilled') {
+                                if (deleted?.payload?.status === 'success') {
+                                    refreshPage()
+                                    resolve(deleted.payload.message)    
+                                    setButtonLoading(false)                                
+                                } else {
+                                    refreshPage()
+                                    reject(deleted.payload.message)
+                                    setButtonLoading(false)
+                                }
+                            } else {
+                                refreshPage()
+                                reject('Duyuru silinirken hata çıktı. Tekrar deneyin !')
+                                setButtonLoading(false)
+                                throw new Error('Announcement delete request failed')
+                            }
+                        }).catch((err) => {
+                            console.error(err)
+                        })
+                }, 3000)
+            )
+        }
+
+        toast.promise(deleteAnnouncementPromise(), {
+            pending: 'Duyuru Siliniyor...',
+            success: {
+                render({ data }) {
+                    return data
+                }
+            },
+            error: {
+                render({ data }) {
+                    return data
+                }
+            }
+        })
+
+
     }
 
     return (
@@ -57,7 +106,7 @@ const AnnouncementDelete = ({ openDeleteModal, setOpenDeleteModal, selectedAnnou
                             backgroundColor: '#FF4D4F',
                             fontFamily: 'open sans'
                         }}
-                        onClick={() => handleLoading(true)}
+                        onClick={() => handleDelete()}
                     >
                         Evet
                         {
@@ -70,7 +119,11 @@ const AnnouncementDelete = ({ openDeleteModal, setOpenDeleteModal, selectedAnnou
                 </Space>
             ]}
         >
-            {`${announcementValues.title} başlıklı ${announcementValues.type} türündeki duyuruyu silmek istediğinize emin misiniz ?` } 
+            {
+                `${announcementValues.title} başlıklı 
+                ${announcementValues.type} türündeki 
+                duyuruyu silmek istediğinize emin misiniz ?` 
+            } 
         </Modal>
     )
 }
