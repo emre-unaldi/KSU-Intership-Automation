@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react'
-import { Button, Col, Input, Row, Space, Table } from 'antd'
+import { useEffect, useRef, useState } from 'react'
+import { Alert, Button, Card, Col, Input, Row, Space, Table } from 'antd'
 import { DeleteOutlined, SearchOutlined } from '@ant-design/icons'
-import { ToastContainer } from 'react-toastify'
 import { FiEdit } from 'react-icons/fi'
+import { useDispatch } from 'react-redux'
 import Highlighter from 'react-highlight-words'
-import AnnouncementUpdate from './AnnouncementUpdate'
+import { getAllAnnouncements } from '../../../redux/announcementSlice'
+import AnnouncementUpdateForm from './AnnouncementUpdateForm'
 import AnnouncementDelete from './AnnouncementDelete'
 
 const AnnouncementViewTable = () => {
@@ -13,7 +14,27 @@ const AnnouncementViewTable = () => {
     const [selectedAnnouncement, setSelectedAnnouncement] = useState()
     const [openUpdateModal, setOpenUpdateModal] = useState(false)
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
+    const [announcements, setAnnouncements] = useState([])
     const searchInput = useRef(null)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(getAllAnnouncements())
+            .then((getAll) => {
+                if (getAll?.meta?.requestStatus === 'fulfilled') {
+                    if (getAll?.payload?.status === 'success') {
+                        console.log(getAll.payload.message)
+                        setAnnouncements(getAll.payload.data)                                
+                    } else {
+                        console.log(getAll.payload.message)
+                    }
+                } else {
+                    throw new Error('Announcements Get All request failed')
+                }
+            }).catch((err) => {
+                console.error(err)
+            })
+    }, [dispatch])
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm()
@@ -69,7 +90,7 @@ const AnnouncementViewTable = () => {
                         onClick={() => clearFilters && handleReset(clearFilters)}
                         size="small"
                         style={{
-                        width: 90
+                            width: 90
                         }}
                     >
                         Temizle
@@ -121,7 +142,7 @@ const AnnouncementViewTable = () => {
             title: 'Duyuru Başlık',
             dataIndex: 'title',
             key: 'title',
-            width: '20%',
+            width: '15%',
             ...getColumnSearchProps({ 
                 dataIndex: 'title', 
                 title: 'Duyuru Başlık' 
@@ -131,7 +152,7 @@ const AnnouncementViewTable = () => {
             title: 'Duyuru İçerik',
             dataIndex: 'content',
             key: 'content',
-            width: '55%',
+            width: '30%',
             ...getColumnSearchProps({
                 dataIndex: 'content',
                 title: 'Duyuru İçerik'
@@ -145,6 +166,26 @@ const AnnouncementViewTable = () => {
             ...getColumnSearchProps({
                 dataIndex: 'type',
                 title: 'Duyuru Türü'
+            })
+        },
+        {
+            title: 'Oluşturulma Tarihi',
+            dataIndex: 'createdDate',
+            key: 'createdDate',
+            width: '15%',
+            ...getColumnSearchProps({
+                dataIndex: 'createdDate',
+                title: 'Oluşturulma Tarihi'
+            })
+        },
+        {
+            title: 'Güncellenme Tarihi',
+            dataIndex: 'updatedDate',
+            key: 'updatedDate',
+            width: '15%',
+            ...getColumnSearchProps({
+                dataIndex: 'updatedDate',
+                title: 'Güncellenme Tarihi'
             })
         },
         {
@@ -205,63 +246,91 @@ const AnnouncementViewTable = () => {
         }
     ]
 
-    const data = [
-        {
-            key: '1',
-            title: 'Tarih Duyurusu',
-            content: 'sdlakjgfasdjfkasdkljfaskdljfksladjfksljdafkljasdflaksdfjkldskljf',
-            type: 'Tarih',
-        },
-        {
-            key: '2',
-            title: 'Ders Duyurusu',
-            content: 'lkasdjfadslkşjfasdfolsadlşfkasdlşkfsdaklşfsdafsadfasdfasfd',
-            type: 'Ders',
-        }
-    ]
+    const formatDate = (dateValue) => {
+        const date = new Date(dateValue)
+        const day = date.getUTCDate().toString().padStart(2, '0')
+        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0')
+        const year = date.getUTCFullYear().toString()
+        const hour = parseInt(date.getUTCHours().toString().padStart(2, '0')) + 3
+        const minute = date.getUTCMinutes().toString().padStart(2, '0')
+        const second = date.getUTCSeconds().toString().padStart(2, '0')
+        const dateTime = `${day}/${month}/${year} - ${hour}:${minute}:${second}`
+    
+        return dateTime
+    }
+
+    const filterData = announcements.map(
+        (item) => (
+            {
+                key: item._id,
+                title: item.title,
+                content: item.content,
+                type: item.type,
+                createdDate: formatDate(item.createdAt),
+                updatedDate: formatDate(item.updatedAt)
+            }
+        )
+    )
 
     return (
-        <>
-            <ToastContainer
-                position="top-center"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop
-                closeOnClick={false}
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover={false}
-                theme="colored"
-            />
-            <Table
-                bordered="true"
-                loading="true"
-                style={{ 
-                    width: '100%',
-                    fontFamily: 'open sans'
-                }}
-                size="small"
-                scroll={{
-                    x: '100%'
-                }}
-                pagination={{
-                    pageSize: 5
-                }}
-                columns={columns}
-                dataSource={data}
-            />
-            <AnnouncementUpdate 
-                openUpdateModal={openUpdateModal}
-                setOpenUpdateModal={setOpenUpdateModal}
-                selectedAnnouncement={selectedAnnouncement}
-            />
-            <AnnouncementDelete
-                openDeleteModal={openDeleteModal}
-                setOpenDeleteModal={setOpenDeleteModal}
-                selectedAnnouncement={selectedAnnouncement}
-            />
-        </>
+        <Card
+            style={{
+                border: '1px solid #d9d9d9',
+                backgroundColor: '#F6F9FF'
+            }}
+        >
+            {
+                announcements.length !== 0 ? (
+                    <>
+                        <Table
+                            bordered="true"
+                            loading="true"
+                            style={{ 
+                                width: '100%',
+                                fontFamily: 'open sans'
+                            }}
+                            size="small"
+                            scroll={{
+                                x: '100%'
+                            }}
+                            pagination={{
+                                pageSize: 5
+                            }}
+                            columns={columns}
+                            dataSource={filterData}
+                        />
+                        <AnnouncementUpdateForm 
+                            openUpdateModal={openUpdateModal}
+                            setOpenUpdateModal={setOpenUpdateModal}
+                            selectedAnnouncement={selectedAnnouncement}
+                        />
+                        <AnnouncementDelete
+                            openDeleteModal={openDeleteModal}
+                            setOpenDeleteModal={setOpenDeleteModal}
+                            selectedAnnouncement={selectedAnnouncement}
+                        />
+                    </>
+                )
+                :
+                (
+                    <Space 
+                        direction="vertical" 
+                        style={{ 
+                            width: '100%',
+                        }}
+                    >
+                        <Alert 
+                            message="Herhangi bir duyuru kaydı bulunmamaktadır." 
+                            type="info"     
+                            showIcon
+                            style={{
+                                fontFamily: 'open sans'
+                            }}
+                        />
+                    </Space>
+                )            
+            }
+        </Card>
     )
 }
 

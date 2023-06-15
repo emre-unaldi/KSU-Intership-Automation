@@ -1,3 +1,4 @@
+process.env.TZ = 'Europe/Istanbul';
 import express, { json, urlencoded } from 'express'
 import createError from 'http-errors'
 import cookieParser from 'cookie-parser'
@@ -11,6 +12,7 @@ import recaptchaRouter from './routes/recaptcha.routes.js'
 import userRoutes from './routes/user.routes.js'
 import internshipRoutes from './routes/internship.routes.js'
 import fileRoutes from './routes/file.routes.js'
+import announcementRoutes from './routes/announcement.routes.js'
 
 const app = express()
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -45,6 +47,8 @@ app.use('/api/recaptcha', recaptchaRouter)
 app.use('/api/users', userRoutes)
 app.use('/api/internship', internshipRoutes)
 app.use('/api/file', fileRoutes)
+app.use('/api/announcement', announcementRoutes)
+
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {

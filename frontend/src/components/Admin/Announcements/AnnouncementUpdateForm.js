@@ -1,6 +1,9 @@
+import React, { useEffect, useState } from 'react'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Button, Form, Modal, Input, Select } from 'antd'
-import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
+import { updateAnnouncement } from '../../../redux/announcementSlice'
 
 const AnnouncementUpdate = ({ openUpdateModal, setOpenUpdateModal, selectedAnnouncement }) => {
     const [buttonLoading, setButtonLoading] = useState(false)
@@ -8,24 +11,7 @@ const AnnouncementUpdate = ({ openUpdateModal, setOpenUpdateModal, selectedAnnou
     const [initialAnnouncementValues, setInitialAnnouncementValues] = useState({})
     const [form] = Form.useForm()
     const { Option } = Select
-
-    useEffect(() => {
-        form.resetFields()
-        if (selectedAnnouncement) {
-            setInitialAnnouncementValues({
-                title: selectedAnnouncement?.title,
-                type: selectedAnnouncement?.type,
-                content: selectedAnnouncement?.content
-            });
-            form.setFieldsValue({
-                title: selectedAnnouncement?.title,
-                type: selectedAnnouncement?.type,
-                content: selectedAnnouncement?.content
-            });
-            form.validateFields();
-        }
-        
-    }, [selectedAnnouncement, form])
+    const dispatch = useDispatch()
 
     const formItemLayout = {
         labelCol: {
@@ -59,22 +45,89 @@ const AnnouncementUpdate = ({ openUpdateModal, setOpenUpdateModal, selectedAnnou
         }
     }
 
-    const onFinish = (values) => {
+    useEffect(() => {
+        form.resetFields()
+        if (selectedAnnouncement) {
+            setInitialAnnouncementValues({
+                title: selectedAnnouncement?.title,
+                type: selectedAnnouncement?.type,
+                content: selectedAnnouncement?.content
+            })
+            form.setFieldsValue({
+                title: selectedAnnouncement?.title,
+                type: selectedAnnouncement?.type,
+                content: selectedAnnouncement?.content
+            })
+            form.validateFields()
+        }
+    }, [selectedAnnouncement, form])
+
+    const refreshPage = () => {
+        setTimeout(() => {
+            window.location.reload()
+            setOpenUpdateModal(false)
+        }, 3000)
+    }
+
+    const onFinish = async (values) => {
+        const formValues = await {
+            ...values,
+            _id: selectedAnnouncement.key
+        }
+
         setFormFieldError(true)
-        console.log('Finish Values: ', values)
+        form.setFieldsValue({
+            title: values.title,
+            type: values.type,
+            content: values.content
+        })
+
+        const updateAnnouncementPromise = () => {
+            return new Promise((resolve, reject) => 
+                setTimeout(() => {
+                    dispatch(updateAnnouncement(formValues))
+                        .then((update) => {
+                            if (update?.meta?.requestStatus === 'fulfilled') {
+                                if (update?.payload?.status === 'success') {
+                                    refreshPage()
+                                    resolve(update.payload.message)    
+                                    setButtonLoading(false)                                
+                                } else {
+                                    refreshPage()
+                                    reject(update.payload.message)
+                                    setButtonLoading(false)
+                                }
+                            } else {
+                                refreshPage()
+                                reject('Duyuru güncellenirken hata çıktı. Tekrar deneyin !')
+                                setButtonLoading(false)
+                                throw new Error('Announcement update request failed')
+                            }
+                        }).catch((err) => {
+                            console.error(err)
+                        })
+                }, 3000)
+            )
+        }
+
+        toast.promise(updateAnnouncementPromise(), {
+            pending: 'Duyuru Güncelleniyor...',
+            success: {
+                render({ data }) {
+                    return data
+                }
+            },
+            error: {
+                render({ data }) {
+                    return data
+                }
+            }
+        })
     }
 
     const onFinishFailed = (values) => {
         setFormFieldError(false)
         console.log('onFinishFailed Values: ', values)
-    }
-
-    const handleLoading = () => {
-        setButtonLoading(true)
-        setTimeout(() => {
-            setButtonLoading(false)
-            setOpenUpdateModal(false)
-        }, 3000)
     }
 
     return (
@@ -147,7 +200,7 @@ const AnnouncementUpdate = ({ openUpdateModal, setOpenUpdateModal, selectedAnnou
                         placeholder='Duyuru türünü seçin'
                     >
                         <Option
-                            value="date"
+                            value="Tarih"
                             style={{
                                 fontFamily: 'open sans'
                             }}
@@ -155,7 +208,7 @@ const AnnouncementUpdate = ({ openUpdateModal, setOpenUpdateModal, selectedAnnou
                             Tarih
                         </Option>
                         <Option
-                            value="lesson"
+                            value="Ders"
                             style={{
                                 fontFamily: 'open sans'
                             }}
@@ -163,7 +216,7 @@ const AnnouncementUpdate = ({ openUpdateModal, setOpenUpdateModal, selectedAnnou
                             Ders
                         </Option>
                         <Option
-                            value="other"
+                            value="Diğer"
                             style={{
                                 fontFamily: 'open sans'
                             }}
@@ -208,7 +261,7 @@ const AnnouncementUpdate = ({ openUpdateModal, setOpenUpdateModal, selectedAnnou
                         htmlType="submit"
                         size="middle"
                         onClick={() => {
-                            handleLoading()
+                            setButtonLoading(true)
                         }}
                         style={{
                             width: '100%',
