@@ -49,6 +49,28 @@ const AdminAside = () => {
                         <span>Duyurular</span>
                     </NavLink>
                 </li>
+                <li className="nav-item">
+                    <NavLink
+                        to={'/admin/students'}
+                        className={({ isActive }) =>
+                            isActive ? 'nav-link' : 'nav-link collapsed'
+                        }
+                    >
+                        <i className="bi bi-collection-fill" />
+                        <span>Öğrenciler</span>
+                    </NavLink>
+                </li>
+                <li className="nav-item">
+                    <NavLink
+                        to={'/admin/teachers'}
+                        className={({ isActive }) =>
+                            isActive ? 'nav-link' : 'nav-link collapsed'
+                        }
+                    >
+                        <i className="bi bi-collection-fill" />
+                        <span>Öğretmenler</span>
+                    </NavLink>
+                </li>
             </ul>
         </aside>
     )

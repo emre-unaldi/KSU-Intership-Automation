@@ -38,6 +38,8 @@ import AdminHomePage from './Admin/HomePage'
 import EducationPeriodOpenClosePage from './Admin/EducationPeriodOpenClosePage'
 import InternshipGradeDateRangesPage from './Admin/InternshipGradeDateRangesPage'
 import AnnouncementsPage from './Admin/AnnouncementsPage'
+import StudentsPage from "./Admin/StudentsPage";
+import TeachersPage from "./Admin/TeachersPage";
 import AdminProfileLayout from './Admin/Profile/ProfileLayout'
 import AdminAboutPage from './Admin/Profile/AboutPage'
 import AdminEditPage from './Admin/Profile/EditPage'
@@ -113,7 +115,7 @@ const routes = [
       },
       { path: '*', element: <TeacherNotFoundPage /> }
     ]
-  }, 
+  },
   {
     path: 'admin',
     element: <AdminLayout />,
@@ -123,6 +125,8 @@ const routes = [
       { path: 'educationPeriod', element: <EducationPeriodOpenClosePage /> },
       { path: 'dateRanges', element: <InternshipGradeDateRangesPage /> },
       { path: 'announcements', element: <AnnouncementsPage /> },
+      { path: 'students', element: <StudentsPage /> },
+      { path: 'teachers', element: <TeachersPage /> },
       {
         path: 'profile',
         element: <AdminProfileLayout />,

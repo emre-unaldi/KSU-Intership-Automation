@@ -3,7 +3,7 @@ import * as yup from 'yup'
 const passwordRegexLowerCase = /(?=.*[a-z])/
 const passwordRegexUpperCase = /(?=.*[A-Z])/
 const passwordRegexNumberCase = /(?=.*[0-9])/
-const schoolNumberRegex = /^((\d{11}))$/
+const schoolNumberRegex = /^(\d{11})$/
 const teacherPhoneNumberRegex = /^(05(\d{9}))$/
 
 const loginValidationSchema = yup.object().shape({
