@@ -34,7 +34,7 @@ const AdminAside = () => {
                             isActive ? 'nav-link' : 'nav-link collapsed'
                         }
                     >
-                        <i className="bi bi-folder-symlink-fill" />
+                        <i className="bi bi-calendar-week-fill" />
                         <span>Tarih Aralıkları</span>
                     </NavLink>
                 </li>
@@ -56,7 +56,7 @@ const AdminAside = () => {
                             isActive ? 'nav-link' : 'nav-link collapsed'
                         }
                     >
-                        <i className="bi bi-collection-fill" />
+                        <i className="bi bi-person-lines-fill" />
                         <span>Öğrenciler</span>
                     </NavLink>
                 </li>
@@ -67,8 +67,20 @@ const AdminAside = () => {
                             isActive ? 'nav-link' : 'nav-link collapsed'
                         }
                     >
-                        <i className="bi bi-collection-fill" />
+                        <i className="bi bi-people-fill" />
                         <span>Öğretmenler</span>
+                    </NavLink>
+                </li>
+                <li className="nav-item">
+                    <NavLink
+                        to={'/admin/internships'}
+                        className={({ isActive }) =>
+                            isActive ? 'nav-link' : 'nav-link collapsed'
+                        }
+                    >
+                        <i className="bi bi-archive-fill
+ " />
+                        <span>Stajlar</span>
                     </NavLink>
                 </li>
             </ul>

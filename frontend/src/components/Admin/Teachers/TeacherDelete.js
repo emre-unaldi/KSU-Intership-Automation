@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Button, Modal, Space } from 'antd'
 import { v4 as uuidv4 } from 'uuid'
@@ -6,17 +6,21 @@ import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import {deleteUser} from "../../../redux/userSlice";
 
-const StudentsDelete = ({ openDeleteModal, setOpenDeleteModal, selectedTeacher }) => {
+const TeacherDelete = ({ openDeleteModal, setOpenDeleteModal, selectedDeleteTeacher }) => {
     const [ buttonLoading, setButtonLoading ] = useState(false)
     const [teacherValues, setTeacherValues] = useState({})
     const dispatch = useDispatch()
 
+    const initialTeachersValues = useMemo(() => {
+        return {
+            name: selectedDeleteTeacher?.name ,
+            surname: selectedDeleteTeacher?.surname
+        }
+    }, [selectedDeleteTeacher])
+
     useEffect(() => {
-        setTeacherValues({
-            name: selectedTeacher?.name ,
-            surname: selectedTeacher?.surname
-        })
-    }, [selectedTeacher])
+        setTeacherValues(initialTeachersValues)
+    }, [initialTeachersValues])
 
     const refreshPage = () => {
         setTimeout(() => {
@@ -30,7 +34,7 @@ const StudentsDelete = ({ openDeleteModal, setOpenDeleteModal, selectedTeacher }
         const deleteTeacherPromise = () => {
             return new Promise((resolve, reject) =>
                 setTimeout(() => {
-                    dispatch(deleteUser({ _id: selectedTeacher.key }))
+                    dispatch(deleteUser({ _id: selectedDeleteTeacher.key }))
                         .then((deleted) => {
                             if (deleted?.meta?.requestStatus === 'fulfilled') {
                                 if (deleted?.payload?.status === 'success') {
@@ -44,7 +48,7 @@ const StudentsDelete = ({ openDeleteModal, setOpenDeleteModal, selectedTeacher }
                                 }
                             } else {
                                 refreshPage()
-                                reject('Öğretmen silinirken hata çıktı. Tekrar deneyin !')
+                                reject('Öğretmen kaydı silinirken hata çıktı. Tekrar deneyin !')
                                 setButtonLoading(false)
                                 throw new Error('Teacher delete request failed')
                             }
@@ -56,7 +60,7 @@ const StudentsDelete = ({ openDeleteModal, setOpenDeleteModal, selectedTeacher }
         }
 
         toast.promise(deleteTeacherPromise(), {
-            pending: 'Öğretmen Siliniyor...',
+            pending: 'Öğretmen Kaydı Siliniyor...',
             success: {
                 render({ data }) {
                     return data
@@ -72,7 +76,7 @@ const StudentsDelete = ({ openDeleteModal, setOpenDeleteModal, selectedTeacher }
 
     return (
         <Modal
-            title={'Öğretmen Silme'}
+            title={'Öğretmen Kaydı Silme'}
             open={openDeleteModal}
             width={450}
             onCancel={() => setOpenDeleteModal(false)}
@@ -116,10 +120,10 @@ const StudentsDelete = ({ openDeleteModal, setOpenDeleteModal, selectedTeacher }
             ]}
         >
             {
-                `${teacherValues.name} ${teacherValues.surname} öğretmenini silmek istediğinize emin misiniz ?`
+                `${teacherValues.name} ${teacherValues.surname} öğretmeninin kaydını silmek istediğinize emin misiniz ?`
             }
         </Modal>
     )
 }
 
-export default StudentsDelete
+export default TeacherDelete

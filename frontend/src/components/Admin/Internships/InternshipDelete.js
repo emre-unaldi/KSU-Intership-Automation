@@ -1,26 +1,25 @@
 import React, {useEffect, useMemo, useState} from 'react'
-import { LoadingOutlined } from '@ant-design/icons'
-import { Button, Modal, Space } from 'antd'
-import { v4 as uuidv4 } from 'uuid'
-import { useDispatch } from 'react-redux'
-import { toast } from 'react-toastify'
-import {deleteUser} from "../../../redux/userSlice";
+import {LoadingOutlined} from '@ant-design/icons'
+import {Button, Modal, Space} from 'antd'
+import {v4 as uuidv4} from 'uuid'
+import {useDispatch} from 'react-redux'
+import {toast} from 'react-toastify'
+import {deleteInternship} from "../../../redux/internshipSlice";
 
-const StudentDelete = ({ openDeleteModal, setOpenDeleteModal, selectedDeleteStudent }) => {
-    const [ buttonLoading, setButtonLoading ] = useState(false)
-    const [studentValues, setStudentValues] = useState({})
+const InternshipDelete = ({openDeleteModal, setOpenDeleteModal, selectedDeleteInternship}) => {
+    const [buttonLoading, setButtonLoading] = useState(false)
+    const [internshipValues, setInternshipValues] = useState({})
     const dispatch = useDispatch()
 
-    const initialStudentValues = useMemo(() => {
+    const initialInternshipValues = useMemo(() => {
         return {
-            name: selectedDeleteStudent?.name ,
-            surname: selectedDeleteStudent?.surname
+            internship: selectedDeleteInternship?.internship
         }
-    }, [selectedDeleteStudent])
+    }, [selectedDeleteInternship])
 
     useEffect(() => {
-        setStudentValues(initialStudentValues)
-    }, [initialStudentValues])
+        setInternshipValues(initialInternshipValues)
+    }, [initialInternshipValues])
 
     const refreshPage = () => {
         setTimeout(() => {
@@ -31,10 +30,10 @@ const StudentDelete = ({ openDeleteModal, setOpenDeleteModal, selectedDeleteStud
 
     const handleDelete = () => {
         setButtonLoading(true)
-        const deleteStudentPromise = () => {
+        const deleteInternshipPromise = () => {
             return new Promise((resolve, reject) =>
                 setTimeout(() => {
-                    dispatch(deleteUser({ _id: selectedDeleteStudent.key }))
+                    dispatch(deleteInternship({_id: selectedDeleteInternship.key}))
                         .then((deleted) => {
                             if (deleted?.meta?.requestStatus === 'fulfilled') {
                                 if (deleted?.payload?.status === 'success') {
@@ -48,9 +47,9 @@ const StudentDelete = ({ openDeleteModal, setOpenDeleteModal, selectedDeleteStud
                                 }
                             } else {
                                 refreshPage()
-                                reject('Öğrenci kaydı silinirken hata çıktı. Tekrar deneyin !')
+                                reject('Staj silinirken hata çıktı. Tekrar deneyin !')
                                 setButtonLoading(false)
-                                throw new Error('Student delete request failed')
+                                throw new Error('Internship delete request failed')
                             }
                         }).catch((err) => {
                         console.error(err)
@@ -59,15 +58,15 @@ const StudentDelete = ({ openDeleteModal, setOpenDeleteModal, selectedDeleteStud
             )
         }
 
-        toast.promise(deleteStudentPromise(), {
-            pending: 'Öğrenci kaydı Siliniyor...',
+        toast.promise(deleteInternshipPromise(), {
+            pending: 'Staj Kaydı Siliniyor...',
             success: {
-                render({ data }) {
+                render({data}) {
                     return data
                 }
             },
             error: {
-                render({ data }) {
+                render({data}) {
                     return data
                 }
             }
@@ -76,9 +75,9 @@ const StudentDelete = ({ openDeleteModal, setOpenDeleteModal, selectedDeleteStud
 
     return (
         <Modal
-            title={'Öğrenci Kaydı Silme'}
+            title={'Staj Kaydı Silme'}
             open={openDeleteModal}
-            width={450}
+            width={500}
             onCancel={() => setOpenDeleteModal(false)}
             style={{
                 fontFamily: 'open sans'
@@ -111,7 +110,7 @@ const StudentDelete = ({ openDeleteModal, setOpenDeleteModal, selectedDeleteStud
                         Evet
                         {
                             buttonLoading ?
-                                <LoadingOutlined />
+                                <LoadingOutlined/>
                                 :
                                 null
                         }
@@ -120,10 +119,10 @@ const StudentDelete = ({ openDeleteModal, setOpenDeleteModal, selectedDeleteStud
             ]}
         >
             {
-                `${studentValues.name} ${studentValues.surname} öğrencisinin kaydını silmek istediğinize emin misiniz ?`
+                `${internshipValues.internship} stajını silmek istediğinize emin misiniz ?`
             }
         </Modal>
     )
 }
 
-export default StudentDelete
+export default InternshipDelete

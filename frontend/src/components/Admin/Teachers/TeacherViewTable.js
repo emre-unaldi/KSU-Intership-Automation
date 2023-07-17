@@ -1,24 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, {useEffect, useMemo, useRef, useState} from 'react'
 import {Alert, Button, Card, Col, Input, Row, Space, Table, Typography} from 'antd'
-import { DeleteOutlined, SearchOutlined } from '@ant-design/icons'
-import { FiEdit } from 'react-icons/fi'
-import { useDispatch } from 'react-redux'
+import {DeleteOutlined, FontColorsOutlined, SearchOutlined} from '@ant-design/icons'
+import {FiEdit} from 'react-icons/fi'
+import {useDispatch} from 'react-redux'
 import Highlighter from 'react-highlight-words'
 import {getAllUsers} from "../../../redux/userSlice";
 import TeacherUpdateForm from "./TeacherUpdateForm";
-import TeachersDelete from "./TeacherDelete";
+import TeacherDelete from "./TeacherDelete";
 import TeacherAdminAuthority from "./TeacherAdminAuthority";
+
 const TeacherViewTable = () => {
     const [searchText, setSearchText] = useState('')
     const [searchedColumn, setSearchedColumn] = useState('')
-    const [selectedTeacher, setSelectedTeacher] = useState()
+    const [selectedDeleteTeacher, setSelectedDeleteTeacher] = useState()
+    const [selectedUpdateTeacher, setSelectedUpdateTeacher] = useState()
+    const [selectedAuthorityTeacher, setSelectedAuthorityTeacher] = useState()
     const [openUpdateModal, setOpenUpdateModal] = useState(false)
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
     const [openAuthorityModal, setOpenAuthorityModal] = useState(false)
     const [teachers, setTeachers] = useState([])
     const searchInput = useRef(null)
     const dispatch = useDispatch()
-    const { Text } = Typography
+    const {Text} = Typography
 
     useEffect(() => {
         dispatch(getAllUsers())
@@ -26,7 +29,8 @@ const TeacherViewTable = () => {
                 if (getAll?.meta?.requestStatus === 'fulfilled') {
                     if (getAll?.payload?.status === 'success') {
                         const response = getAll.payload.data
-                        const filteredUsers = response.filter((item) => item.role === "teacher" || item.role === "admin")
+                        const filteredUsers = response
+                            .filter((item) => item.role === "teacher" || item.role === "admin")
                         setTeachers(filteredUsers)
                     } else {
                         console.log(getAll.payload.message)
@@ -51,7 +55,7 @@ const TeacherViewTable = () => {
     }
 
     const getColumnSearchProps = (data) => ({
-        filterDropdown: ({setSelectedKeys,selectedKeys,confirm,clearFilters}) =>
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) =>
             (
                 <div
                     style={{
@@ -78,7 +82,7 @@ const TeacherViewTable = () => {
                         <Button
                             type="primary"
                             onClick={() => handleSearch(selectedKeys, confirm, data.dataIndex)}
-                            icon={<SearchOutlined />}
+                            icon={<SearchOutlined/>}
                             size="small"
                             style={{
                                 width: 90,
@@ -197,7 +201,7 @@ const TeacherViewTable = () => {
             width: '10%',
             render: (teacher) => (
                 <Row
-                    gutter={16}
+                    gutter={8}
                     style={{
                         display: 'flex',
                         justifyContent: 'center',
@@ -220,7 +224,7 @@ const TeacherViewTable = () => {
                             }}
                             onClick={() => {
                                 setOpenUpdateModal(true)
-                                setSelectedTeacher(teacher)
+                                setSelectedUpdateTeacher(teacher)
                             }}
                         />
                     </Col>
@@ -240,12 +244,17 @@ const TeacherViewTable = () => {
                             }}
                             onClick={() => {
                                 setOpenDeleteModal(true)
-                                setSelectedTeacher(teacher)
+                                setSelectedDeleteTeacher(teacher)
                             }}
                         />
                     </Col>
                     <Col>
                         <Button
+                            icon={<FontColorsOutlined
+                                style={{
+                                    fontSize: 16
+                                }}
+                            />}
                             type="primary"
                             style={{
                                 display: 'flex',
@@ -256,11 +265,9 @@ const TeacherViewTable = () => {
                             }}
                             onClick={() => {
                                 setOpenAuthorityModal(true)
-                                setSelectedTeacher(teacher)
+                                setSelectedAuthorityTeacher(teacher)
                             }}
-                        >
-                            Yetki Ver
-                        </Button>
+                        />
                     </Col>
                 </Row>
             )
@@ -270,23 +277,25 @@ const TeacherViewTable = () => {
     const convertToTR = (role) => {
         if (role === "teacher") {
             return "Öğretmen"
-        } else if(role === "admin") {
+        } else if (role === "admin") {
             return "Admin"
         }
     }
 
-    const filterData = teachers.map(
-        (item) => (
-            {
-                key: item._id,
-                phoneNumber: item.phoneNumber,
-                name: item.name,
-                surname: item.surname,
-                email: item.email,
-                role: convertToTR(item.role)
-            }
+    const filterData = useMemo(() => {
+        return teachers.map(
+            (item) => (
+                {
+                    key: item._id,
+                    phoneNumber: item.phoneNumber,
+                    name: item.name,
+                    surname: item.surname,
+                    email: item.email,
+                    role: convertToTR(item.role)
+                }
+            )
         )
-    )
+    }, [teachers])
 
     return (
         <Card
@@ -318,17 +327,17 @@ const TeacherViewTable = () => {
                             <TeacherUpdateForm
                                 openUpdateModal={openUpdateModal}
                                 setOpenUpdateModal={setOpenUpdateModal}
-                                selectedTeacher={selectedTeacher}
+                                selectedUpdateTeacher={selectedUpdateTeacher}
                             />
-                            <TeachersDelete
+                            <TeacherDelete
                                 openDeleteModal={openDeleteModal}
                                 setOpenDeleteModal={setOpenDeleteModal}
-                                selectedTeacher={selectedTeacher}
+                                selectedDeleteTeacher={selectedDeleteTeacher}
                             />
                             <TeacherAdminAuthority
                                 openAuthorityModal={openAuthorityModal}
                                 setOpenAuthorityModal={setOpenAuthorityModal}
-                                selectedTeacher={selectedTeacher}
+                                selectedAuthorityTeacher={selectedAuthorityTeacher}
                             />
                             <Text
                                 style={{

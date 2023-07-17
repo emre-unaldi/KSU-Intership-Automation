@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Button, Modal, Space } from 'antd'
 import { v4 as uuidv4 } from 'uuid'
@@ -6,17 +6,21 @@ import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import {authorityUser} from "../../../redux/userSlice";
 
-const TeacherAdminAuthority = ({ openAuthorityModal, setOpenAuthorityModal, selectedTeacher }) => {
+const TeacherAdminAuthority = ({ openAuthorityModal, setOpenAuthorityModal, selectedAuthorityTeacher }) => {
     const [ buttonLoading, setButtonLoading ] = useState(false)
     const [teacherValues, setTeacherValues] = useState({})
     const dispatch = useDispatch()
 
+    const initialTeacherValues = useMemo(() => {
+        return {
+            name: selectedAuthorityTeacher?.name ,
+            surname: selectedAuthorityTeacher?.surname
+        }
+    }, [selectedAuthorityTeacher])
+
     useEffect(() => {
-        setTeacherValues({
-            name: selectedTeacher?.name ,
-            surname: selectedTeacher?.surname
-        })
-    }, [selectedTeacher])
+        setTeacherValues(initialTeacherValues)
+    }, [initialTeacherValues])
 
     const refreshPage = () => {
         setTimeout(() => {
@@ -30,7 +34,7 @@ const TeacherAdminAuthority = ({ openAuthorityModal, setOpenAuthorityModal, sele
         const deleteTeacherPromise = () => {
             return new Promise((resolve, reject) =>
                 setTimeout(() => {
-                    dispatch(authorityUser({ _id: selectedTeacher.key }))
+                    dispatch(authorityUser({ _id: selectedAuthorityTeacher.key }))
                         .then((deleted) => {
                             if (deleted?.meta?.requestStatus === 'fulfilled') {
                                 if (deleted?.payload?.status === 'success') {
@@ -56,7 +60,7 @@ const TeacherAdminAuthority = ({ openAuthorityModal, setOpenAuthorityModal, sele
         }
 
         toast.promise(deleteTeacherPromise(), {
-            pending: 'Öğretmene Yetki Veriliyor...',
+            pending: 'Admin Yetkisi Veriliyor...',
             success: {
                 render({ data }) {
                     return data
@@ -116,7 +120,7 @@ const TeacherAdminAuthority = ({ openAuthorityModal, setOpenAuthorityModal, sele
             ]}
         >
             {
-                `${teacherValues.name} ${teacherValues.surname} öğretmenini admin yetkisi vermek istediğinize emin misiniz ?`
+                `${teacherValues.name} ${teacherValues.surname} öğretmenine admin yetkisi vermek istediğinize emin misiniz ?`
             }
         </Modal>
     )
