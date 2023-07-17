@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { LoadingOutlined } from '@ant-design/icons'
-import { Button, Form, Modal, Input } from 'antd'
-import { useDispatch } from 'react-redux'
-import { toast } from 'react-toastify'
+import React, {useEffect, useMemo, useRef, useState} from 'react'
+import {LoadingOutlined} from '@ant-design/icons'
+import {Button, Form, Modal, Input} from 'antd'
+import {useDispatch} from 'react-redux'
+import {toast} from 'react-toastify'
 import {updateUser} from "../../../redux/userSlice";
 
-const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeacher }) => {
+const TeacherUpdateForm = ({openUpdateModal, setOpenUpdateModal, selectedUpdateTeacher}) => {
     const [buttonLoading, setButtonLoading] = useState(false)
     const [formFieldError, setFormFieldError] = useState(true)
-    const [initialTeacherValues, setInitialTeacherValues] = useState({})
     const [form] = Form.useForm()
     const dispatch = useDispatch()
+    const formRef = useRef()
 
     const formItemLayout = {
         labelCol: {
@@ -44,24 +44,22 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
         }
     }
 
+    const initialTeacherValues = useMemo(() => {
+        return {
+            name: selectedUpdateTeacher?.name,
+            surname: selectedUpdateTeacher?.surname,
+            phoneNumber: selectedUpdateTeacher?.phoneNumber,
+            email: selectedUpdateTeacher?.email
+        }
+    }, [selectedUpdateTeacher])
+
     useEffect(() => {
-        form.resetFields()
-        if (selectedTeacher) {
-            setInitialTeacherValues({
-                name: selectedTeacher?.name ,
-                surname: selectedTeacher?.surname ,
-                phoneNumber: selectedTeacher?.phoneNumber,
-                email: selectedTeacher?.email
-            })
-            form.setFieldsValue({
-                name: selectedTeacher?.name ,
-                surname: selectedTeacher?.surname ,
-                phoneNumber: selectedTeacher?.phoneNumber,
-                email: selectedTeacher?.email
-            })
+        if (formRef.current) {
+            form.resetFields()
+            form.setFieldsValue(initialTeacherValues)
             form.validateFields()
         }
-    }, [selectedTeacher, form])
+    }, [initialTeacherValues, form])
 
     const refreshPage = () => {
         setTimeout(() => {
@@ -70,21 +68,20 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
         }, 3000)
     }
 
-    const onFinish = async (values) => {
-        const formValues = await {
-            ...values,
-            _id: selectedTeacher.key
+    const onFinish = async ({
+                                name,
+                                surname,
+                                phoneNumber,
+                                email
+                            }) => {
+        const formValues = {
+            name,
+            surname,
+            phoneNumber,
+            email,
+            _id: selectedUpdateTeacher.key
         }
-
-        console.log(formValues)
-
         setFormFieldError(true)
-        form.setFieldsValue({
-            name: values.name ,
-            surname: values.surname ,
-            phoneNumber: values.phoneNumber,
-            email: values.email
-        })
 
         const updateTeacherPromise = () => {
             return new Promise((resolve, reject) =>
@@ -103,7 +100,7 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
                                 }
                             } else {
                                 refreshPage()
-                                reject('Öğretmen güncellenirken hata çıktı. Tekrar deneyin !')
+                                reject('Öğretmen kaydı güncellenirken hata çıktı. Tekrar deneyin !')
                                 setButtonLoading(false)
                                 throw new Error('Teacher update request failed')
                             }
@@ -115,14 +112,14 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
         }
 
         toast.promise(updateTeacherPromise(), {
-            pending: 'Öğretmen Güncelleniyor...',
+            pending: 'Öğretmen Kaydı Güncelleniyor...',
             success: {
-                render({ data }) {
+                render({data}) {
                     return data
                 }
             },
             error: {
-                render({ data }) {
+                render({data}) {
                     return data
                 }
             }
@@ -136,7 +133,7 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
 
     return (
         <Modal
-            title='Öğretmen Güncelleme'
+            title='Öğretmen Kaydı Güncelleme'
             centered
             open={openUpdateModal}
             width={700}
@@ -155,6 +152,7 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
                 colon={false}
                 size="middle"
                 labelAlign="left"
+                ref={formRef}
                 scrollToFirstError
                 style={{
                     maxWidth: 800,
@@ -184,7 +182,6 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
                 >
                     <Input placeholder='Öğretmen adını girin'/>
                 </Form.Item>
-
                 <Form.Item
                     name="surname"
                     label='Soyad : '
@@ -202,7 +199,6 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
                 >
                     <Input placeholder='Öğretmen soyadını girin'/>
                 </Form.Item>
-
                 <Form.Item
                     name="email"
                     label='E-Posta : '
@@ -218,9 +214,8 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
                         }
                     ]}
                 >
-                    <Input placeholder="Öğretmen E-posta adresini girin" />
+                    <Input placeholder="Öğretmen E-posta adresini girin"/>
                 </Form.Item>
-
                 <Form.Item
                     name="phoneNumber"
                     label='Öğretmen Numarası : '
@@ -236,9 +231,8 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
                         }
                     ]}
                 >
-                    <Input placeholder="Öğretmen telefon numarası girin" />
+                    <Input placeholder="Öğretmen telefon numarası girin"/>
                 </Form.Item>
-
                 <Form.Item
                     {...tailFormItemLayout}
                 >
@@ -261,7 +255,7 @@ const TeacherUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedTeache
                         Öğretmen Güncelle
                         {
                             buttonLoading && formFieldError ?
-                                <LoadingOutlined />
+                                <LoadingOutlined/>
                                 :
                                 null
                         }

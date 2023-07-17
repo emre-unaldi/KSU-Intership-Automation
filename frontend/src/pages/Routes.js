@@ -40,6 +40,7 @@ import InternshipGradeDateRangesPage from './Admin/InternshipGradeDateRangesPage
 import AnnouncementsPage from './Admin/AnnouncementsPage'
 import StudentsPage from "./Admin/StudentsPage";
 import TeachersPage from "./Admin/TeachersPage";
+import InternshipPage from "./Admin/InternshipPage";
 import AdminProfileLayout from './Admin/Profile/ProfileLayout'
 import AdminAboutPage from './Admin/Profile/AboutPage'
 import AdminEditPage from './Admin/Profile/EditPage'
@@ -127,6 +128,7 @@ const routes = [
       { path: 'announcements', element: <AnnouncementsPage /> },
       { path: 'students', element: <StudentsPage /> },
       { path: 'teachers', element: <TeachersPage /> },
+      { path: 'internships', element: <InternshipPage /> },
       {
         path: 'profile',
         element: <AdminProfileLayout />,

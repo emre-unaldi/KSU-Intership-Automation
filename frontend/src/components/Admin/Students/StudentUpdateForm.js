@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { LoadingOutlined } from '@ant-design/icons'
-import { Button, Form, Modal, Input } from 'antd'
-import { useDispatch } from 'react-redux'
-import { toast } from 'react-toastify'
+import React, {useEffect, useMemo, useRef, useState} from 'react'
+import {LoadingOutlined} from '@ant-design/icons'
+import {Button, Form, Modal, Input} from 'antd'
+import {useDispatch} from 'react-redux'
+import {toast} from 'react-toastify'
 import {updateUser} from "../../../redux/userSlice";
 
-const StudentUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedStudent }) => {
+const StudentUpdateForm = ({openUpdateModal, setOpenUpdateModal, selectedUpdateStudent}) => {
     const [buttonLoading, setButtonLoading] = useState(false)
     const [formFieldError, setFormFieldError] = useState(true)
-    const [initialStudentValues, setInitialStudentValues] = useState({})
     const [form] = Form.useForm()
     const dispatch = useDispatch()
+    const formRef = useRef()
 
     const formItemLayout = {
         labelCol: {
@@ -44,24 +44,22 @@ const StudentUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedStuden
         }
     }
 
+    const initialStudentValues = useMemo(() => {
+        return {
+            name: selectedUpdateStudent?.name,
+            surname: selectedUpdateStudent?.surname,
+            schoolNumber: selectedUpdateStudent?.schoolNumber,
+            email: selectedUpdateStudent?.email
+        }
+    }, [selectedUpdateStudent])
+
     useEffect(() => {
-        form.resetFields()
-        if (selectedStudent) {
-            setInitialStudentValues({
-                name: selectedStudent?.name ,
-                surname: selectedStudent?.surname ,
-                schoolNumber: selectedStudent?.schoolNumber,
-                email: selectedStudent?.email
-            })
-            form.setFieldsValue({
-                name: selectedStudent?.name ,
-                surname: selectedStudent?.surname ,
-                schoolNumber: selectedStudent?.schoolNumber,
-                email: selectedStudent?.email
-            })
+        if (formRef.current) {
+            form.resetFields()
+            form.setFieldsValue(initialStudentValues)
             form.validateFields()
         }
-    }, [selectedStudent, form])
+    }, [initialStudentValues, form])
 
     const refreshPage = () => {
         setTimeout(() => {
@@ -70,18 +68,20 @@ const StudentUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedStuden
         }, 3000)
     }
 
-    const onFinish = async (values) => {
-        const formValues = await {
-            ...values,
-            _id: selectedStudent.key
+    const onFinish = async ({
+                                name,
+                                surname,
+                                schoolNumber,
+                                email
+                            }) => {
+        const formValues = {
+            name,
+            surname,
+            schoolNumber,
+            email,
+            _id: selectedUpdateStudent.key
         }
         setFormFieldError(true)
-        form.setFieldsValue({
-            name: values.name ,
-            surname: values.surname ,
-            schoolNumber: values.schoolNumber,
-            email: values.email
-        })
 
         const updateStudentPromise = () => {
             return new Promise((resolve, reject) =>
@@ -100,7 +100,7 @@ const StudentUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedStuden
                                 }
                             } else {
                                 refreshPage()
-                                reject('Öğrenci güncellenirken hata çıktı. Tekrar deneyin !')
+                                reject('Öğrenci kaydı güncellenirken hata çıktı. Tekrar deneyin !')
                                 setButtonLoading(false)
                                 throw new Error('Student update request failed')
                             }
@@ -112,14 +112,14 @@ const StudentUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedStuden
         }
 
         toast.promise(updateStudentPromise(), {
-            pending: 'Öğrenci Güncelleniyor...',
+            pending: 'Öğrenci Kaydı Güncelleniyor...',
             success: {
-                render({ data }) {
+                render({data}) {
                     return data
                 }
             },
             error: {
-                render({ data }) {
+                render({data}) {
                     return data
                 }
             }
@@ -133,7 +133,7 @@ const StudentUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedStuden
 
     return (
         <Modal
-            title='Öğrenci Güncelleme'
+            title='Öğrenci Kaydı Güncelleme'
             centered
             open={openUpdateModal}
             width={700}
@@ -152,6 +152,7 @@ const StudentUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedStuden
                 colon={false}
                 size="middle"
                 labelAlign="left"
+                ref={formRef}
                 scrollToFirstError
                 style={{
                     maxWidth: 800,
@@ -215,7 +216,7 @@ const StudentUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedStuden
                         }
                     ]}
                 >
-                    <Input placeholder="Öğrenci E-posta adresini girin" />
+                    <Input placeholder="Öğrenci E-posta adresini girin"/>
                 </Form.Item>
 
                 <Form.Item
@@ -233,7 +234,7 @@ const StudentUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedStuden
                         }
                     ]}
                 >
-                    <Input placeholder="Öğrenci numarası girin" />
+                    <Input placeholder="Öğrenci numarası girin"/>
                 </Form.Item>
 
                 <Form.Item
@@ -258,7 +259,7 @@ const StudentUpdateForm = ({ openUpdateModal, setOpenUpdateModal, selectedStuden
                         Öğrenci Güncelle
                         {
                             buttonLoading && formFieldError ?
-                                <LoadingOutlined />
+                                <LoadingOutlined/>
                                 :
                                 null
                         }

@@ -1,37 +1,42 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react'
 import {Alert, Button, Card, Col, Input, Row, Space, Table, Typography} from 'antd'
-import { DeleteOutlined, SearchOutlined } from '@ant-design/icons'
-import { FiEdit } from 'react-icons/fi'
-import { useDispatch } from 'react-redux'
+import {DeleteOutlined, MailOutlined, SearchOutlined} from '@ant-design/icons'
+import {FiEdit} from 'react-icons/fi'
+import {useDispatch} from 'react-redux'
 import Highlighter from 'react-highlight-words'
-import StudentUpdateForm from "./StudentUpdateForm";
-import StudentDelete from "./StudentDelete";
-import {getAllUsers} from "../../../redux/userSlice";
-const StudentViewTable = () => {
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+import {getAllInternships} from "../../../redux/internshipSlice";
+import InternshipUpdateForm from "./InternshipUpdateForm";
+import InternshipDelete from "./InternshipDelete";
+import InternshipSendEmail from "./InternshipSendEmail";
+
+dayjs.extend(customParseFormat)
+const InternshipViewTable = () => {
     const [searchText, setSearchText] = useState('')
     const [searchedColumn, setSearchedColumn] = useState('')
-    const [selectedDeleteStudent, setSelectedDeleteStudent] = useState()
-    const [selectedUpdateStudent, setSelectedUpdateStudent] = useState()
+    const [selectedUpdateInternship, setSelectedUpdateInternship] = useState()
+    const [selectedDeleteInternship, setSelectedDeleteInternship] = useState()
+    const [selectedSendEmailInternship, setSelectedSendEmailInternship] = useState()
     const [openUpdateModal, setOpenUpdateModal] = useState(false)
     const [openDeleteModal, setOpenDeleteModal] = useState(false)
-    const [students, setStudents] = useState([])
+    const [openSendEmailModal, setOpenSendEmailModal] = useState(false)
+    const [internships, setInternships] = useState([])
     const searchInput = useRef(null)
     const dispatch = useDispatch()
-    const { Text } = Typography
+    const {Text} = Typography
 
     useEffect(() => {
-        dispatch(getAllUsers())
+        dispatch(getAllInternships())
             .then((getAll) => {
                 if (getAll?.meta?.requestStatus === 'fulfilled') {
                     if (getAll?.payload?.status === 'success') {
-                        const response = getAll.payload.data
-                        const filteredUsers = response.filter((item) => item.role === "student")
-                        setStudents(filteredUsers)
+                        setInternships(getAll.payload.data)
                     } else {
                         console.log(getAll.payload.message)
                     }
                 } else {
-                    throw new Error('Students Get All request failed')
+                    throw new Error('Internships Get All request failed')
                 }
             }).catch((err) => {
             console.error(err)
@@ -50,7 +55,7 @@ const StudentViewTable = () => {
     }
 
     const getColumnSearchProps = (data) => ({
-        filterDropdown: ({setSelectedKeys,selectedKeys,confirm,clearFilters}) =>
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) =>
             (
                 <div
                     style={{
@@ -77,7 +82,7 @@ const StudentViewTable = () => {
                         <Button
                             type="primary"
                             onClick={() => handleSearch(selectedKeys, confirm, data.dataIndex)}
-                            icon={<SearchOutlined />}
+                            icon={<SearchOutlined/>}
                             size="small"
                             style={{
                                 width: 90,
@@ -141,50 +146,99 @@ const StudentViewTable = () => {
 
     const columns = [
         {
-            title: 'Öğrenci Numarası',
-            dataIndex: 'schoolNumber',
-            key: 'schoolNumber',
-            width: '20%',
+            title: 'İş Yeri Adı',
+            dataIndex: 'companyName',
+            key: 'companyName',
             ...getColumnSearchProps({
-                dataIndex: 'schoolNumber',
-                title: 'Öğrenci Numarası'
+                dataIndex: 'companyName',
+                title: 'İş Yeri Adı'
             })
         },
         {
-            title: 'Öğrenci Adı',
-            dataIndex: 'name',
-            key: 'name',
-            width: '20%',
+            title: 'İş Yeri E-Posta',
+            dataIndex: 'companyEmail',
+            key: 'companyEmail',
             ...getColumnSearchProps({
-                dataIndex: 'name',
-                title: 'Öğrenci Adı'
+                dataIndex: 'companyEmail',
+                title: 'İş Yeri E-Posta'
             })
         },
         {
-            title: 'Öğrenci Soyadı',
-            dataIndex: 'surname',
-            key: 'surname',
-            width: '20%',
+            title: 'İş Yeri Numarası',
+            dataIndex: 'companyPhone',
+            key: 'companyPhone',
             ...getColumnSearchProps({
-                dataIndex: 'surname',
-                title: 'Öğrenci Soyadı'
+                dataIndex: 'companyPhone',
+                title: 'İş Yeri Numarası'
             })
         },
         {
-            title: 'Öğrenci E-Posta',
-            dataIndex: 'email',
-            key: 'email',
-            width: '30%',
+            title: 'Yetkili Adı',
+            dataIndex: 'companyResponsibleName',
+            key: 'companyResponsibleName',
             ...getColumnSearchProps({
-                dataIndex: 'email',
-                title: 'Öğrenci E-Posta'
+                dataIndex: 'companyResponsibleName',
+                title: 'Yetkili Adı'
+            })
+        },
+        {
+            title: 'Yetkili Soyadı',
+            dataIndex: 'companyResponsibleSurname',
+            key: 'companyResponsibleSurname',
+            ...getColumnSearchProps({
+                dataIndex: 'companyResponsibleSurname',
+                title: 'Yetkili Soyadı'
+            })
+        },
+        {
+            title: 'Personel Sayısı',
+            dataIndex: 'companyPersonalCount',
+            key: 'companyPersonalCount',
+            ...getColumnSearchProps({
+                dataIndex: 'companyPersonalCount',
+                title: 'Personel Sayısı'
+            })
+        },
+        {
+            title: 'Vergi Numarası',
+            dataIndex: 'companyTaxNumber',
+            key: 'companyTaxNumber',
+            ...getColumnSearchProps({
+                dataIndex: 'companyTaxNumber',
+                title: 'Vergi Numarası'
+            })
+        },
+        {
+            title: 'İş Yeri Adresi',
+            dataIndex: 'companyAddress',
+            key: 'companyAddress',
+            ...getColumnSearchProps({
+                dataIndex: 'companyAddress',
+                title: 'İş Yeri Adresi'
+            })
+        },
+        {
+            title: 'Staj Türü',
+            dataIndex: 'internship',
+            key: 'internship',
+            ...getColumnSearchProps({
+                dataIndex: 'internship',
+                title: 'Staj Türü'
+            })
+        },
+        {
+            title: 'Staj Tarih Aralığı',
+            dataIndex: 'internshipDateRange',
+            key: 'internshipDateRange',
+            ...getColumnSearchProps({
+                dataIndex: 'internshipDateRange',
+                title: 'Staj Tarih Aralığı'
             })
         },
         {
             title: 'Olaylar',
             key: 'actions',
-            width: '10%',
-            render: (student) => (
+            render: (internship) => (
                 <Row
                     gutter={8}
                     style={{
@@ -208,8 +262,12 @@ const StudentViewTable = () => {
                                 alignItems: 'center'
                             }}
                             onClick={() => {
+                                const dateRange = internship?.internshipDateRange.split(" - ")
                                 setOpenUpdateModal(true)
-                                setSelectedUpdateStudent(student)
+                                setSelectedUpdateInternship({
+                                    ...internship,
+                                    dateRange
+                                })
                             }}
                         />
                     </Col>
@@ -229,7 +287,28 @@ const StudentViewTable = () => {
                             }}
                             onClick={() => {
                                 setOpenDeleteModal(true)
-                                setSelectedDeleteStudent(student)
+                                setSelectedDeleteInternship(internship)
+                            }}
+                        />
+                    </Col>
+                    <Col>
+                        <Button
+                            icon={<MailOutlined
+                                style={{
+                                    fontSize: 16
+                                }}
+                            />}
+                            type="primary"
+                            danger
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                backgroundColor: 'green'
+                            }}
+                            onClick={() => {
+                                setOpenSendEmailModal(true)
+                                setSelectedSendEmailInternship(internship)
                             }}
                         />
                     </Col>
@@ -238,19 +317,43 @@ const StudentViewTable = () => {
         }
     ]
 
+    const formatDate = (dateRange) => {
+        const startDate = dayjs(dateRange[0]).format('DD/MM/YYYY')
+        const endDate = dayjs(dateRange[1]).format('DD/MM/YYYY')
+
+        return `${startDate} - ${endDate}`
+    }
+
+    const convertToTR = (internship) => {
+        if (internship === "software") {
+            return "Yazılım"
+        } else if (internship === "hardware") {
+            return "Donanım"
+        } else {
+            return "UME"
+        }
+    }
+
     const filterData = useMemo(() => {
-        return students.map(
+        return internships.map(
             (item) => (
                 {
                     key: item._id,
-                    schoolNumber: item.schoolNumber,
-                    name: item.name,
-                    surname: item.surname,
-                    email: item.email
+                    studentID: item.studentID,
+                    companyName: item.companyName,
+                    companyEmail: item.companyEmail,
+                    companyPhone: item.companyPhone,
+                    companyResponsibleName: item.companyResponsibleName,
+                    companyResponsibleSurname: item.companyResponsibleSurname,
+                    companyPersonalCount: item.companyPersonalCount,
+                    companyTaxNumber: item.companyTaxNumber,
+                    companyAddress: item.companyAddress,
+                    internshipDateRange: item.internshipDateRange && formatDate(item.internshipDateRange),
+                    internship: convertToTR(item.internship)
                 }
             )
         )
-    }, [students])
+    }, [internships])
 
     return (
         <Card
@@ -260,7 +363,7 @@ const StudentViewTable = () => {
             }}
         >
             {
-                students.length !== 0 ? (
+                internships.length !== 0 ? (
                         <>
                             <Table
                                 bordered="true"
@@ -279,15 +382,20 @@ const StudentViewTable = () => {
                                 columns={columns}
                                 dataSource={filterData}
                             />
-                            <StudentUpdateForm
+                            <InternshipUpdateForm
                                 openUpdateModal={openUpdateModal}
                                 setOpenUpdateModal={setOpenUpdateModal}
-                                selectedUpdateStudent={selectedUpdateStudent}
+                                selectedUpdateInternship={selectedUpdateInternship}
                             />
-                            <StudentDelete
+                            <InternshipDelete
                                 openDeleteModal={openDeleteModal}
                                 setOpenDeleteModal={setOpenDeleteModal}
-                                selectedDeleteStudent={selectedDeleteStudent}
+                                selectedDeleteInternship={selectedDeleteInternship}
+                            />
+                            <InternshipSendEmail
+                                openSendEmailModal={openSendEmailModal}
+                                setOpenSendEmailModal={setOpenSendEmailModal}
+                                selectedSendEmailInternship={selectedSendEmailInternship}
                             />
                             <Text
                                 style={{
@@ -297,7 +405,7 @@ const StudentViewTable = () => {
                                     color: '#899BBD'
                                 }}
                             >
-                                {`${students.length} adet öğrenci kaydı mevcut`}
+                                {`${internships.length} adet staj kaydı mevcut`}
                             </Text>
                         </>
                     )
@@ -310,7 +418,7 @@ const StudentViewTable = () => {
                             }}
                         >
                             <Alert
-                                message="Herhangi bir öğrenci kaydı bulunmamaktadır."
+                                message="Herhangi bir staj kaydı bulunmamaktadır."
                                 type="info"
                                 showIcon
                                 style={{
@@ -324,4 +432,4 @@ const StudentViewTable = () => {
     )
 }
 
-export default StudentViewTable
+export default InternshipViewTable

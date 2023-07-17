@@ -1,10 +1,8 @@
 import User from '../models/User.js'
 import {compare} from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import Announcement from "../models/Announcement.js";
 
 const maxAge = 60 * 60 * 24
-// JWT token oluşturma endpointi
 const generateToken = (userId) => {
     return jwt.sign({userId}, process.env.JWT_SECRET_KEY, {
         expiresIn: maxAge,
